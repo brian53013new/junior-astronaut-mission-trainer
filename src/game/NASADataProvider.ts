@@ -32,7 +32,7 @@ function validate(input:unknown):input is DataManifest{
 /** Loads a dated local snapshot first; the game never depends on a live NASA request. */
 export async function loadMissionData():Promise<LoadedMissionData>{
   const controller=new AbortController();const timeout=window.setTimeout(()=>controller.abort(),2500);
-  try{const response=await fetch('/data/nasa-event-snapshot.json',{cache:'no-store',signal:controller.signal});if(!response.ok)throw new Error('snapshot missing');const payload:unknown=await response.json();if(!validate(payload))return fallback('invalid');if(payload.records.length===0)return fallback('empty');
+  try{const response=await fetch(`${import.meta.env.BASE_URL}data/nasa-event-snapshot.json`,{cache:'no-store',signal:controller.signal});if(!response.ok)throw new Error('snapshot missing');const payload:unknown=await response.json();if(!validate(payload))return fallback('invalid');if(payload.records.length===0)return fallback('empty');
     const events=payload.records.map(r=>({id:r.id,title:r.titleKey,note:r.noteKey,source:payload.provenance.dataset,sourceUrl:r.sourceUrl,retrievedAt:r.retrievedAt,mappingDisclosure:r.mappingDisclosure,effects:r.effects,kind:r.kind==='NASA'?'nasa-snapshot' as const:'education' as const}));return{events,provenance:payload.provenance,isFallback:payload.provenance.mode!=='NASA-SNAPSHOT'};
   }catch{return fallback('offline');}finally{clearTimeout(timeout);}
 }
