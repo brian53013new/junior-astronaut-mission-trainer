@@ -16,6 +16,18 @@ export class Companion {
   const cheek=new THREE.Mesh(new THREE.TorusGeometry(.035,.008,8,24),trim);cheek.position.set(side*.32,-.08,.465);this.body.add(cheek);
   const cuff=new THREE.Mesh(new THREE.TorusGeometry(.075,.012,8,24),trim);cuff.position.set(side*.13,-.18,0);cuff.rotation.x=Math.PI/2;this.arms[side===-1?0:1].add(cuff);
  }
+ // Articulated shoulder-to-hand silhouette, with flexible cuffs and inset fasteners.
+ for(const [i,side] of [-1,1].entries()){
+  const arm=this.arms[i];
+  const elbow=new THREE.Mesh(new THREE.SphereGeometry(.065,20,12),trim);elbow.position.set(side*.20,-.23,0);arm.add(elbow);
+  const hand=new THREE.Mesh(new THREE.SphereGeometry(.082,24,16),shell);hand.scale.set(1,.8,.72);hand.position.set(side*.24,-.29,.01);arm.add(hand);
+  const palm=new THREE.Mesh(new THREE.SphereGeometry(.035,16,10),dark);palm.position.set(side*.25,-.30,.065);arm.add(palm);
+ }
+ // Shell seams and paired rear vents describe a serviceable enclosure.
+ for(const side of [-1,1]){
+  const vent=new THREE.Mesh(new THREE.BoxGeometry(.085,.015,.025),dark);
+  for(let n=0;n<3;n++){const fin=vent.clone();fin.position.set(side*.38,-.18+n*.055,-.27);this.body.add(fin);}
+ }
  const belly=new THREE.Mesh(new THREE.SphereGeometry(.13,24,16),trim);belly.scale.set(1,.55,.3);belly.position.set(0,-.29,.38);this.body.add(belly);
  const heart=new THREE.Mesh(new THREE.SphereGeometry(.046,20,12),light);heart.position.set(0,-.29,.425);this.body.add(heart);
  const antennaRing=new THREE.Mesh(new THREE.TorusGeometry(.034,.008,8,24),trim);antennaRing.rotation.x=Math.PI/2;antennaRing.position.y=.55;this.body.add(antennaRing);
