@@ -68,6 +68,12 @@ export class AudioDirector {
   else if(kind==='talk')this.tone(620,.065,'sine',.035,0,'voice');
   else this.tone(380,.065,'triangle',.04);
  }
+ /** Short synthesized mechanisms: contact, travel and latch remain on the effects bus. */
+ actuate(kind:'button'|'toggle'|'lever'){
+  if(kind==='lever'){this.tone(150,.12,'triangle',.038);this.tone(260,.10,'sine',.025,.10);this.tone(120,.09,'triangle',.02,.19);}
+  else if(kind==='toggle'){this.tone(420,.06,'triangle',.035);this.tone(230,.07,'sine',.025,.05);}
+  else{this.tone(330,.075,'triangle',.035);this.tone(175,.09,'sine',.022,.08);}
+ }
  private note(midi:number,duration:number,instrument:Instrument,volume:number,delay=0){
   const ctx=this.ctx,destination=this.buses.music;
   if(!ctx||!destination||ctx.state!=='running'||this.muted||volume<=0)return;
