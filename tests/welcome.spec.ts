@@ -14,12 +14,13 @@ test('physical welcome controls lead to the first lesson', async ({page}, testIn
     if(cdp){await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x+dx,y}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});}
     else {await page.mouse.move(x,y);await page.mouse.down();await page.mouse.move(x+dx,y,{steps:8});await page.mouse.up();}
   };
-  if(mobile)await drag(200,700,-35);else await page.mouse.move(700,360);
+  if(mobile)await page.locator('#welcome-move [aria-label="ArrowUp"]').click();else await page.mouse.move(700,360);
   const state=()=>page.evaluate(()=>window.__OUTPOST_QA__!.welcome());
   const position=(name:'button'|'knob'|'switch'|'book'|'door')=>page.evaluate(n=>window.__OUTPOST_QA__!.welcomePosition(n),name);
   const click=async(name:'button'|'knob'|'switch'|'book'|'door')=>{
-    await page.waitForTimeout(4500);
-    const p=await position(name);
+    await page.waitForTimeout(2500);
+    await expect.poll(async()=>{const p=await position(name);return p.x>15&&p.x<page.viewportSize()!.width-15&&p.y>15&&p.y<page.viewportSize()!.height-15;},{timeout:20000}).toBe(true);
+    await page.waitForTimeout(1200);const p=await position(name);
     expect(p.x,`${name} must be within the viewport`).toBeGreaterThan(0);
     expect(p.x).toBeLessThan(page.viewportSize()!.width);
     if(mobile)await page.touchscreen.tap(p.x,p.y);else await page.mouse.click(p.x,p.y);

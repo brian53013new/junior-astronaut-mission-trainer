@@ -13,6 +13,9 @@ test('A and arrow keys move laterally in the welcome room and study room', async
   await expect.poll(cameraX,{timeout:15000}).toBeGreaterThan(initial+.25);
   await page.keyboard.press('a');
   await expect.poll(cameraX,{timeout:15000}).toBeLessThan(initial+.2);
+  const cameraZ=()=>page.evaluate(()=>window.__OUTPOST_QA__!.camera().z);const startZ=await cameraZ();
+  await page.keyboard.press('w');await expect.poll(cameraZ,{timeout:15000}).toBeLessThan(startZ-.25);
+  await page.keyboard.press('ArrowDown');await expect.poll(cameraZ,{timeout:15000}).toBeGreaterThan(startZ-.15);
   await page.reload();
   await page.evaluate(()=>localStorage.setItem('outpost-welcome-3d-v1','done'));
   await page.reload();await page.locator('#lobby-start').click();
