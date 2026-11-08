@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "provenance": {
+    "mode": "EDUCATIONAL-FALLBACK",
+    "dataset": "Bundled teaching scenarios",
+    "sourceUrl": "",
+    "retrievedAt": "2026-11-04",
+    "recordId": "offline-training-v1",
+    "limitations": "No NASA observation loaded. Effects are invented teaching values and are not a dose estimate, forecast, or mission safety prediction."
+  },
+  "records": []
+}

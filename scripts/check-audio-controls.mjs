@@ -1,0 +1,2 @@
+import assert from 'node:assert/strict';import {AudioDirector} from '../src/game/AudioDirector.ts';
+const a=new AudioDirector();assert.equal(a.ready,false);a.setLevel('music',2);a.setLevel('effects',-.2);a.setLevel('voice',.4);assert.equal(a.levels.music,1);assert.equal(a.levels.effects,0);assert.equal(a.levels.voice,.4);a.toggle();assert.equal(a.muted,true);a.toggle();assert.equal(a.muted,false);a.phase='quiz';assert.equal(a.phase,'quiz');a.tick(500);console.log('Audio control state passed without an audio device.');

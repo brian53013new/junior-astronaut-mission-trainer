@@ -1,0 +1,4 @@
+import assert from 'node:assert/strict';
+import {MissionEngine} from '../src/game/MissionEngine.ts';
+const event={id:'training',title:'test',note:'test',source:'test',effects:{power:-2},kind:'education'};
+const m=new MissionEngine(()=>event);assert.equal(m.requestTrainingSupply(1000).ok,false);m.state.power=0;m.state.water=0;m.state.food=6;assert.equal(m.requestTrainingSupply(2000).ok,true);assert.equal(m.state.power,45);assert.equal(m.state.water,45);assert.equal(m.state.food,36);m.state.power=0;assert.equal(m.requestTrainingSupply(3000).ok,false);const n=new MissionEngine(()=>event);assert.equal(n.restore(m.snapshot()),true);assert.equal(n.lastTrainingSupplySol,n.state.sol);assert.equal(n.requestTrainingSupply(4000).ok,false);n.state.eventOpen=true;assert.equal(n.requestTrainingSupply(5000).message,'eventMustDecide');console.log('Training supply checks passed: low supplies, once per sol, restore and event gate.');

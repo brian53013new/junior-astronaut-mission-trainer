@@ -1,0 +1,3 @@
+/** Speech-shaped timing for typewriter text. Durations are educational character sounds, not spoken words. */
+export function speechTimeline(text:string):number[]{let t=0;const times:number[]=[];for(const ch of text){times.push(t);if(/[。！？.!?]/u.test(ch))t+=380;else if(/[，、,:;；：]/u.test(ch))t+=210;else if(/\s/u.test(ch))t+=70;else if(/[\u3400-\u9fff]/u.test(ch))t+=125;else t+=55;}return times;}
+export function speechPitch(ch:string,index:number,mood:'happy'|'thinking'|'cheer'){const base=mood==='thinking'?410:mood==='cheer'?630:535;return base+(ch.codePointAt(0)??0)%83+Math.sin(index*.75)*45;}
