@@ -35,7 +35,17 @@ export class WelcomeRoom {
   addBox(this.root,10,.18,10,0,-.1,0,dark);addBox(this.root,10,.18,10,0,4.8,0,hull);addBox(this.root,7.2,4.8,.2,-1.4,2.4,-4.2,hull);addBox(this.root,1,4.8,.2,4.5,2.4,-4.2,hull);addBox(this.root,1.8,1.5,.2,3.1,4.05,-4.2,hull);addBox(this.root,.2,4.8,10,-4.9,2.4,0,hull);addBox(this.root,.2,4.8,10,4.9,2.4,0,hull);
   for(const x of [-4,-2,0,2,4]){if(x!==4)addBox(this.root,.09,4.65,.13,x,2.35,-4.05,trim,.02);addBox(this.root,.08,.08,8.4,x,4.68,0,trim,.02);}
   for(const x of [-3,0,3]){const strip=addBox(this.root,1.7,.04,.15,x,4.68,-.1,new THREE.MeshStandardMaterial({color:'#ecf1dd',emissive:'#dbedd1',emissiveIntensity:.8}),.01);strip.castShadow=false;}
-  const ambient=new THREE.HemisphereLight('#e5f5e8','#525c53',1.1);this.root.add(ambient);const taskLight=new THREE.PointLight('#ffe8b5',16,12,2);taskLight.position.set(0,3.7,.4);this.root.add(taskLight);
+  // Repeated floor plates, handrails and service hatches give the compartment a readable scale.
+  const seamMat=metal('#5d716d',.58,.42);
+  for(let x=-4;x<=4;x+=2)addBox(this.root,.025,.012,8.1,x,.005,-.1,seamMat,.004);
+  for(let z=-3;z<=3;z+=2)addBox(this.root,9.4,.012,.025,0,.006,z,seamMat,.004);
+  for(const side of [-1,1]){
+   const rail=new THREE.Mesh(new THREE.CylinderGeometry(.035,.035,3.6,16),trim);rail.rotation.x=Math.PI/2;rail.position.set(side*4.72,1.35,-1.6);this.root.add(rail);
+   for(const z of [-3.1,-1.7,-.3])addBox(this.root,.22,.06,.06,side*4.78,1.35,z,dark,.01);
+   addBox(this.root,.05,1.15,1.25,side*4.74,2.55,1.3,dark,.02);
+   for(let i=0;i<5;i++)addBox(this.root,.018,.035,.8,side*4.7,2.25+i*.15,1.3,trim,.005);
+  }
+  const ambient=new THREE.HemisphereLight('#e5f5e8','#525c53',1.1);this.root.add(ambient);const taskLight=new THREE.PointLight('#ffe8b5',16,12,2);taskLight.position.set(0,3.7,.4);this.root.add(taskLight);const coolFill=new THREE.PointLight('#9ecfda',8,10,2);coolFill.position.set(-3.8,3,-2.5);this.root.add(coolFill);
   const windowFrame=addBox(this.root,2.1,1.35,.14,-3.2,2.8,-4.02,trim,.08);void windowFrame;addBox(this.root,1.86,1.1,.08,-3.2,2.8,-3.92,new THREE.MeshBasicMaterial({color:'#0c1f28'}),.08);
   for(let i=0;i<36;i++){const p=new THREE.Mesh(new THREE.SphereGeometry(.012+(i%3)*.004,6,4),new THREE.MeshBasicMaterial({color:'#e6eecf'}));p.position.set(-4.02+(i*137%163)/100,2.34+(i*71%90)/100,-3.86);this.root.add(p);}
   // Hatch has physical depth and an emissive outline; it opens only on request.
@@ -75,10 +85,10 @@ export class WelcomeRoom {
   // The button's fixed bezel and illuminated ring remain separate from its moving cap.
   this.buttonLight=new THREE.MeshStandardMaterial({color:'#a8dfbc',emissive:'#69c79b',emissiveIntensity:.35,roughness:.3});const ledRing=new THREE.Mesh(new THREE.TorusGeometry(.29,.014,10,48),this.buttonLight);ledRing.rotation.x=Math.PI/2;ledRing.position.set(-1.9,1.27,.52);this.root.add(ledRing);
   // Study book has a raised cover, paper block and actual large touch target.
-  addBox(this.root,.85,.09,.62,-2.75,1.11,1.35,metal('#785740',.84,.1),.025);addBox(this.root,.78,.026,.55,-2.75,1.17,1.35,metal('#d9caac',.95,.02),.02);addBox(this.root,.035,.035,.57,-2.75,1.2,1.35,gold,.005);
-  const hitButton=makeHit('button',-1.9,1.36,.52,.92,.55,.85),hitKnob=makeHit('knob',0,1.36,.52,.92,.55,.85),hitSwitch=makeHit('switch',1.9,1.38,.52,.92,.65,.85),hitBook=makeHit('book',-2.75,1.25,1.35,1.0,.4,.8),hitDoor=makeHit('door',3.15,1.7,-3.72,1.8,3.2,.5);
+  addBox(this.root,.85,.09,.62,-1.05,1.11,1.4,metal('#785740',.84,.1),.025);addBox(this.root,.78,.026,.55,-1.05,1.17,1.4,metal('#d9caac',.95,.02),.02);addBox(this.root,.035,.035,.57,-1.05,1.2,1.4,gold,.005);
+  const hitButton=makeHit('button',-1.9,1.36,.52,.92,.55,.85),hitKnob=makeHit('knob',0,1.36,.52,.92,.55,.85),hitSwitch=makeHit('switch',1.9,1.38,.52,.92,.65,.85),hitBook=makeHit('book',-1.05,1.25,1.4,1.0,.4,.8),hitDoor=makeHit('door',3.15,1.7,-3.72,1.8,3.2,.5);
   this.hits={button:hitButton,knob:hitKnob,switch:hitSwitch,book:hitBook,door:hitDoor};
-  glow('button',-1.9,1.25,.52,1.22,.83);glow('knob',0,1.25,.52,1.22,.83);glow('switch',1.9,1.25,.52,1.22,.83);glow('book',-2.75,1.22,1.35,.94,.7);
+  glow('button',-1.9,1.25,.52,1.22,.83);glow('knob',0,1.25,.52,1.22,.83);glow('switch',1.9,1.25,.52,1.22,.83);glow('book',-1.05,1.22,1.4,.94,.7);
   const doorHighlight=new THREE.Mesh(new THREE.TorusGeometry(.8,.025,8,64),new THREE.MeshBasicMaterial({color:'#f6cf73',transparent:true,opacity:.9,depthTest:false}));doorHighlight.scale.set(1,1.8,1);doorHighlight.position.set(3.15,1.65,-3.82);doorHighlight.visible=false;doorHighlight.renderOrder=10;this.root.add(doorHighlight);this.highlights.set('door',doorHighlight);
   this.setStep(0,'zh');
  }

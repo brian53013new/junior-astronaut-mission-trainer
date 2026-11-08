@@ -50,5 +50,7 @@ interface Window {
     hoveredAction(): string|null;
     screenPosition(action: string): {x:number;y:number};
     setLanguage(language:'en'|'zh'):void;
+    welcome(): {active:boolean;step:number;focus:string|null;departing:boolean;quiz:boolean};
+    welcomePosition(target:'button'|'knob'|'switch'|'book'|'door'): {x:number;y:number};
   };
 }

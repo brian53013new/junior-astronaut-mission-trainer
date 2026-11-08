@@ -12,6 +12,7 @@ export default defineConfig({
   },
   use: {
     baseURL: 'http://127.0.0.1:5188',
+    launchOptions: process.env.CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.CHROMIUM_EXECUTABLE_PATH, args: ['--no-sandbox','--use-gl=angle','--use-angle=swiftshader'] } : undefined,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
   },
