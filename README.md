@@ -58,6 +58,8 @@ The 2026 challenge URL could not be accessed during this update, so its details 
 
 ## Cross-device controls
 
+Use the left and right arrow keys or A and D to move sideways in the welcome room, control desk, and study room. On the control desk, moving sideways closes an open equipment close-up first. Text inputs keep their normal keyboard behavior.
+
 The gear in the upper-right corner opens sound, language, text-size, motion and camera controls. Camera zoom is off by default; enable it to use a mouse wheel or two-finger pinch, and use Reset view to return to the standard view. Text scaling is independent of camera zoom. On touch input, the navigation strip offers workspace movement, return, and a Find goal shortcut. Selected adjustable equipment gets a larger slider; the time control advances on confirmation at 100 and then resets. Workshop parts and sockets can be selected in two taps. The mobile-accessible paper presents the same saved reading and quiz state with larger controls. Desktop, tablet and phone behavior still requires hands-on device validation.
 
 ## NASA data status

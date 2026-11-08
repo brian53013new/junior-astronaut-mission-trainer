@@ -48,9 +48,12 @@ interface Window {
     guide(): {step:number;target:string|null};
     camera(): {x:number;y:number;z:number;baseZ:number};
     hoveredAction(): string|null;
+    selectedAction(): string|null;
     screenPosition(action: string): {x:number;y:number};
     setLanguage(language:'en'|'zh'):void;
     welcome(): {active:boolean;step:number;focus:string|null;departing:boolean;quiz:boolean};
+    lesson(): {id:string;reading:boolean;page:number;prediction:number|null};
+    paperPosition(x:number,y:number): {x:number;y:number};
     welcomePosition(target:'button'|'knob'|'switch'|'book'|'door'): {x:number;y:number};
   };
 }
