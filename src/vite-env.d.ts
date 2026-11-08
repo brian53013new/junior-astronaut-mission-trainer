@@ -56,6 +56,7 @@ interface Window {
     paperPosition(x:number,y:number): {x:number;y:number};
     screenPoint(kind:'map'|'telemetry'|'checklist',x:number,y:number): {x:number;y:number};
     workshop(): {mode:string|null;parts:boolean[]};
+    signal(): {active:boolean;cursor:number;solved:boolean};
     welcomePosition(target:'button'|'knob'|'switch'|'book'|'door'): {x:number;y:number};
   };
 }
