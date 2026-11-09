@@ -6,6 +6,7 @@ test('A and arrow keys move laterally in the welcome room and study room', async
   await page.goto('/?qa=1');
   await page.locator('#lobby-start').click();
   await expect.poll(()=>page.evaluate(()=>window.__OUTPOST_QA__?.welcome().active)).toBe(true);
+  await page.locator('#intro-skip').click();
   await page.waitForTimeout(2500);
   const cameraX=()=>page.evaluate(()=>window.__OUTPOST_QA__!.camera().x);
   const initial=await cameraX();

@@ -9,6 +9,7 @@ test('physical welcome controls lead to the first lesson', async ({page}, testIn
   await page.goto('/?qa=1');
   await page.locator('#lobby-start').click();
   await expect.poll(()=>page.evaluate(()=>window.__OUTPOST_QA__?.welcome().active)).toBe(true);
+  await page.locator('#intro-skip').click();
   await page.waitForTimeout(1200); // Let the lobby transition finish before moving the view.
   const mobile=testInfo.project.name.includes('mobile');
   const cdp=mobile?await page.context().newCDPSession(page):null;

@@ -51,7 +51,7 @@ interface Window {
     selectedAction(): string|null;
     screenPosition(action: string): {x:number;y:number};
     setLanguage(language:'en'|'zh'):void;
-    welcome(): {active:boolean;step:number;focus:string|null;departing:boolean;quiz:boolean};
+    welcome(): {active:boolean;intro:boolean;step:number;focus:string|null;departing:boolean;quiz:boolean};
     lesson(): {id:string;reading:boolean;page:number;prediction:number|null;phase:string;questionIndex:number;finished:boolean};
     safetyOpen():boolean;
     metrics(): {calls:number;triangles:number;geometries:number;textures:number;pixelRatio:number};

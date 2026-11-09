@@ -34,6 +34,14 @@ export class Companion {
  let drawLayer=24;this.body.traverse(o=>{if(o instanceof THREE.Mesh){o.renderOrder=drawLayer++;const materials=Array.isArray(o.material)?o.material:[o.material];for(const material of materials)material.depthTest=true;}});
  this.textCanvas.width=1024;this.textCanvas.height=256;this.texture=new THREE.CanvasTexture(this.textCanvas);this.texture.colorSpace=THREE.SRGBColorSpace;this.bubble=new THREE.Sprite(new THREE.SpriteMaterial({map:this.texture,transparent:true,depthTest:false}));this.bubble.position.set(1.05,1.12,.05);this.bubble.scale.set(2.7,.8,1);this.dialogueObject=this.bubble;this.bubble.visible=false;this.bubble.renderOrder=30;this.root.add(this.bubble);this.say('Hi! I’m NOVA. Let’s explore together!','happy');}
  trackCamera(camera:THREE.PerspectiveCamera,quiz:boolean,lobby:boolean){const distance=4.2,halfHeight=Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*distance,halfWidth=halfHeight*camera.aspect;const x=Math.max(.15,halfWidth-1.05)*((lobby||quiz)?1:-1);const y=Math.max(.15,halfHeight-.65);const offset=new THREE.Vector3(x,y,-distance).applyQuaternion(camera.quaternion);const target=camera.position.clone().add(offset);if(this.root.position.distanceTo(target)>8)this.root.position.copy(target);this.destination.copy(target);this.root.quaternion.copy(camera.quaternion);this.root.scale.setScalar(quiz&&camera.aspect<.7?.58:.82);}
+ trackIntro(camera:THREE.PerspectiveCamera,progress:number,reduced:boolean){
+  const distance=4.2,halfHeight=Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*distance,halfWidth=halfHeight*camera.aspect;
+  const settle=Math.min(1,progress*1.4),ease=settle*settle*(3-2*settle);
+  const x=reduced?0:THREE.MathUtils.lerp(Math.min(halfWidth+.8,3.4),0,ease);
+  const offset=new THREE.Vector3(x,Math.min(.3,halfHeight*.16),-distance).applyQuaternion(camera.quaternion);
+  const target=camera.position.clone().add(offset);if(this.root.position.distanceTo(target)>8)this.root.position.copy(target);
+  this.destination.copy(target);this.root.quaternion.copy(camera.quaternion);this.root.scale.setScalar(camera.aspect<.7?.7:.85);
+ }
  moveTo(position:THREE.Vector3){this.destination.copy(position);}
  say(message:string,mood:'happy'|'thinking'|'cheer'='happy'){if(message===this.message&&mood===this.mood)return;this.message=message;this.mood=mood;this.started=performance.now();this.schedule=speechTimeline(message);this.lastChirp=0;this.shown=-1;}
  repeat(){this.started=performance.now();this.lastChirp=0;this.shown=-1;}
