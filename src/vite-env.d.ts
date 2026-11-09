@@ -46,7 +46,7 @@ interface Window {
     state(): Record<string, unknown>;
     language(): 'en'|'zh';
     guide(): {step:number;target:string|null};
-    camera(): {x:number;y:number;z:number;baseZ:number};
+    camera(): {x:number;y:number;z:number;baseZ:number;yaw:number;pitch:number};
     hoveredAction(): string|null;
     selectedAction(): string|null;
     screenPosition(action: string): {x:number;y:number};
