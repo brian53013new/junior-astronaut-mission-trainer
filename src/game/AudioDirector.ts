@@ -17,6 +17,8 @@ export class AudioDirector {
  private beat=0;
  private activePhase:Phase='lobby';
  private speaking=false;
+ private noise:AudioBuffer|null=null;
+ private ambience:AudioBufferSourceNode|null=null;
  volume=.35;
  muted=false;
  levels:Record<SoundGroup,number>={music:.55,effects:.6,voice:.7};
@@ -44,6 +46,13 @@ export class AudioDirector {
     for(const k of ['music','effects','voice'] as const){
      const b=this.ctx.createGain();b.gain.value=this.levels[k];b.connect(k==='music'?this.duck:this.master);this.buses[k]=b;
     }
+    // Deterministic filtered air, intentionally quiet beneath instructions and music.
+    this.noise=this.ctx.createBuffer(1,this.ctx.sampleRate*2,this.ctx.sampleRate);
+    const samples=this.noise.getChannelData(0);let seed=0x5a17;
+    for(let i=0;i<samples.length;i++){seed^=seed<<13;seed^=seed>>>17;seed^=seed<<5;const edge=Math.min(1,i/(this.ctx.sampleRate*.02),(samples.length-1-i)/(this.ctx.sampleRate*.02));samples[i]=((seed>>>0)/2147483648-1)*edge;}
+    const air=this.ctx.createBufferSource(),filter=this.ctx.createBiquadFilter(),airGain=this.ctx.createGain();
+    air.buffer=this.noise;air.loop=true;filter.type='lowpass';filter.frequency.value=620;airGain.gain.value=.0035;
+    air.connect(filter);filter.connect(airGain);airGain.connect(this.buses.effects!);air.start();this.ambience=air;
     // Gentle cabin air: low, steady, and on the effects fader.
     const hum=this.ctx.createOscillator(),g=this.ctx.createGain();hum.frequency.value=54;hum.type='sine';g.gain.value=.009;hum.connect(g);g.connect(this.buses.effects!);hum.start();
    }
@@ -61,12 +70,30 @@ export class AudioDirector {
   osc.type=type;osc.frequency.value=freq;env.gain.setValueAtTime(.0001,t);env.gain.exponentialRampToValueAtTime(gain,t+.025);env.gain.exponentialRampToValueAtTime(.0001,t+duration);
   osc.connect(env);env.connect(destination);osc.start(t);osc.stop(t+duration+.02);
  }
+ private noiseBurst(duration:number,frequency:number,gain:number){
+  if(!this.ctx||!this.noise||!this.buses.effects||this.ctx.state!=='running'||this.muted)return;
+  const t=this.ctx.currentTime,source=this.ctx.createBufferSource(),filter=this.ctx.createBiquadFilter(),env=this.ctx.createGain();
+  source.buffer=this.noise;filter.type='lowpass';filter.frequency.value=frequency;env.gain.setValueAtTime(gain,t);env.gain.exponentialRampToValueAtTime(.0001,t+duration);
+  source.connect(filter);filter.connect(env);env.connect(this.buses.effects);source.start(t);source.stop(t+duration);
+ }
+ private doorMotor(){
+  if(!this.ctx||!this.buses.effects||this.ctx.state!=='running'||this.muted)return;
+  const t=this.ctx.currentTime,osc=this.ctx.createOscillator(),gain=this.ctx.createGain();osc.type='triangle';osc.frequency.setValueAtTime(105,t);osc.frequency.exponentialRampToValueAtTime(155,t+.32);osc.frequency.exponentialRampToValueAtTime(115,t+.65);
+  gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(.025,t+.07);gain.gain.exponentialRampToValueAtTime(.0001,t+.72);osc.connect(gain);gain.connect(this.buses.effects);osc.start(t);osc.stop(t+.74);
+ }
+ dispose(){if(this.ambience){try{this.ambience.stop();}catch{}this.ambience=null;}if(this.ctx){void this.ctx.close().catch(()=>{});this.ctx=null;}this.master=null;this.duck=null;this.buses={};this.noise=null;}
  cue(kind:'talk'|'success'|'error'|'click'|'door'){
   if(kind==='success'){[523,659,784].forEach((f,i)=>this.tone(f,.22,'sine',.055,i*.1));}
   else if(kind==='error'){this.tone(230,.19,'triangle',.045);this.tone(180,.22,'triangle',.035,.13);}
-  else if(kind==='door'){this.tone(160,.42,'sine',.035);this.tone(240,.36,'sine',.025,.15);}
+  else if(kind==='door'){this.doorMotor();this.tone(240,.36,'sine',.018,.15);}
   else if(kind==='talk')this.tone(620,.065,'sine',.035,0,'voice');
   else this.tone(380,.065,'triangle',.04);
+ }
+ /** Short synthesized mechanisms: contact, travel and latch remain on the effects bus. */
+ actuate(kind:'button'|'toggle'|'lever'){
+  if(kind==='lever'){this.noiseBurst(.12,800,.018);this.tone(150,.12,'triangle',.038);this.tone(260,.10,'sine',.025,.10);this.tone(120,.09,'triangle',.02,.19);}
+  else if(kind==='toggle'){this.noiseBurst(.055,1900,.012);this.tone(420,.06,'triangle',.035);this.tone(230,.07,'sine',.025,.05);}
+  else{this.noiseBurst(.075,1250,.014);this.tone(330,.075,'triangle',.035);this.tone(175,.09,'sine',.022,.08);}
  }
  private note(midi:number,duration:number,instrument:Instrument,volume:number,delay=0){
   const ctx=this.ctx,destination=this.buses.music;
@@ -101,7 +128,8 @@ export class AudioDirector {
   const thirds=[3,3,4,3];const third=thirds[bar];
   // Shared rising idea; rests leave room for NOVA and allow real phrases.
   const melody=[0,-1,4,7,-1,9,7,4,2,-1,5,9,-1,7,5,2,0,4,7,-1,11,9,7,4,2,5,9,7,5,-1,2,-1];
-  const offset=melody[step];
+  const lessonMotif=[0,4,8,12,16,20,24][Math.max(0,Math.min(6,Math.floor(this.course)))];
+  const offset=melody[(step+(phase==='guide'||phase==='mission'?lessonMotif:0))%melody.length];
   if(step%8===0){
    const sustain=stepDuration*7.5;
    const intensity=phase==='alert'?.008:phase==='quiz'?.007:.009;
@@ -118,7 +146,7 @@ export class AudioDirector {
   if(offset>=0&&((phase!=='quiz'&&phase!=='lobby')||step%2===0)){
    const octave=phase==='alert'?0:12;
    const twist=cycle===3&&step===28?2:0;
-   this.note(root+octave+offset+twist,stepDuration*(step%4===0?2.1:1.2),'piano',phase==='quiz'?.009:.013);
+   this.note(root+octave+offset+twist,stepDuration*(step%4===0?2.1:1.2),this.course%3===1&&phase==='mission'?'organ':'piano',phase==='quiz'?.009:.013);
   }
   if(step%4===0&&phase!=='quiz')this.note(root-24,stepDuration*1.6,'pulse',phase==='alert'?.016:.009);
  }

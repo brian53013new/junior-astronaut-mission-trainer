@@ -28,8 +28,8 @@ export function drawConsoleScreen(c:CanvasRenderingContext2D,kind:ScreenKind,inf
  const z=info.language==='zh',s=info.mission;
  c.fillStyle='#0b171a';c.fillRect(0,0,640,390);
  const grad=c.createLinearGradient(0,0,0,390);grad.addColorStop(0,'#192d30');grad.addColorStop(1,'#0a1415');c.fillStyle=grad;c.fillRect(0,0,640,390);
- c.fillStyle='#b5c9bf';c.font='bold 23px Arial';text(c,kind==='telemetry'?(z?'01 / 生命維持與設備':'01 / SYSTEMS & LIFE SUPPORT'):kind==='map'?(z?'02 / 月球南極任務':'02 / LUNAR SOUTH POLE'):(z?'03 / 發現與任務紀錄':'03 / DISCOVERIES & LOG'),22,31);
  if(info.signalMode&&kind==='map'){drawSignal(c,info);return;}if(info.workshopMode&&((info.workshopMode==='assembly'&&kind==='map')||(info.workshopMode==='repair'&&kind==='telemetry'))){drawWorkshop(c,info);return;}
+ c.fillStyle='#b5c9bf';c.font='bold 23px Arial';text(c,kind==='telemetry'?(z?'01 / 生命維持與設備':'01 / SYSTEMS & LIFE SUPPORT'):kind==='map'?(z?'02 / 月球南極任務':'02 / LUNAR SOUTH POLE'):(z?'03 / 發現與任務紀錄':'03 / DISCOVERIES & LOG'),22,31);
  c.fillStyle='#7fa48f';c.fillRect(22,42,596,2);c.fillStyle=time%2<1?'#8fd0a1':'#3d7967';c.fillRect(600,18,9,9);c.font='17px Arial';
  if(kind==='telemetry'){
    const rows:[[string,string],number][]=[[["電力","POWER"],s.power],[["水 / 氧氣","WATER / O₂"],s.water],[["食物","FOOD"],s.food],[["乘員健康","CREW"],s.health],[["燃料","FUEL"],s.propellant],[["安全防護","SHELTER"],s.shielding]];
@@ -60,8 +60,8 @@ function drawWorkshop(c:CanvasRenderingContext2D,info:ScreenInfo){
  const order=kind==='assembly'?[0,1,2]:[2,0,1];
  for(let i=0;i<3;i++){const y=76+i*60;c.fillStyle=placed[i]?'#395f4c':'#33423b';c.fillRect(28,y,217,45);c.strokeStyle=placed[i]?'#9bd8a8':'#a6a28a';c.strokeRect(28,y,217,45);c.fillStyle='#e5e6d9';c.font='bold 18px Arial';c.fillText((placed[i]?'✓  ':'●  ')+labels[i],40,y+29,190);
  c.fillStyle='#172b2a';c.fillRect(375,y,237,45);c.strokeStyle='#829f90';c.strokeRect(375,y,237,45);c.fillStyle='#d2ddce';c.fillText(slots[i],389,y+29,210);
- if(placed[i]){c.strokeStyle='#e0c67f';c.lineWidth=4;c.beginPath();c.moveTo(245,y+22);c.lineTo(300,y+22);c.lineTo(320,98+order[i]*60);c.lineTo(375,98+order[i]*60);c.stroke();}}
- if(info.workshopPointer){const p=info.workshopPointer;c.strokeStyle='#ebd08a';c.lineWidth=3;c.beginPath();c.moveTo(245,98+p.part*60);c.lineTo(p.x,p.y);c.stroke();c.fillStyle='#e9d08b';c.beginPath();c.arc(p.x,p.y,8,0,Math.PI*2);c.fill();}
+ if(placed[i]&&kind==='assembly'){c.strokeStyle='#e0c67f';c.lineWidth=4;c.beginPath();c.moveTo(245,y+22);c.lineTo(300,y+22);c.lineTo(320,98+order[i]*60);c.lineTo(375,98+order[i]*60);c.stroke();}}
+ if(info.workshopPointer&&kind==='assembly'){const p=info.workshopPointer;c.strokeStyle='#ebd08a';c.lineWidth=3;c.beginPath();c.moveTo(245,98+p.part*60);c.lineTo(p.x,p.y);c.stroke();c.fillStyle='#e9d08b';c.beginPath();c.arc(p.x,p.y,8,0,Math.PI*2);c.fill();}
  c.fillStyle='#aec4b2';c.font='15px Arial';c.fillText(info.notice?info.notice:info.workshopClaimed?(z?'已啟用；每次任務限一次。':'ACTIVATED ONCE THIS MISSION.'):(placed.every(Boolean)?(kind==='assembly'?(z?'消耗 4 電力，增加 10 遮蔽；佔用本回合。':'COST 4 POWER; +10 SHIELDING; USES ONE COMMAND.'):(z?'消耗 3 水冷卻，恢復 12 電力；佔用本回合。':'USE 3 WATER FOR COOLING; RESTORE 12 POWER.')):(z?'配對完成後，啟用設備觀察資源變化。':'MATCH ALL PARTS, THEN ACTIVATE TO SEE THE EFFECT.')),25,282,590);
  for(const b of screenButtons(kind==='assembly'?'map':'telemetry',info)){c.fillStyle='#284641';c.fillRect(b.x,b.y,b.w,b.h);c.fillStyle='#a8cbb2';c.fillRect(b.x,b.y,4,b.h);c.fillStyle='#46685b';c.fillRect(b.x,b.y,b.w,3);c.strokeStyle='#91b49d';c.strokeRect(b.x+.5,b.y+.5,b.w-1,b.h-1);c.fillStyle='#eff0de';c.font='bold 16px Arial';c.textAlign='center';c.fillText(b.label,b.x+b.w/2,b.y+b.h/2+5,b.w-10);c.textAlign='left';}
  c.fillStyle='#89a79a';c.font='14px Arial';c.fillText(z?'教育用模型 · Esc 返回控制桌':'EDUCATIONAL MODEL · ESC RETURNS',23,378);

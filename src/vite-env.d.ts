@@ -48,7 +48,19 @@ interface Window {
     guide(): {step:number;target:string|null};
     camera(): {x:number;y:number;z:number;baseZ:number};
     hoveredAction(): string|null;
+    selectedAction(): string|null;
     screenPosition(action: string): {x:number;y:number};
     setLanguage(language:'en'|'zh'):void;
+    welcome(): {active:boolean;intro:boolean;step:number;focus:string|null;departing:boolean;quiz:boolean};
+    lesson(): {id:string;reading:boolean;page:number;prediction:number|null;phase:string;questionIndex:number;finished:boolean};
+    safetyOpen():boolean;
+    metrics(): {calls:number;triangles:number;geometries:number;textures:number;pixelRatio:number};
+    paperPosition(x:number,y:number): {x:number;y:number};
+    screenPoint(kind:'map'|'telemetry'|'checklist',x:number,y:number): {x:number;y:number};
+    workshop(): {mode:string|null;parts:boolean[]};
+    signal(): {active:boolean;cursor:number;solved:boolean};
+    orbit(): {focused:boolean;angle:number;reward:boolean};
+    orbitPoint(): {x:number;y:number};
+    welcomePosition(target:'button'|'knob'|'switch'|'book'|'door'): {x:number;y:number};
   };
 }
