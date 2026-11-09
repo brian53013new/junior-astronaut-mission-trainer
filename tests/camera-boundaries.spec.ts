@@ -20,10 +20,10 @@ test('off-screen training book provides a passive direction marker',async({page}
  expect(await page.locator('#target-direction').evaluate(el=>getComputedStyle(el).pointerEvents)).toBe('none');
 });
 
-test('main desk retains bounded cumulative touch rotation',async({page,browserName},info)=>{
+test('main desk permits continuous wrapped touch rotation',async({page,browserName},info)=>{
  test.skip(!info.project.name.includes('mobile')||browserName!=='chromium','Touch emulation is exercised on mobile and tablet Chromium.');test.setTimeout(180_000);
  await page.addInitScript(()=>{localStorage.setItem('outpost-welcome-3d-v1','done');localStorage.setItem('outpost-learning-journey-v2',JSON.stringify({version:2,curriculumVersion:2,activityVersion:1,index:1,awaiting:false,finished:false,reading:false,readingPage:0,attempts:0,lastChoice:null,records:[],finalTasks:[]}));});
  await page.goto('/?qa=1');await page.locator('#lobby-start').click();await page.waitForTimeout(2500);const cdp=await page.context().newCDPSession(page),w=page.viewportSize()!.width,h=page.viewportSize()!.height;
  async function swipe(a:number,b:number){const y=h*.17;await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:a,y}]});for(let i=1;i<=4;i++)await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:a+(b-a)*i/4,y}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});}
- const yaw=()=>page.evaluate(()=>window.__OUTPOST_QA__!.camera().yaw);for(let i=0;i<7;i++)await swipe(w*.8,w*.2);expect(await yaw()).toBeCloseTo(.94,2);await swipe(w*.8,w*.2);expect(await yaw()).toBeCloseTo(.94,2);for(let i=0;i<12;i++)await swipe(w*.2,w*.8);expect(await yaw()).toBeCloseTo(-.94,2);
+ const yaw=()=>page.evaluate(()=>window.__OUTPOST_QA__!.camera().yaw);for(let i=0;i<7;i++)await swipe(w*.8,w*.2);const before=await yaw();await swipe(w*.8,w*.2);const after=await yaw();expect(Math.abs(Math.atan2(Math.sin(after-before),Math.cos(after-before)))).toBeGreaterThan(.2);expect(Math.abs(after)).toBeLessThanOrEqual(Math.PI);
 });

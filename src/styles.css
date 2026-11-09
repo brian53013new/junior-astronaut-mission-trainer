@@ -18,3 +18,9 @@ html,body,#app{height:100dvh}#coach{top:max(12px,env(safe-area-inset-top));font-
 #intro-skip{position:absolute;right:calc(max(16px,env(safe-area-inset-right)) + 58px);top:max(16px,env(safe-area-inset-top));z-index:30;border:1px solid #a4c4b3;border-radius:6px;padding:10px 14px;color:#edf5e9;background:#163334eF;font:600 13px Arial;cursor:pointer}#intro-skip[hidden]{display:none}.intro-mode #welcome-move,.intro-mode #zoom-controls,.intro-mode #coach{display:none!important}
 
 #target-direction{position:absolute;z-index:9;width:38px;height:24px;pointer-events:none;opacity:.55}#target-direction::before{content:"";position:absolute;left:2px;right:7px;top:11px;border-top:2px dashed #e7d79c}#target-direction::after{content:"";position:absolute;right:3px;top:6px;width:9px;height:9px;border-top:2px solid #e7d79c;border-right:2px solid #e7d79c;transform:rotate(45deg)}#target-direction[hidden]{display:none}
+/* Cockpit overlay: restrained contrast without covering physical controls. */
+#dialogue,.quiz-mode #dialogue{background:rgba(19,37,52,.96);border:1px solid #7895a2;border-radius:12px;box-shadow:0 12px 28px #050e18a0;color:#f5f3e9;line-height:1.55}
+#dialogue strong{color:#e8c17d;letter-spacing:.14em}
+#coach{background:rgba(23,42,56,.92);border-left-color:#d8aa65;border-radius:4px 9px 9px 4px;color:#e9efed}
+#zoom-controls button,#intro-skip{background:#1c3447ef;border-color:#7895a2;color:#f1f4ee}
+#zoom-controls button:focus-visible,#intro-skip:focus-visible{outline:3px solid #e2bf7c;outline-offset:2px}

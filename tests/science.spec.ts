@@ -1,3 +1,4 @@
+import { turnToSide } from './turn-to-side';
 import { expect, test } from '@playwright/test';
 
 test('science observation uses the instrument and opens reflection',async({page},info)=>{
@@ -8,7 +9,7 @@ test('science observation uses the instrument and opens reflection',async({page}
  });
  await page.goto('/?qa=1');await page.locator('#lobby-start').click();await page.waitForFunction(()=>Boolean(window.__OUTPOST_QA__));await page.evaluate(()=>window.__OUTPOST_QA__!.ready());await page.waitForTimeout(6000);
  const cdp=mobile?await page.context().newCDPSession(page):null;
- if(cdp){await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:100,y:100}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:220,y:100}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await page.waitForTimeout(3000);}
+ await turnToSide(page,mobile,'right',1.85);
  const point=()=>page.evaluate(()=>window.__OUTPOST_QA__!.screenPosition('science'));let p=await point();expect(p.x).toBeGreaterThan(0);expect(p.x).toBeLessThan(page.viewportSize()!.width);
  if(mobile)await page.touchscreen.tap(p.x,p.y);else await page.mouse.click(p.x,p.y);
  await expect.poll(()=>page.evaluate(()=>window.__OUTPOST_QA__!.selectedAction()),{timeout:15000}).toBe('science');await page.waitForTimeout(5000);p=await point();
