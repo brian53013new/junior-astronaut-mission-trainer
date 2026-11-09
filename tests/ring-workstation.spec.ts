@@ -3,7 +3,7 @@ test('the seat turns to a side workstation and focuses its physical control',asy
  test.setTimeout(100_000);await page.addInitScript(()=>{localStorage.setItem('outpost-welcome-3d-v1','done');localStorage.setItem('outpost-learning-journey-v2',JSON.stringify({version:2,curriculumVersion:2,activityVersion:1,index:1,awaiting:false,finished:false,reading:false,readingPage:0,attempts:0,lastChoice:null,records:[],finalTasks:[]}));});
  await page.goto('/?qa=1');await page.locator('#lobby-start').click();await page.waitForTimeout(3000);
  const mobile=info.project.name.includes('mobile'),w=page.viewportSize()!.width,h=page.viewportSize()!.height;
- if(mobile){const c=await page.context().newCDPSession(page);for(let i=0;i<2;i++){await c.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:w*.2,y:h*.17}]});await c.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:w*.62,y:h*.17}]});await c.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});}}else for(let i=0;i<4;i++)await page.keyboard.press('ArrowLeft');
+ if(mobile){const c=await page.context().newCDPSession(page);for(let i=0;i<2;i++){await c.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:w/2-78,y:100}]});await c.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:w/2+78,y:100}]});await c.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});}}else for(let i=0;i<4;i++)await page.keyboard.press('ArrowLeft');
  await page.waitForTimeout(3500);const p=await page.evaluate(()=>window.__OUTPOST_QA__!.screenPosition('power'));
  expect(p.x).toBeGreaterThan(0);expect(p.x).toBeLessThan(w);expect(p.y).toBeGreaterThan(0);expect(p.y).toBeLessThan(h);
  if(mobile)await page.touchscreen.tap(p.x,p.y);else await page.mouse.click(p.x,p.y);
