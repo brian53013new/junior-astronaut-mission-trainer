@@ -54,6 +54,7 @@ interface Window {
     welcome(): {active:boolean;step:number;focus:string|null;departing:boolean;quiz:boolean};
     lesson(): {id:string;reading:boolean;page:number;prediction:number|null;phase:string;questionIndex:number;finished:boolean};
     safetyOpen():boolean;
+    metrics(): {calls:number;triangles:number;geometries:number;textures:number;pixelRatio:number};
     paperPosition(x:number,y:number): {x:number;y:number};
     screenPoint(kind:'map'|'telemetry'|'checklist',x:number,y:number): {x:number;y:number};
     workshop(): {mode:string|null;parts:boolean[]};

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import type { Action } from './types';
 import type { Language } from './language';
 import type { MissionState } from './types';
@@ -25,7 +26,7 @@ export class ConsoleRoom {
   private lamps:THREE.Mesh[]=[];
   private language:Language='en';private mission:MissionState|null=null;private sourceName='EDUCATIONAL FALLBACK';private lastScreenDraw=0;private paper:THREE.Mesh|null=null;private portrait=false;private tutorialAction:Action|null=null;private focusedAction:Action|null=null;private focusedAvailable=false;private analysisValue=.5;private routeValue=.5;private planValue=.5;private scienceValue=.5;private scienceAim=.5;private powerValue=.5;private craftValue=.5;
   private clock=new THREE.Clock();
-  constructor(){this.scene.background=new THREE.Color('#171c1d');this.scene.fog=new THREE.Fog('#171c1d',15,34);this.scene.add(this.root);this.camera.position.set(0,2.65,5.95);this.camera.lookAt(0,1.14,-.25);this.buildRoom();this.buildCabinZones();this.buildDesk();this.buildDisplays();this.buildControls();this.setControlValue('plan',.5);this.setLanguage('en');}
+  constructor(){this.scene.background=new THREE.Color('#171c1d');this.scene.fog=new THREE.Fog('#171c1d',15,34);this.scene.add(this.root);this.camera.position.set(0,2.65,5.95);this.camera.lookAt(0,1.14,-.25);this.buildRoom();this.buildCabinZones();this.buildDesk();this.buildDisplays();this.buildControls();this.compactStaticGeometry(this.root);for(const control of this.controls)this.compactStaticGeometry(control.group);this.setControlValue('plan',.5);this.setLanguage('en');}
   setLanguage(lang:Language){this.language=lang;for(const c of this.controls){const key=({plan:'planLabel',craft:'craftLabel',power:'powerLabel',comms:'commsLabel',navigate:'navLabel',science:'scienceLabel',analyze:'analyzeLabel',recycle:'recycleLabel',grow:'growLabel',event:'eventLabel',pause:'pauseLabel',advance:'advanceLabel',skip:'skipLabel',shelter:'shelterLabel',continue:'continueLabel'} as const)[c.action];this.drawLabel(c.label.userData.canvas as HTMLCanvasElement,t(lang,key));const cards=c.group.userData.cards as THREE.Mesh[]|undefined;if(cards)cards.forEach((card,i)=>{const canvas=card.userData.canvas as HTMLCanvasElement;const ctx=canvas.getContext('2d')!;ctx.clearRect(0,0,256,128);ctx.fillStyle='#26312c';ctx.font='bold 44px Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText((lang==='zh'?['明','衡','陰']:['SUN','RIM','SHA'])[i],128,64);(card.material as THREE.MeshBasicMaterial).map!.needsUpdate=true;});}if(this.paper)this.drawPaper(this.paper);}
   setMissionState(state:MissionState,source:string){this.mission=state;this.sourceName=source;const toggle=this.controls.find(c=>c.action==='pause')?.group.userData.toggle as THREE.Object3D|undefined;if(toggle)toggle.rotation.x=state.paused ? 0.5 : -0.5;}
   setPortrait(enabled:boolean){if(this.portrait===enabled)return;this.portrait=enabled;if(!enabled){for(const c of this.controls){c.group.position.copy(c.home);c.group.scale.setScalar(1.08);}return;}const rows:Action[][]=[['plan','craft','power'],['comms','navigate','science'],['analyze','recycle','grow'],['event','pause','advance'],['skip','shelter','continue']];for(const [row,actions]of rows.entries())for(const [column,action]of actions.entries()){const c=this.controls.find(v=>v.action===action)!;c.group.position.set((column-1)*.92,c.home.y,-1.1+row*.8);c.group.scale.setScalar(.48);}}
@@ -41,6 +42,25 @@ export class ConsoleRoom {
   closeSafetyCover(control:DeskControl){if(control.group.userData.safetyCover)control.group.userData.coverOpen=false;}
   press(control:DeskControl){const part=control.group.userData.pressPart as THREE.Object3D|undefined;if(part){control.group.userData.pressStart=performance.now();control.group.userData.pressDuration=control.action==='comms'?360:270;}const lever=control.group.userData.pressLever as THREE.Object3D|undefined;if(lever){lever.rotation.x=.55;control.group.userData.pressUntil=performance.now()+300;}const lamp=control.light.material as THREE.MeshStandardMaterial;lamp.emissiveIntensity=2.2;}
   tickPresses(){const now=performance.now();for(const c of this.controls){const part=c.group.userData.pressPart as THREE.Object3D|undefined;if(part){const start=Number(c.group.userData.pressStart??-10000),duration=Number(c.group.userData.pressDuration??270),p=Math.min(1,Math.max(0,(now-start)/duration));const depth=p<.35?.07*(1-Math.pow(1-p/.35,2)):.07*Math.exp(-5*(p-.35))*Math.max(0,Math.cos((p-.35)*6));part.position.y=Number(part.userData.homeY)-depth;}const lever=c.group.userData.pressLever as THREE.Object3D|undefined;if(lever&&now>Number(c.group.userData.pressUntil||0))lever.rotation.x=THREE.MathUtils.damp(lever.rotation.x,0,10,.016);const cover=c.group.userData.safetyCover as THREE.Object3D|undefined;if(cover)cover.rotation.x=THREE.MathUtils.damp(cover.rotation.x,c.group.userData.coverOpen?-1.25:0,9,.016);const ring=c.group.userData.statusRing as THREE.Mesh|undefined;if(ring){const material=ring.material as THREE.MeshStandardMaterial;const lit=now-Number(c.group.userData.pressStart??-10000)<450?1.5:c.hit.userData.disabled?.08:.28;material.emissiveIntensity=THREE.MathUtils.damp(material.emissiveIntensity,lit,8,.016);}}}
+  /** Batch immutable cabin meshes only; controls, screens, lamps and paper stay independent. */
+  private compactStaticGeometry(parent:THREE.Group){
+    const buckets=new Map<string,THREE.Mesh[]>();
+    for(const child of parent.children){
+      const referenced=Object.values(parent.userData).some(value=>value===child||(Array.isArray(value)&&value.includes(child)));
+      if(referenced||!(child instanceof THREE.Mesh)||!(child.material instanceof THREE.MeshStandardMaterial)||child===this.paper||this.lamps.includes(child)||Object.keys(child.userData).length)continue;
+      const material=child.material;
+      if(material.map||material.emissive.getHex()!==0||material.transparent||material.side!==THREE.FrontSide)continue;
+      const key=[material.color.getHex(),material.roughness,material.metalness,material.normalMap?.uuid??'',material.normalScale.x,material.normalScale.y,child.castShadow,child.receiveShadow].join(':');
+      const list=buckets.get(key)??[];list.push(child);buckets.set(key,list);
+    }
+    for(const meshes of buckets.values()){
+      if(meshes.length<2)continue;
+      const parts=meshes.map(mesh=>{mesh.updateMatrix();const geometry=mesh.geometry.index?mesh.geometry.toNonIndexed():mesh.geometry.clone();geometry.applyMatrix4(mesh.matrix);return geometry;});
+      const geometry=mergeGeometries(parts,false);for(const part of parts)part.dispose();if(!geometry)continue;
+      const merged=new THREE.Mesh(geometry,meshes[0].material);merged.castShadow=meshes[0].castShadow;merged.receiveShadow=meshes[0].receiveShadow;parent.add(merged);
+      for(const mesh of meshes){parent.remove(mesh);mesh.geometry.dispose();}
+    }
+  }
   private buildRoom(){
     this.scene.add(new THREE.HemisphereLight('#d9d3c3','#303635',1.12));
     const ceiling=new THREE.Mesh(new THREE.PlaneGeometry(14,14),metal('#292e2c',.86,.1));ceiling.rotation.x=Math.PI/2;ceiling.position.y=5.1;this.root.add(ceiling);

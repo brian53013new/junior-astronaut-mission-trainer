@@ -36,7 +36,7 @@ export class QuizRoom {
    else {const lesson=lessons[this.reviewPage-1],record=journey.records.find(r=>r.id===lesson.id);lines(`${this.reviewPage}/${journey.total} · ${z?lesson.zhTitle:lesson.enTitle}`,70,180,880,30,true,'#64867c');lines(curriculum[lesson.id].summary[lang],70,245,880,32);const n=Object.values(record?.concepts??{}).filter(x=>x==='review').length;lines(z?`修正 ${record?.attempts??0} 次 · ${n} 個觀念可再複習`:`${record?.attempts??0} retries · ${n} concepts to revisit`,70,400,880,28);if(record?.prediction!==undefined)lines((z?'你的預測：':'Prediction: ')+activities[lesson.id].choices[record.prediction][lang],70,475,880,28);}
    button(400,680,240,58,z?'任務紀錄 →':'MISSION LOG →');button(665,680,285,58,z?'重新開始':'PLAY AGAIN');
   }else if(journey.reading){
-   const p=course.pages[journey.readingPage];lines(`${z?'任務卡':'CARD'} ${journey.readingPage+1}/4 · ${p.title[lang]}`,70,160,870,30,true,'#64867c');
+   const p=course.pages[journey.readingPage];lines(`${z?'任務卡':'CARD'} ${journey.readingPage+1}/3 · ${p.title[lang]}`,70,160,870,30,true,'#64867c');
    if(journey.readingPage===2){lines(activity.predict[lang],70,218,880,32);for(let i=0;i<3;i++)button(70,320+i*96,880,82,activity.choices[i][lang],journey.prediction===i);}
    else if(journey.readingPage===1&&journey.lesson.id==='explore'){
     lines(z?'先分辨：看見，還是猜想？':'First decide: observed or inferred?',70,215,880,32,true);
@@ -53,8 +53,11 @@ export class QuizRoom {
    }
    if(journey.readingPage===0)button(70,570,350,58,z?'想知道更多':'LEARN MORE');if(journey.readingPage>0)button(400,680,240,58,z?'← 上一頁':'← PREVIOUS');const canNext=journey.readingPage===2?journey.prediction!==null:!(journey.readingPage===1&&((journey.lesson.id==='explore'&&(journey.clueAnswers[0]!==0||journey.clueAnswers[1]!==1))||(journey.lesson.id==='repair'&&journey.clueAnswers[0]!==0)));button(665,680,285,58,journey.readingPage<2?(z?'下一頁 →':'NEXT →'):(z?'開始操作 →':'START →'),false,canNext);
   }else if(journey.reflectionPending){
+   lines(z?'完成後反思 · 4/4':'REFLECT AFTER TRYING · 4/4',70,155,880,27,true,'#64867c');
    if(journey.lesson.id==='plan'&&this.reflectionPage===1){lines(z?'想一想你的選址：點卡片切換答案。':'Think about your site: tap each card to change your answer.',70,190,880,31);const reasons=z?['考慮日照','可能的冰與觀測','平衡電力和水']:['Sunlight','Possible ice and observations','Balance power and water'];const cautions=z?['電力需求','水仍需證據','地形和通訊']:['Power needs','Water needs more evidence','Terrain and communication'];button(70,315,880,100,(z?'我選這裡，因為：':'I chose it because: ')+(journey.planReason===null?(z?'點選':'TAP'):reasons[journey.planReason]),journey.planReason!==null);button(70,455,880,100,(z?'我需要留意：':'I should watch: ')+(journey.planCaution===null?(z?'點選':'TAP'):cautions[journey.planCaution]),journey.planCaution!==null);button(400,680,240,58,z?'← 上一步':'← BACK');button(665,680,285,58,z?'繼續測驗 →':'CONTINUE →',false,journey.planReason!==null&&journey.planCaution!==null);
    }else {const key=`r:${journey.lesson.id}:${journey.reflectionChoice}:${journey.records.find(r=>r.id===journey.lesson.id)?.reflectionAttempts??0}`;const show=journey.reflectionChoice!==null&&this.dismissed!==key;if(show){lines(z?'一起看看原因':'Let’s see why',70,185,880,33,true,'#64867c');lines(activity.explain[journey.reflectionChoice!][lang],70,260,880,36);const correct=journey.reflectionChoice===activity.correct;button(665,680,285,58,correct?(z?'繼續 →':'CONTINUE →'):(z?'再試一次':'TRY AGAIN'));}else{lines(activity.reflect[lang],70,198,880,33);for(let i=0;i<3;i++)button(70,310+i*96,880,82,activity.answers[i][lang],journey.reflectionChoice===i);}}
+   const prediction=journey.prediction;
+   if(prediction!==null&&activity.choices[prediction])lines((z?'操作前的預測：':'Your earlier prediction: ')+activity.choices[prediction][lang],70,635,880,24,false,'#665f4c');
   }else if(journey.awaiting){
    const q=journey.question,key=`q:${journey.lesson.id}:${q.id}:${journey.attempts}`;const show=journey.lastChoice!==null&&(journey.feedbackChoice!==null||this.dismissed!==key);
    lines(`${z?'問題':'QUESTION'} ${journey.questionIndex+1}/${course.questions.length}`,70,160,880,28,true,'#64867c');
