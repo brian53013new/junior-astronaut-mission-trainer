@@ -33,6 +33,8 @@ export class WelcomeRoom {
   const glow=(target:WelcomeTarget,x:number,y:number,z:number,w:number,d:number)=>{const g=new THREE.Group();const m=new THREE.MeshBasicMaterial({color:'#f6cf73',transparent:true,opacity:.88,depthTest:false});for(const sx of [-1,1])addBox(g,.035,.025,d,sx*w/2,0,0,m,.005);for(const sz of [-1,1])addBox(g,w,.025,.035,0,0,sz*d/2,m,.005);g.position.set(x,y,z);g.visible=false;g.renderOrder=10;this.root.add(g);this.highlights.set(target,g);};
   // Structural shell, ribs and a view into space create an actual enclosed compartment.
   addBox(this.root,10,.18,10,0,-.1,0,dark);addBox(this.root,10,.18,10,0,4.8,0,hull);addBox(this.root,7.2,4.8,.2,-1.4,2.4,-4.2,hull);addBox(this.root,1,4.8,.2,4.5,2.4,-4.2,hull);addBox(this.root,1.8,1.5,.2,3.1,4.05,-4.2,hull);addBox(this.root,.2,4.8,10,-4.9,2.4,0,hull);addBox(this.root,.2,4.8,10,4.9,2.4,0,hull);
+  // A sealed rear wall keeps the classroom enclosed at the limits of the view.
+  addBox(this.root,10,4.8,.2,0,2.4,4.9,hull);addBox(this.root,1.8,2.8,.12,0,1.5,4.78,dark,.08);for(const x of [-.94,.94])addBox(this.root,.08,2.9,.12,x,1.52,4.7,trim,.02);
   for(const x of [-4,-2,0,2,4]){if(x!==4)addBox(this.root,.09,4.65,.13,x,2.35,-4.05,trim,.02);addBox(this.root,.08,.08,8.4,x,4.68,0,trim,.02);}
   for(const x of [-3,0,3]){const strip=addBox(this.root,1.7,.04,.15,x,4.68,-.1,new THREE.MeshStandardMaterial({color:'#ecf1dd',emissive:'#dbedd1',emissiveIntensity:.8}),.01);strip.castShadow=false;}
   // Repeated floor plates, handrails and service hatches give the compartment a readable scale.
