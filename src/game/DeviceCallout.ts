@@ -10,7 +10,7 @@ const copy:Record<Action,[string,string,string,string]>={
  power:['增加電力，會消耗一些水。','拖曳滑桿，再放開。','More power costs some water.','Drag and release the slider.'],
  comms:['建立通訊，讓觀測資料傳回基地。','點擊按鍵建立通訊。','Connect the relay to send observations.','Click the key to connect.'],
  navigate:['選擇探索路線；遠路消耗更多燃料。','拖曳航點，再放開。','Longer routes use more fuel.','Drag and release the waypoint.'],
- science:['觀測月球，調整方向與強度。','左右拖曳調整強度，上下瞄準。','Explore the Moon with your instrument.','Drag sideways for power; up/down to aim.'],
+ science:['觀測月球，調整方向與強度。','再次點擊進入觀測室，或拖曳調整儀器。','Explore the Moon with your instrument.','Tap again for the observation room, or drag to adjust.'],
  analyze:['比較樣本，找出較強的訊號。','拖曳標記，再放開。','Compare the samples for a stronger signal.','Drag and release the marker.'],
  recycle:['使用電力回收水。','點擊開始回收。','Recycle water using electrical power.','Click to recycle.'],
  grow:['植物需要水和電力才能長大。','點擊開始種植。','Plants need water and power.','Click to grow food.'],

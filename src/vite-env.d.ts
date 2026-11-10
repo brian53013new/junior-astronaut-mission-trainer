@@ -67,6 +67,10 @@ interface Window {
     assemblyPreparation():boolean[];
     assemblyPoint(kind:'part'|'socket'|'activate'|'passage',index:number):{x:number;y:number};
     workshop(): {mode:string|null;parts:boolean[]};
+    scienceRoom():{active:boolean;moved:boolean;power:number;aim:number};
+    sciencePoint(kind:'dial'|'scan'):{x:number;y:number};
+    communications():{active:boolean;aligned:boolean;value:number};
+    communicationsPoint(kind:'dial'|'key'|'send'|'replay',index:number):{x:number;y:number};
     signal(): {active:boolean;cursor:number;solved:boolean};
     orbit(): {focused:boolean;angle:number;reward:boolean};
     orbitPoint(): {x:number;y:number};
