@@ -7,7 +7,7 @@ Status describes behavior in this checkout, not visual ambition. Existing saves 
 - [x] Touch selection, focused devices and drag handling exist; repeated welcome and console swipes were tested in Chromium phone/tablet emulation. Full physical-device coverage is still required.
 - [x] Default-on zoom, independently saved settings and paper-edge page turning exist.
 - [x] Rotating 360° seated cabin, side workstations, rear book, rotation-aware focus presets and enclosed walls. Desktop and phone emulations exercise rotation and the rear book; some equipment remains on the forward desk.
-- [ ] Guidance uses a breathing elliptical 3D cue and off-screen/occluded-target arrows. The occlusion estimate uses ray tests; shape-specific contours and all-scene review remain outstanding.
+- [ ] Guidance uses an object-attached 3D locator and dashed tether, animated control cues and off-screen/occluded-target arrows. Occlusion is estimated with ray tests; all-scene and real-device review remain outstanding.
 - [ ] Every interactive control verified individually for touch focus, drag, exit and save/progress behavior.
 - [ ] A 3D engineering bay now allows dragging three distinct components to their ports, returning a misaligned component, and activating the probe. Movement is constrained to the workbench plane; Held parts can rotate on three axes with Q/E, W/S and Z/X; a two-finger twist and vertical movement rotate on two axes. Solar deployment, battery insertion and antenna alignment require distinct interactions. Translation remains constrained to the workbench plane.
 - [ ] Separate 3D assembly and repair workbenches have an enclosed connecting passage and support component placement and circuit repair. Dedicated science/communications rooms remain outstanding; the transition is guided camera travel, not unrestricted walking.
@@ -16,3 +16,6 @@ Status describes behavior in this checkout, not visual ambition. Existing saves 
 
 - [x] Planning board has illustrative 3D terrain, simulated site trade-offs and terrain / sunlight / route view controls. These are game models, not measured site data.
 - [x] Time dial has a separate numeric readout and a single release-triggered visual pulse; repeated advance and event-stop behavior is covered by existing clock tests.
+
+- [x] The training book has a separate rear pedestal; hit volumes do not intersect console controls and a measured gap remains to the rear wall.
+- [ ] The six lessons and finale now introduce a life analogy, concept and device purpose before the activity and a result/reflection afterwards. Assessments still contain fixed written questions and require further hands-on redesign.

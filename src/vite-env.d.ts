@@ -49,6 +49,8 @@ interface Window {
     camera(): {x:number;y:number;z:number;baseZ:number;yaw:number;pitch:number};
     hoveredAction(): string|null;
     selectedAction(): string|null;
+    targetMarker():{id:string;visible:boolean;x:number;y:number;z:number};
+    bookClearance():{overlaps:string[];backGap:number};
     bookPosition():{x:number;y:number};
     siteMode():number;
     siteModePoint(index:number):{x:number;y:number};

@@ -1,26 +1,26 @@
 /* A fixed, non-diegetic HUD: independent of the 3D camera. */
 #game-settings{position:fixed;z-index:30;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));color:#eef3e8;font-family:Arial,Helvetica,sans-serif;font-size:calc(16px * var(--ui-text-scale,1));line-height:1.35}
 #game-settings button,#game-settings select,#game-settings input{font:inherit;touch-action:manipulation}
-.settings-gear,.settings-close{display:grid;place-items:center;cursor:pointer;min-width:48px;min-height:48px;color:#e4eadc;background:#142e30eb;border:1px solid #8cac99;border-radius:12px;box-shadow:0 4px 16px #0007}
+.settings-gear,.settings-close{display:grid;place-items:center;cursor:pointer;min-width:48px;min-height:48px;color:#e4e4ff;background:#142e30eb;border:1px solid #8ca4bd;border-radius:12px;box-shadow:0 4px 16px #0007}
 .settings-gear svg{width:24px;height:24px}
 .settings-gear:focus-visible,.settings-close:focus-visible,#game-settings button:focus-visible,#game-settings input:focus-visible,#game-settings select:focus-visible{outline:3px solid #f4ce73;outline-offset:2px}
 .settings-panel[hidden]{display:none}
-.settings-panel{position:absolute;top:58px;right:0;width:min(390px,calc(100vw - 24px - env(safe-area-inset-left) - env(safe-area-inset-right)));max-height:min(78dvh,720px);overflow:hidden;display:flex;flex-direction:column;background:#102629f7;border:1px solid #7fa996;border-radius:16px;box-shadow:0 16px 50px #000a;backdrop-filter:blur(12px)}
-.settings-panel header{display:flex;justify-content:space-between;align-items:center;padding:16px 16px 10px;border-bottom:1px solid #46635b}
-.settings-panel header small{font-size:.62em;color:#b5cdbd;letter-spacing:.15em}
+.settings-panel{position:absolute;top:58px;right:0;width:min(390px,calc(100vw - 24px - env(safe-area-inset-left) - env(safe-area-inset-right)));max-height:min(78dvh,720px);overflow:hidden;display:flex;flex-direction:column;background:#102629f7;border:1px solid #7fa1ba;border-radius:16px;box-shadow:0 16px 50px #000a;backdrop-filter:blur(12px)}
+.settings-panel header{display:flex;justify-content:space-between;align-items:center;padding:16px 16px 10px;border-bottom:1px solid #46606d}
+.settings-panel header small{font-size:.62em;color:#b5c6e2;letter-spacing:.15em}
 .settings-panel h2{font-size:1.2em;margin:3px 0;color:#f5e8c5}
 .settings-close{min-width:44px;min-height:44px;font-size:1.65em;line-height:1;background:#233f3d}
 .settings-scroll{overflow-y:auto;overscroll-behavior:contain;padding:4px 16px max(18px,env(safe-area-inset-bottom))}
-.settings-scroll section{padding:10px 0 14px;border-bottom:1px solid #35514a}
+.settings-scroll section{padding:10px 0 14px;border-bottom:1px solid #354e59}
 .settings-scroll section:last-child{border:0}
-.settings-scroll h3{font-size:.88em;color:#b8d6c1;letter-spacing:.04em;margin:0 0 8px}
+.settings-scroll h3{font-size:.88em;color:#b8cdeb;letter-spacing:.04em;margin:0 0 8px}
 .settings-range{display:grid;grid-template-columns:1fr auto;gap:0 12px;align-items:center;min-height:58px}
 .settings-range output{color:#d8c28f;font-variant-numeric:tabular-nums}
 .settings-range input{grid-column:1/-1;width:100%;height:28px;accent-color:#d3ba7b;margin:0}
 .settings-select,.settings-switch{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:50px}
-.settings-select select{max-width:60%;min-height:44px;color:#f2f4e9;background:#203b39;border:1px solid #789b8a;border-radius:8px;padding:6px}
+.settings-select select{max-width:60%;min-height:44px;color:#f2f4e9;background:#203b39;border:1px solid #7894aa;border-radius:8px;padding:6px}
 .settings-switch input{width:24px;height:24px;accent-color:#d4bd82}
-.settings-mute,.settings-actions button{min-height:44px;padding:8px 12px;color:#e7ecdb;background:#24423e;border:1px solid #7e9f8e;border-radius:8px;cursor:pointer}
+.settings-mute,.settings-actions button{min-height:44px;padding:8px 12px;color:#e7ecdb;background:#244049;border:1px solid #7e98af;border-radius:8px;cursor:pointer}
 .settings-mute[aria-pressed="true"]{border-color:#e4b57d;color:#f5cd9b}
 .settings-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 @media(max-width:680px){#game-settings{top:max(8px,env(safe-area-inset-top));right:max(8px,env(safe-area-inset-right))}.settings-panel{position:fixed;top:auto;bottom:0;left:0;right:0;width:100%;max-height:min(68dvh,650px);border-radius:18px 18px 0 0}.settings-scroll{padding-bottom:max(20px,env(safe-area-inset-bottom))}.settings-open #coach{display:none}.settings-open #dialogue{top:max(10px,env(safe-area-inset-top));bottom:auto;left:max(10px,env(safe-area-inset-left));transform:none;max-height:22dvh;width:min(68vw,430px)}}
