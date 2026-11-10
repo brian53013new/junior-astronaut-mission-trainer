@@ -10,12 +10,13 @@ test('repair lesson matches circuits and progresses to reflection',async({page},
  const tap=async(x:number,y:number)=>{const p=await point(x,y);if(mobile)await page.touchscreen.tap(p.x,p.y);else await page.mouse.click(p.x,p.y);await page.waitForTimeout(2000);};
  await tap(320,200);await page.waitForTimeout(mobile?12000:5000);await tap(550,22);
  await expect.poll(()=>page.evaluate(()=>window.__OUTPOST_QA__!.workshop().mode),{timeout:10000}).toBe('repair');
+ await expect.poll(()=>page.evaluate(()=>window.__OUTPOST_QA__!.assemblyBay().active)).toBe(true);await page.waitForTimeout(2500);
  for(let i=0;i<3;i++){
-  const a=await point(130,98+i*60),b=await point(500,98+[2,0,1][i]*60);
+  const a=await page.evaluate(i=>window.__OUTPOST_QA__!.assemblyPoint('part',i),i),b=await page.evaluate(i=>window.__OUTPOST_QA__!.assemblyPoint('socket',i),i);
   if(cdp){await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[a]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[b]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});}
   else{await page.mouse.move(a.x,a.y);await page.mouse.down();await page.mouse.move(b.x,b.y,{steps:8});await page.mouse.up();}
   await expect.poll(()=>page.evaluate(index=>window.__OUTPOST_QA__!.workshop().parts[index],i),{timeout:10000}).toBe(true);
  }
- await tap(315,334);await expect.poll(()=>page.evaluate(()=>window.__OUTPOST_QA__!.welcome().quiz),{timeout:15000}).toBe(true);
+ {const p=await page.evaluate(()=>window.__OUTPOST_QA__!.assemblyPoint('activate',0));if(mobile)await page.touchscreen.tap(p.x,p.y);else await page.mouse.click(p.x,p.y);}await expect.poll(()=>page.evaluate(()=>window.__OUTPOST_QA__!.welcome().quiz),{timeout:15000}).toBe(true);
  const state=await page.evaluate(()=>window.__OUTPOST_QA__!.state());expect(state.water).toBe(65);expect(state.power).toBe(84);expect(errors).toEqual([]);
 });

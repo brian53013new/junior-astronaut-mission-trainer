@@ -60,6 +60,8 @@ interface Window {
     metrics(): {calls:number;triangles:number;geometries:number;textures:number;pixelRatio:number};
     paperPosition(x:number,y:number): {x:number;y:number};
     screenPoint(kind:'map'|'telemetry'|'checklist',x:number,y:number): {x:number;y:number};
+    assemblyBay():{active:boolean};
+    assemblyPoint(kind:'part'|'socket'|'activate',index:number):{x:number;y:number};
     workshop(): {mode:string|null;parts:boolean[]};
     signal(): {active:boolean;cursor:number;solved:boolean};
     orbit(): {focused:boolean;angle:number;reward:boolean};
