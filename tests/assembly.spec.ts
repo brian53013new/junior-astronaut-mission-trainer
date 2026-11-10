@@ -1,3 +1,4 @@
+import { finishProbe } from './finish-probe';
 import { expect, test } from '@playwright/test';
 import { curriculum } from '../src/game/Curriculum';
 import { questionOrder } from '../src/game/QuestionOrder';
@@ -18,6 +19,7 @@ test('the first lesson assembles real parts and progresses to reflection',async(
   else{await page.mouse.move(a.x,a.y);await page.mouse.down();await page.mouse.move(b.x,b.y,{steps:8});await page.mouse.up();}
   await expect.poll(()=>page.evaluate(index=>window.__OUTPOST_QA__!.workshop().parts[index],i),{timeout:10000}).toBe(true);
  }
+ await finishProbe(page,mobile);
  {const p=await page.evaluate(()=>window.__OUTPOST_QA__!.assemblyPoint('activate',0));if(mobile)await page.touchscreen.tap(p.x,p.y);else await page.mouse.click(p.x,p.y);}await expect.poll(()=>page.evaluate(()=>window.__OUTPOST_QA__!.welcome().quiz),{timeout:15000}).toBe(true);
  const state=await page.evaluate(()=>window.__OUTPOST_QA__!.state());expect(state.shielding).toBe(10);expect(state.power).toBe(68);
  await page.waitForTimeout(5000);const paper=async(x:number,y:number)=>{const p=await page.evaluate(([a,b])=>window.__OUTPOST_QA__!.paperPosition(a,b),[x,y]);if(mobile)await page.touchscreen.tap(p.x,p.y);else await page.mouse.click(p.x,p.y);await page.waitForTimeout(1500);};

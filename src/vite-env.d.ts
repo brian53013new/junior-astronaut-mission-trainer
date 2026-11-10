@@ -62,6 +62,7 @@ interface Window {
     screenPoint(kind:'map'|'telemetry'|'checklist',x:number,y:number): {x:number;y:number};
     assemblyBay():{active:boolean;transit:boolean};
     assemblyRotation(index:number):number;
+    assemblyPreparation():boolean[];
     assemblyPoint(kind:'part'|'socket'|'activate'|'passage',index:number):{x:number;y:number};
     workshop(): {mode:string|null;parts:boolean[]};
     signal(): {active:boolean;cursor:number;solved:boolean};
