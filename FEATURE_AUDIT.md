@@ -19,3 +19,7 @@ Status describes behavior in this checkout, not visual ambition. Existing saves 
 
 - [x] The training book has a separate rear pedestal; hit volumes do not intersect console controls and a measured gap remains to the rear wall.
 - [ ] The six lessons and finale now introduce a life analogy, concept and device purpose before the activity and a result/reflection afterwards. Assessments still contain fixed written questions and require further hands-on redesign.
+
+- [ ] The cockpit has a continuous annular bridging surface, rails and supports; engineering, repair, science and communications room envelopes now contain their adaptive cameras. Visual review and all control clearances remain to be checked.
+- [ ] The engineering bay includes interactive component information, tool guidance and diagnostics tied to current assembly state. It does not yet support reusable module upgrades in later lessons, unrestricted walking, or a mechanical arm.
+- [ ] The off-screen indicator is a larger dashed directional arrow and the world marker has a downward pointer. Per-device operation cues and occlusion behavior still need broader validation.

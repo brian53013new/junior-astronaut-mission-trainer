@@ -62,9 +62,10 @@ interface Window {
     metrics(): {calls:number;triangles:number;geometries:number;textures:number;pixelRatio:number};
     paperPosition(x:number,y:number): {x:number;y:number};
     screenPoint(kind:'map'|'telemetry'|'checklist',x:number,y:number): {x:number;y:number};
-    assemblyBay():{active:boolean;transit:boolean};
+    assemblyBay():{active:boolean;transit:boolean;inspection:number};
     assemblyRotation(index:number):number;
     assemblyPreparation():boolean[];
+    inspectionPoint(index:number):{x:number;y:number};
     assemblyPoint(kind:'part'|'socket'|'activate'|'passage',index:number):{x:number;y:number};
     workshop(): {mode:string|null;parts:boolean[]};
     scienceRoom():{active:boolean;moved:boolean;power:number;aim:number};
