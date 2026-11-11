@@ -14,6 +14,17 @@ export class AssemblyBay {
   const tag=(text:string,x:number,y:number,z:number)=>{const canvas=document.createElement('canvas');canvas.width=256;canvas.height=96;const c=canvas.getContext('2d')!;c.fillStyle='#142a38';c.fillRect(0,0,256,96);c.fillStyle='#f1e4bf';c.textAlign='center';c.font='bold 56px Arial';c.fillText(text,128,68,240);const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;const label=new THREE.Mesh(new THREE.PlaneGeometry(.42,.16),new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide}));label.rotation.x=-Math.PI/2;label.position.set(x,y,z);this.root.add(label);};
 
   box(this.root,6,.2,14,0,-.1,3.5,dark);box(this.root,6,4,.18,0,2,-3.45,shell);box(this.root,.18,4,7,-2.9,2,0,shell);for(const z of [-2.3,2.3])box(this.root,.18,4,2.4,2.9,2,z,shell);box(this.root,.18,1.2,2.2,2.9,3.4,0,shell);box(this.root,6,.18,14,0,11,3.5,shell);box(this.root,6,7,.18,0,7.5,-3.45,shell);for(const x of [-2.9,2.9]){box(this.root,.18,7,14,x,7.5,3.5,shell);box(this.root,.18,4,7,x,2,7,shell);}box(this.root,6,11,.18,0,5.5,10.45,shell);
+  // Structural observation ports give the workshop an exterior reference and break the blank-box silhouette.
+  for(const x of [-2.05,2.05]){
+   box(this.root,1.42,1.05,.12,x,2.72,-3.31,dark);
+   const glassCanvas=document.createElement('canvas');glassCanvas.width=512;glassCanvas.height=320;const gc=glassCanvas.getContext('2d')!;
+   const sky=gc.createLinearGradient(0,0,0,320);sky.addColorStop(0,'#10253a');sky.addColorStop(.58,'#31506b');sky.addColorStop(.59,'#b6a98e');sky.addColorStop(1,'#4a4d50');gc.fillStyle=sky;gc.fillRect(0,0,512,320);
+   gc.fillStyle='#d7d2bf';gc.beginPath();gc.arc(385,198,94,Math.PI,Math.PI*2);gc.fill();gc.fillStyle='#766f66';gc.fillRect(280,198,205,90);
+   let seed=x<0?27:61;for(let i=0;i<42;i++){seed=(seed*9301+49297)%233280;const sx=seed/233280*512;seed=(seed*9301+49297)%233280;const sy=seed/233280*150;gc.fillStyle=`rgba(225,239,246,${.3+(seed%60)/100})`;gc.fillRect(sx,sy,2,2);}
+   const glassTexture=new THREE.CanvasTexture(glassCanvas);glassTexture.colorSpace=THREE.SRGBColorSpace;const glass=new THREE.Mesh(new THREE.PlaneGeometry(1.22,.85),new THREE.MeshBasicMaterial({map:glassTexture}));glass.position.set(x,2.72,-3.235);this.root.add(glass);
+   for(const [dx,dy,w,h] of [[-.69,0,.1,1.16],[.69,0,.1,1.16],[0,-.53,1.48,.1],[0,.53,1.48,.1]] as const)box(this.root,w,h,.16,x+dx,2.72+dy,-3.22,metal);
+   box(this.root,1.18,.07,.16,x,2.12,-3.12,blue);
+  }
   box(this.root,3.7,.22,4.8,0,.9,0,dark);box(this.root,3.55,.06,4.65,0,1.04,0,metal);
   for(const x of [-1.55,1.55])for(const z of [-2,2])box(this.root,.16,.82,.16,x,.41,z,dark);
   const hemi=new THREE.HemisphereLight('#e9f4f4','#60717c',1.2);this.root.add(hemi);const lamp=new THREE.PointLight('#e6eff0',18,9);lamp.position.set(0,3.5,1);this.root.add(lamp);

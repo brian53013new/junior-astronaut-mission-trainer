@@ -66,6 +66,7 @@ export class SettingsPanel {
  }
  private input(name:string){return this.root.querySelector<HTMLInputElement>(`[data-input="${name}"]`)!;}
  private select(){return this.root.querySelector<HTMLSelectElement>('[data-input="text"]')!;}
+ setTextScale(scale:number){this.select().value=scale>=1.75?'xlarge':scale>=1.25?'large':'normal';}
  private setOutput(name:string,value:number){this.root.querySelector<HTMLOutputElement>(`[data-output="${name}"]`)!.textContent=`${Math.round(value*100)}%`;}
  setAudio(master:number,muted:boolean,levels:Record<SettingsSoundGroup,number>){this.muted=muted;for(const [name,value] of Object.entries({master,...levels})){this.input(name).value=String(Math.round(value*100));this.setOutput(name,value);}this.updateMute();}
  setLevels(levels:Record<SettingsSoundGroup,number>){for(const [name,value] of Object.entries(levels)){this.input(name).value=String(Math.round(value*100));this.setOutput(name,value);}}

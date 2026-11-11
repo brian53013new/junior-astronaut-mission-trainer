@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { textSystem } from './TextSystem';
 import { t, type Language } from './language';
 import type { Action } from './types';
 import { devices } from './DeviceCatalog';
@@ -21,8 +22,11 @@ const copy:Record<Action,[string,string,string,string]>={
  shelter:['保護乘員，但需要電力。','先打開安全蓋，再點避難桿。','Protect the crew at a power cost.','Open the safety cover, then click the lever.'],
  continue:['保留電力，乘員可能承受風險。','事件發生時點擊繼續作業。','Save power, but risk crew health.','Click during an event to continue.']};
 export class DeviceCallout {
+ private last:{action:Action;lang:Language;position:THREE.Vector3;available:boolean}|null=null;
  private readonly group=new THREE.Group();private readonly canvas=document.createElement('canvas');private readonly texture:THREE.CanvasTexture;private readonly sprite:THREE.Sprite;private readonly line:THREE.Line;
  constructor(parent:THREE.Object3D){this.canvas.width=1024;this.canvas.height=448;this.texture=new THREE.CanvasTexture(this.canvas);this.texture.colorSpace=THREE.SRGBColorSpace;this.sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:this.texture,transparent:true,depthTest:false}));this.sprite.scale.set(1.55,.68,1);this.sprite.position.set(.95,.8,.05);this.sprite.renderOrder=20;this.group.add(this.sprite);const geometry=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,.15,0),new THREE.Vector3(.27,.5,.02),new THREE.Vector3(.43,.55,.02)]);this.line=new THREE.Line(geometry,new THREE.LineBasicMaterial({color:'#eac775',depthTest:false}));this.line.renderOrder=20;this.group.add(this.line);this.group.visible=false;parent.add(this.group);}
- show(action:Action,lang:Language,position:THREE.Vector3,available:boolean){this.group.position.copy(position);this.group.visible=true;const c=this.canvas.getContext('2d')!;c.clearRect(0,0,1024,448);c.fillStyle='rgba(12,31,33,.95)';c.fillRect(3,3,1018,442);c.strokeStyle='#d7bb79';c.lineWidth=5;c.strokeRect(5,5,1014,438);c.fillStyle='#9fcbe9';c.font='bold 46px Arial';c.fillText(t(lang,labels[action]),38,76,930);c.fillStyle='#e8eadc';c.font='36px Arial';const d=copy[action];const info=devices[action];c.fillText(lang==='zh'?info.zh:info.en,38,155,940);c.fillText(d[lang==='zh'?1:3],38,215,940);c.fillStyle=available?'#a9ccf2':'#e6b783';c.font='bold 31px Arial';c.fillText(available?(lang==='zh'?`狀態：可操作 · ${info.range}`:`READY · ${info.range}`):(lang==='zh'?`狀態：尚未就緒 · ${info.range}`:`NOT READY · ${info.range}`),38,290,940);c.fillStyle='#b8c5de';c.font='28px Arial';c.fillText(lang==='zh'?'按 Esc 或點擊空白處返回':'ESC OR CLICK EMPTY SPACE TO RETURN',38,380,940);this.texture.needsUpdate=true;}
- hide(){this.group.visible=false;}
+ show(action:Action,lang:Language,position:THREE.Vector3,available:boolean){this.last={action,lang,position:position.clone(),available};this.group.position.copy(position);this.group.visible=true;const d=copy[action],info=devices[action];const layout=textSystem.draw(this.canvas,[{text:t(lang,labels[action]),size:28,bold:true,color:'#a9d7ed'},{text:lang==='zh'?info.zh:info.en},{text:d[lang==='zh'?1:3]},{text:available?(lang==='zh'?'可操作':'READY'):(lang==='zh'?'尚未就緒':'NOT READY'),color:'#edc887'},{text:lang==='zh'?'點擊空白處返回':'Tap empty space to return',size:18}],lang);this.sprite.scale.set(1.55,1.55*layout.height/layout.width,1);this.texture.needsUpdate=true;}
+ refresh(){if(this.last)this.show(this.last.action,this.last.lang,this.last.position,this.last.available);}
+ contains(raycaster:THREE.Raycaster){return this.group.visible&&raycaster.intersectObject(this.sprite,false).length>0;}
+ hide(){this.group.visible=false;this.last=null;}
 }
