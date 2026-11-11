@@ -27,3 +27,6 @@ html,body,#app{height:100dvh}#coach{top:max(12px,env(safe-area-inset-top));font-
 #coach{background:rgba(23,42,56,.92);border-left-color:#d8aa65;border-radius:4px 9px 9px 4px;color:#e9efed}
 #zoom-controls button,#intro-skip{background:#1c3447ef;border-color:#7895a2;color:#f1f4ee}
 #zoom-controls button:focus-visible,#intro-skip:focus-visible{outline:3px solid #e2bf7c;outline-offset:2px}
+
+/* Subtitle text must not steal touches from the 3D devices beneath it. */
+#dialogue{pointer-events:none}#dialogue button,#dialogue a{pointer-events:auto}
