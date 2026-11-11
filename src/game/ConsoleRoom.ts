@@ -111,24 +111,19 @@ export class ConsoleRoom {
   }
   private boxed(p:[number,number,number],s:[number,number,number],c:string){box(this.root,new THREE.BoxGeometry(...s),metal(c,.75,.25),new THREE.Vector3(...p));}
   private buildDesk(){
-    this.boxed([0,.73,.75],[10.8,.34,4.25],'#273c4b');this.boxed([0,.925,.74],[10.55,.09,4.05],'#455968');
-    // Continuous annular work surface bridges the front, side and rear stations.
-    // Its inner opening surrounds the seat; equipment remains in its existing positions.
-    const worktop=new THREE.Mesh(new THREE.RingGeometry(2.12,3.94,128),metal('#536875',.63,.32));
-    worktop.rotation.x=-Math.PI/2;worktop.position.set(0,.958,4.2);worktop.receiveShadow=true;this.root.add(worktop);
-    for(const radius of [2.12,3.94]){const rim=new THREE.Mesh(new THREE.TorusGeometry(radius,.055,10,128),metal('#a2b3ba',.35,.65));rim.rotation.x=Math.PI/2;rim.position.set(0,.956,4.2);this.root.add(rim);}
-    for(let i=0;i<12;i++){const a=i*Math.PI/6;const brace=new THREE.Mesh(new THREE.BoxGeometry(.16,.78,.22),metal('#344b59',.6,.45));brace.position.set(Math.sin(a)*3.55,.48,4.2+Math.cos(a)*3.55);brace.rotation.y=a;this.root.add(brace);}
-    // Angled side wings bring work areas around the chair.
-    for(const side of [-1,1]){const wing=new THREE.Mesh(new RoundedBoxGeometry(1.65,.2,3.7,3,.08),metal('#354b5a',.72,.25));wing.position.set(side*4.85,.82,1.05);wing.rotation.y=-side*.15;wing.receiveShadow=true;this.root.add(wing);}
-    // Side and rear consoles form a continuous seated work area around the player.
-    for(const side of [-1,1]){this.boxed([side*3.3,.86,5.15],[1.3,.22,4.1],'#344b59');this.boxed([side*3.3,.99,5.15],[1.2,.06,4.0],'#5c6d77');}
-    this.boxed([0,.86,7.35],[5.4,.22,1.15],'#344b59');this.boxed([0,.99,7.35],[5.25,.06,1.05],'#5c6d77');this.boxed([0,1.31,7.12],[.92,.5,.7],'#536b79');
+    // One continuous work surface with a seat opening, not a narrow ring of platforms.
+    const shape=new THREE.Shape();shape.moveTo(-5.4,-1.35);shape.lineTo(5.4,-1.35);shape.lineTo(5.4,7.55);shape.lineTo(-5.4,7.55);shape.closePath();
+    const opening=new THREE.Path();opening.absarc(0,5.25,1.95,0,Math.PI*2,true);shape.holes.push(opening);
+    const worktop=new THREE.Mesh(new THREE.ExtrudeGeometry(shape,{depth:.24,bevelEnabled:true,bevelThickness:.025,bevelSize:.025,bevelSegments:3,curveSegments:96}),metal('#455968',.63,.32));worktop.rotation.x=Math.PI/2;worktop.position.y=.98;worktop.receiveShadow=true;this.root.add(worktop);
+    const rim=new THREE.Mesh(new THREE.TorusGeometry(1.95,.045,10,96),metal('#a2b3ba',.35,.65));rim.rotation.x=Math.PI/2;rim.position.set(0,.99,5.25);this.root.add(rim);
+    for(const x of [-4.8,4.8])for(const z of [-.6,3.5,7.5])this.boxed([x,.39,z],[.2,.78,.2],'#344b59');
+    this.boxed([0,1.31,7.12],[.92,.5,.7],'#536b79');
     // Front edge, gasket and inset modular instrument rails.
     this.boxed([0,.69,2.91],[10.72,.12,.08],'#26292f');this.boxed([0,.69,2.98],[10.5,.035,.035],'#96907c');
     for(const x of [-4.35,4.35]){this.boxed([x,.34,1.65],[.34,.82,.32],'#34343b');this.boxed([x,.77,.3],[.34,.11,3.5],'#383840');}
     // Side-mounted comms handset and coiled lead.
     const phone=new THREE.Group();phone.position.set(4.13,1.04,1.72);phone.rotation.z=-.18;this.root.add(phone);const body=new THREE.Mesh(new THREE.BoxGeometry(.24,.12,.72),metal('#33363e',.6,.3));phone.add(body);for(const z of [-.3,.3]){const end=new THREE.Mesh(new THREE.CylinderGeometry(.11,.11,.08,14),metal('#777263',.65,.18));end.rotation.x=Math.PI/2;end.position.z=z;phone.add(end);}const cord=new THREE.Mesh(new THREE.TorusGeometry(.17,.018,6,32,.9*Math.PI),metal('#262a30',.9,.1));cord.position.set(4.34,1.01,1.82);cord.rotation.x=Math.PI/2;this.root.add(cord);
-    const paper=new THREE.Mesh(new THREE.PlaneGeometry(1.12,.78),new THREE.MeshStandardMaterial({color:'#b9b4a7',roughness:.96,side:THREE.DoubleSide}));paper.rotation.x=-Math.PI/2;paper.rotation.z=-.08;paper.position.set(-4.1,.984,1.8);this.root.add(paper);this.paper=paper;this.drawPaper(paper);
+    const paper=new THREE.Mesh(new THREE.PlaneGeometry(1.12,.78),new THREE.MeshStandardMaterial({color:'#b9b4a7',roughness:.96,side:THREE.DoubleSide}));paper.rotation.x=-Math.PI/2;paper.rotation.z=-.08;paper.position.set(-4.1,1.015,1.8);this.root.add(paper);this.paper=paper;this.drawPaper(paper);
     // A tactile wrist rest and cable channels anchor the workstation foreground.
     this.boxed([0,1.0,2.77],[2.55,.08,.15],'#24262d');for(const x of [-3.5,-2.2,2.2,3.5]){const screw=new THREE.Mesh(new THREE.CylinderGeometry(.025,.025,.012,12),metal('#b8aa8d',.33,.72));screw.position.set(x,.988,2.54);this.root.add(screw);}
   }
