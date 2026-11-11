@@ -1,0 +1,68 @@
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import type { WorkshopPart } from './Workshop';
+
+/** A physical training bench. All coordinates and fixtures are fictional teaching aids. */
+export class AssemblyBay {
+ readonly root=new THREE.Group();readonly hits:THREE.Mesh[]=[];readonly inspection:THREE.Mesh[]=[];readonly activate:THREE.Mesh;readonly exit:THREE.Mesh;readonly passage:THREE.Mesh;
+ lastInspection=-1;private readonly pieces:THREE.Group[]=[];private prepared=[false,false,false];private readonly homes:THREE.Vector3[]=[];private readonly sockets:THREE.Vector3[]=[];private readonly socketRings:THREE.Mesh[]=[];
+ private readonly lights:THREE.MeshStandardMaterial[]=[];private readonly labelCanvas=document.createElement('canvas');private readonly labelTexture:THREE.CanvasTexture;
+ constructor(scene:THREE.Scene){
+  scene.add(this.root);this.root.position.set(80,0,0);this.root.visible=false;
+  const metal=new THREE.MeshStandardMaterial({color:'#aabac3',metalness:.7,roughness:.35}), dark=new THREE.MeshStandardMaterial({color:'#273f50',metalness:.5,roughness:.55}), shell=new THREE.MeshStandardMaterial({color:'#d3d6ef',metalness:.25,roughness:.55}), blue=new THREE.MeshStandardMaterial({color:'#294b65',metalness:.35,roughness:.4});
+  const box=(parent:THREE.Object3D,w:number,h:number,d:number,x:number,y:number,z:number,material:THREE.Material)=>{const m=new THREE.Mesh(new RoundedBoxGeometry(w,h,d,3,.025),material);m.position.set(x,y,z);parent.add(m);return m;};
+  const tag=(text:string,x:number,y:number,z:number)=>{const canvas=document.createElement('canvas');canvas.width=256;canvas.height=96;const c=canvas.getContext('2d')!;c.fillStyle='#142a38';c.fillRect(0,0,256,96);c.fillStyle='#f1e4bf';c.textAlign='center';c.font='bold 56px Arial';c.fillText(text,128,68,240);const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;const label=new THREE.Mesh(new THREE.PlaneGeometry(.42,.16),new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide}));label.rotation.x=-Math.PI/2;label.position.set(x,y,z);this.root.add(label);};
+
+  box(this.root,6,.2,14,0,-.1,3.5,dark);box(this.root,6,4,.18,0,2,-3.45,shell);box(this.root,.18,4,7,-2.9,2,0,shell);for(const z of [-2.3,2.3])box(this.root,.18,4,2.4,2.9,2,z,shell);box(this.root,.18,1.2,2.2,2.9,3.4,0,shell);box(this.root,6,.18,14,0,11,3.5,shell);box(this.root,6,7,.18,0,7.5,-3.45,shell);for(const x of [-2.9,2.9]){box(this.root,.18,7,14,x,7.5,3.5,shell);box(this.root,.18,4,7,x,2,7,shell);}box(this.root,6,11,.18,0,5.5,10.45,shell);
+  // Structural observation ports give the workshop an exterior reference and break the blank-box silhouette.
+  for(const x of [-2.05,2.05]){
+   box(this.root,1.42,1.05,.12,x,2.72,-3.31,dark);
+   const glassCanvas=document.createElement('canvas');glassCanvas.width=512;glassCanvas.height=320;const gc=glassCanvas.getContext('2d')!;
+   const sky=gc.createLinearGradient(0,0,0,320);sky.addColorStop(0,'#10253a');sky.addColorStop(.58,'#31506b');sky.addColorStop(.59,'#b6a98e');sky.addColorStop(1,'#4a4d50');gc.fillStyle=sky;gc.fillRect(0,0,512,320);
+   gc.fillStyle='#d7d2bf';gc.beginPath();gc.arc(385,198,94,Math.PI,Math.PI*2);gc.fill();gc.fillStyle='#766f66';gc.fillRect(280,198,205,90);
+   let seed=x<0?27:61;for(let i=0;i<42;i++){seed=(seed*9301+49297)%233280;const sx=seed/233280*512;seed=(seed*9301+49297)%233280;const sy=seed/233280*150;gc.fillStyle=`rgba(225,239,246,${.3+(seed%60)/100})`;gc.fillRect(sx,sy,2,2);}
+   const glassTexture=new THREE.CanvasTexture(glassCanvas);glassTexture.colorSpace=THREE.SRGBColorSpace;const glass=new THREE.Mesh(new THREE.PlaneGeometry(1.22,.85),new THREE.MeshBasicMaterial({map:glassTexture}));glass.position.set(x,2.72,-3.235);this.root.add(glass);
+   for(const [dx,dy,w,h] of [[-.69,0,.1,1.16],[.69,0,.1,1.16],[0,-.53,1.48,.1],[0,.53,1.48,.1]] as const)box(this.root,w,h,.16,x+dx,2.72+dy,-3.22,metal);
+   box(this.root,1.18,.07,.16,x,2.12,-3.12,blue);
+  }
+  box(this.root,3.7,.22,4.8,0,.9,0,dark);box(this.root,3.55,.06,4.65,0,1.04,0,metal);
+  for(const x of [-1.55,1.55])for(const z of [-2,2])box(this.root,.16,.82,.16,x,.41,z,dark);
+  const hemi=new THREE.HemisphereLight('#e9f4f4','#60717c',1.2);this.root.add(hemi);const lamp=new THREE.PointLight('#e6eff0',18,9);lamp.position.set(0,3.5,1);this.root.add(lamp);
+  // Probe chassis, mounting ports and three separate serviceable components.
+  box(this.root,.55,.36,2.55,.52,1.27,0,shell);box(this.root,.42,.12,2.38,.52,1.51,0,dark);
+  for(let i=0;i<3;i++){
+   const z=(i-1)*1.12;const socket=new THREE.Vector3(.52,1.63,z);this.sockets.push(socket);tag(['SOLAR 太陽','BAT 電池','ANT 天線'][i],1.08,1.12,z);tag(['SOLAR 太陽','BAT 電池','ANT 天線'][i],-1.53,1.12,z);
+   const ringMat=new THREE.MeshStandardMaterial({color:'#9dbec8',emissive:'#456675',emissiveIntensity:.25,metalness:.55,roughness:.4});const ring=new THREE.Mesh(new THREE.TorusGeometry(.23,.025,10,40),ringMat);ring.rotation.x=Math.PI/2;ring.position.copy(socket);this.root.add(ring);this.socketRings.push(ring);this.lights.push(ringMat);
+   const part=new THREE.Group();part.position.set(-1.03,1.31,z);this.homes.push(part.position.clone());this.root.add(part);this.pieces.push(part);
+   if(i===0){box(part,.58,.09,.55,0,0,0,metal);box(part,.48,.025,.43,0,.065,0,blue);for(const x of [-.12,0,.12])box(part,.008,.01,.42,x,.085,0,metal);}
+   else if(i===1){box(part,.43,.29,.42,0,.1,0,shell);for(const x of [-.12,.12])box(part,.05,.08,.35,x,.27,0,metal);}
+   else{box(part,.48,.12,.48,0,.02,0,metal);const antenna=new THREE.Mesh(new THREE.ConeGeometry(.18,.28,24,1,true),metal);antenna.position.y=.21;part.add(antenna);const tip=new THREE.Mesh(new THREE.SphereGeometry(.04,12,8),blue);tip.position.y=.36;part.add(tip);}
+   const hit=new THREE.Mesh(new THREE.BoxGeometry(.7,.65,.7),new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));hit.position.y=.15;part.add(hit);this.hits.push(hit);
+  }
+  // Three physical stations: component guide, tool guide and live diagnostic.
+  for(let i=0;i<3;i++){const x=(i-1)*1.15;box(this.root,.9,.11,.42,x,1.13,2,dark);const lamp=new THREE.Mesh(new THREE.CylinderGeometry(.12,.14,.08,24),new THREE.MeshStandardMaterial({color:'#a8c6d1',emissive:'#52798b',emissiveIntensity:.45}));lamp.position.set(x,1.24,2);this.root.add(lamp);const hit=new THREE.Mesh(new THREE.BoxGeometry(.85,.5,.55),new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));hit.position.set(x,1.22,2);this.root.add(hit);this.inspection.push(hit);tag(['PARTS 零件','TOOLS 工具','CHECK 診斷'][i],x,1.2,2.28);}
+  // Tool storage is mounted on the wall instead of left floating on the worktop.
+  box(this.root,.08,1.25,2.5,-2.78,2,-1.3,dark);for(let i=0;i<5;i++){const tool=box(this.root,.12,.38,.07,-2.7,2,-2.2+i*.43,metal);tool.rotation.x=i%2?.25:-.25;}
+  const activateBase=box(this.root,.54,.13,.45,1.33,1.13,-1.95,dark);void activateBase;const cap=new THREE.Mesh(new THREE.CylinderGeometry(.15,.17,.12,24),new THREE.MeshStandardMaterial({color:'#b9d4da',emissive:'#356779',emissiveIntensity:.3,metalness:.25,roughness:.4}));cap.position.set(1.33,1.27,-1.95);this.root.add(cap);this.activate=new THREE.Mesh(new THREE.BoxGeometry(.56,.45,.5),new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));this.activate.position.set(1.33,1.27,-1.95);this.root.add(this.activate);
+this.passage=new THREE.Mesh(new THREE.BoxGeometry(.4,2.7,2.15),new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));this.passage.position.set(2.9,1.35,0);this.root.add(this.passage);  this.exit=box(this.root,.65,.22,.35,-1.25,1.17,-2.05,dark);this.exit.userData.exit=true;
+  tag('BACK 返回',-1.25,1.3,-2.05);tag('START 啟動',1.33,1.36,-1.95);this.labelCanvas.width=1024;this.labelCanvas.height=512;this.labelTexture=new THREE.CanvasTexture(this.labelCanvas);this.labelTexture.colorSpace=THREE.SRGBColorSpace;const label=new THREE.Mesh(new THREE.PlaneGeometry(2.8,1.4),new THREE.MeshBasicMaterial({map:this.labelTexture}));label.position.set(0,2.6,-3.31);this.root.add(label);
+ }
+ show(placed:boolean[],zh:boolean){this.root.visible=true;try{const saved=JSON.parse(localStorage.getItem('outpost-assembly-mechanics-v1')||'null');this.prepared=Array.isArray(saved)&&saved.length===3?saved.map(Boolean):placed.map(Boolean);}catch{this.prepared=placed.map(Boolean);}for(let i=0;i<3;i++){if(!placed[i])this.prepared[i]=false;this.pieces[i].position.copy(placed[i]?this.sockets[i]:this.homes[i]);this.pieces[i].rotation.set(0,0,0);if(i===0&&this.prepared[i])this.pieces[i].rotation.z=.55;if(i===1&&this.prepared[i])this.pieces[i].position.y-=.1;this.lights[i].emissiveIntensity=this.prepared[i]?1:placed[i]?.55:.25;}this.draw(placed,zh);}
+ private savePrepared(){try{localStorage.setItem('outpost-assembly-mechanics-v1',JSON.stringify(this.prepared));}catch{}}
+ ready(){return this.prepared.every(Boolean);}
+ preparation(){return [...this.prepared];}
+ finishInstalled(part:WorkshopPart,dx:number,dy:number,turned:boolean){const ok=part===0?Math.hypot(dx,dy)<18:part===1?dy>35:turned;if(!ok)return false;this.prepared[part]=true;if(part===0)this.pieces[part].rotation.z=.55;if(part===1)this.pieces[part].position.y=this.sockets[part].y-.1;this.lights[part].emissiveIntensity=1;this.savePrepared();return true;}
+ markUnprepared(part:WorkshopPart){this.prepared[part]=false;this.savePrepared();}
+
+ draw(placed:boolean[],zh:boolean){const c=this.labelCanvas.getContext('2d')!;c.fillStyle='#122635';c.fillRect(0,0,1024,512);c.fillStyle='#e8c786';c.font='bold 48px Arial';c.fillText(zh?'探測器組裝工作台':'PROBE ASSEMBLY BAY',48,74);c.fillStyle='#eef1e8';c.font='35px Arial';const lines=zh?['拖動零件到接口；按住時可用雙指旋轉。','太陽能板收集光；電池儲存能量；天線傳送訊號。','點展太陽能板、下推電池、旋轉天線後啟動。','側牆通道前往另一工作室；深色鍵返回控制艙']:['Drag parts to ports; twist with two fingers while holding.','Solar panels collect light; batteries store energy; antennas send signals.','Tap panel, push battery down, rotate antenna; then start.','Side hatch: other workshop. Dark key: cabin.'];lines.forEach((line,i)=>c.fillText(line,48,155+i*68,930));c.fillStyle='#9fc5d2';c.fillText(`${placed.filter(Boolean).length} / 3 · ${this.prepared.filter(Boolean).length} / 3`,48,467);this.labelTexture.needsUpdate=true;}
+ inspect(index:number,placed:boolean[],zh:boolean){this.lastInspection=index;const pending=placed.filter(Boolean).length,ready=this.prepared.filter(Boolean).length;const zhText=[`零件辨識：太陽能板收集光，電池儲存電力，天線傳送訊號。已安裝 ${pending} / 3。`,'工具牆：先拿起零件，轉動對準接口；再依零件使用展開、插入或旋轉動作。',`診斷結果：${pending} 個接口已連接，${ready} 個零件已固定。未固定時先檢查，再啟動。`];const enText=[`Components: solar panel, battery and antenna. ${pending} of 3 installed.`,'Tool guide: pick up and align a component, then unfold, insert or rotate it.',`Diagnostics: ${pending} connections and ${ready} secured components. Check them before starting.`];const text=(zh?zhText:enText)[index];const c=this.labelCanvas.getContext('2d')!;c.fillStyle='#122635';c.fillRect(0,0,1024,512);c.fillStyle='#e8c786';c.font='bold 48px Arial';c.fillText((zh?['零件辨識','工具與接口','系統診斷']:['COMPONENTS','TOOLS AND PORTS','SYSTEM DIAGNOSTICS'])[index],48,74);c.fillStyle='#eef1e8';c.font='34px Arial';const chars=zh?20:42;for(let i=0;i<text.length;i+=chars)c.fillText(text.slice(i,i+chars),48,155+Math.floor(i/chars)*62,930);this.labelTexture.needsUpdate=true;return text;}
+ private aligned(part:WorkshopPart){const r=this.pieces[part].rotation;return [r.x,r.y,r.z].every(a=>Math.abs(Math.atan2(Math.sin(a),Math.cos(a)))<.4);}
+ move(part:WorkshopPart,point:THREE.Vector3){const piece=this.pieces[part];piece.position.set(THREE.MathUtils.clamp(point.x-80,-1.5,1.4),1.34,THREE.MathUtils.clamp(point.z,-2.15,2.15));const socket=this.sockets[part],near=Math.hypot(piece.position.x-socket.x,piece.position.z-socket.z)<.6;this.lights[part].emissive.set(near&&!this.aligned(part)?'#c68b50':'#456675');this.lights[part].emissiveIntensity=near?1.2:.25;}
+ drop(part:WorkshopPart,point:THREE.Vector3){const local=point.clone();local.x-=80;const socket=this.sockets[part];const distance=Math.hypot(local.x-socket.x,local.z-socket.z);if(distance<.43&&this.aligned(part)){this.pieces[part].position.copy(socket);this.pieces[part].rotation.set(0,0,0);this.lights[part].emissiveIntensity=1;return true;}this.pieces[part].position.copy(this.homes[part]);this.pieces[part].rotation.set(0,0,0);this.lights[part].emissive.set('#456675');this.lights[part].emissiveIntensity=.25;return false;}
+ rotate(part:WorkshopPart,delta:number,axis:'x'|'y'|'z'='y'){this.pieces[part].rotation[axis]+=delta;}
+ rotation(part:WorkshopPart){return this.pieces[part].rotation.y;}
+ boot(progress:number){this.pieces[0].rotation.z=Math.sin(Math.min(1,progress)*Math.PI/2)*.55;this.pieces[2].rotation.y=progress*2.5;for(const light of this.lights)light.emissiveIntensity=1.2+.5*Math.sin(progress*18);}
+ targetIndex(part:WorkshopPart){return part;}
+ point(kind:'part'|'socket'|'activate'|'passage',index=0){if(kind==='activate')return this.activate.getWorldPosition(new THREE.Vector3());if(kind==='passage')return this.passage.getWorldPosition(new THREE.Vector3());if(kind==='part')return this.hits[index].getWorldPosition(new THREE.Vector3());return this.root.localToWorld(new THREE.Vector3(this.sockets[index].x,1.31,this.sockets[index].z));}
+ hide(){this.root.visible=false;}
+}
