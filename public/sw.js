@@ -1,6 +1,6 @@
 /* Bump this cache version when publishing a new application shell. */
 const PREFIX='outpost-shell-';
-const CACHE=PREFIX+'20261108-1';
+const CACHE=PREFIX+'20261110-2';
 const BASE=new URL('./',self.location.href).pathname;
 const SNAPSHOT=BASE+'data/nasa-event-snapshot.json';
 
@@ -30,10 +30,10 @@ self.addEventListener('fetch',event=>{
   const url=new URL(request.url);
   if(url.origin!==self.location.origin)return;
   if(request.mode==='navigate'){
-    event.respondWith((async()=>{const cache=await caches.open(CACHE);return (await cache.match(BASE))||fetch(request);})());
+    event.respondWith((async()=>{const cache=await caches.open(CACHE);try{const response=await fetch(request);if(response.ok){await cache.put(BASE,response.clone());await cache.put(BASE+'index.html',response.clone());return response;}return (await cache.match(BASE))||response;}catch{const saved=await cache.match(BASE);if(saved)return saved;throw new Error('Application shell unavailable');}})());
   }else if(url.pathname===SNAPSHOT){
     event.respondWith((async()=>{const cache=await caches.open(CACHE);try{const response=await fetch(request);if(response.ok){await cache.put(SNAPSHOT,response.clone());return response;}return (await cache.match(SNAPSHOT))||response;}catch{const saved=await cache.match(SNAPSHOT);if(saved)return saved;throw new Error('Snapshot unavailable');}})());
   }else if(url.pathname.startsWith(BASE+'assets/')||url.pathname===BASE+'favicon.svg'||url.pathname===BASE+'data/lro-south-pole.jpg'){
-    event.respondWith((async()=>{const cache=await caches.open(CACHE);return (await cache.match(request,{ignoreSearch:true}))||fetch(request);})());
+    event.respondWith((async()=>{const cache=await caches.open(CACHE);const saved=await cache.match(request,{ignoreSearch:true});if(saved)return saved;const response=await fetch(request);if(response.ok)await cache.put(request,response.clone());return response;})());
   }
 });

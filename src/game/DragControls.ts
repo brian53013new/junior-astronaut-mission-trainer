@@ -7,5 +7,5 @@ export function beginDrag(action:DragAction,x:number,y:number,value:number,aim:n
 }
 export function moveDrag(d:DragState,x:number,y:number):DragState{
   const dx=x-d.startX,dy=y-d.startY;
-  return {...d,value:clamp(d.initial+dx/180),aim:d.action==='science'?clamp(d.initialAim-dy/160):d.initialAim,moved:d.moved||Math.hypot(dx,dy)>8,changed:d.changed||(d.action==='science'?Math.hypot(dx,dy)>8:Math.abs(dx)>8)};
+  return {...d,value:clamp(d.initial+dx/180),aim:(d.action==='science'||d.action==='craft')?clamp(d.initialAim-dy/160):d.initialAim,moved:d.moved||Math.hypot(dx,dy)>8,changed:d.changed||((d.action==='science'||d.action==='craft')?Math.hypot(dx,dy)>8:Math.abs(dx)>8)};
 }

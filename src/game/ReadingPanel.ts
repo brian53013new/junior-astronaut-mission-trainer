@@ -20,6 +20,7 @@ export interface ReadingPanelCallbacks {
   finishReflection:()=>void;
   reflectionNote:(value:string)=>void;
   repeat:()=>void;
+  projectInfo:()=>void;
 }
 /** A second presentation of the same Journey, used when 3D paper is too small.
  * It never owns course state, so closing, resizing or rotating cannot reset it. */
@@ -77,7 +78,7 @@ export class ReadingPanel {
         main.append(this.element('p','reading-fact',zh?`修正 ${retry} 次 · ${review} 個觀念可以再複習`:`${retry} retries · ${review} concepts to revisit`));
         if(record?.prediction!==undefined)main.append(this.element('p','reading-note',(zh?'操作前的預測：':'Your prediction: ')+activities[item.id].choices[record.prediction][language]));if(record?.reflection!==undefined)main.append(this.element('p','reading-note',(zh?'操作後的理由：':'Your reason: ')+activities[item.id].answers[record.reflection][language]));if(item.id==='plan'&&record?.planReason!==undefined&&record.planCaution!==undefined){const reasons=zh?['考慮日照','考慮可能的冰與觀測','平衡電力和水']:['consider sunlight','consider possible ice and observation','balance power and water'];const cautions=zh?['電力需求','可用水仍需更多證據','地形和通訊條件']:['power needs','usable water needs more evidence','terrain and communications'];main.append(this.element('p','reading-note',zh?`我選這裡，因為${reasons[record.planReason]}；要小心${cautions[record.planCaution]}。`:`I chose it to ${reasons[record.planReason]}; I should watch ${cautions[record.planCaution]}.`));}if(record?.reflectionAttempts)main.append(this.element('p','reading-note',zh?`理由曾重試 ${record.reflectionAttempts} 次。`:`You retried your reason ${record.reflectionAttempts} times.`));if(record?.reflectionNote)main.append(this.element('p','reading-body',record.reflectionNote));if(record?.actions.length)main.append(this.element('p','reading-note',zh?'本課操作已保存在此瀏覽器。':'Actions for this lesson are saved in this browser.'));
       }
-      nav.append(this.button(zh?'任務紀錄 →':'Mission log →',()=>{this.review=(this.review+1)%(journey.total+1);this.render(journey,language);},'reading-button reading-primary'),this.button(zh?'重新開始':'Play again',this.callbacks.restart));
+      nav.append(this.button(zh?'任務紀錄 →':'Mission log →',()=>{this.review=(this.review+1)%(journey.total+1);this.render(journey,language);},'reading-button reading-primary'),this.button(zh?'整理 Space Apps 提交資料':'Prepare Space Apps submission',this.callbacks.projectInfo),this.button(zh?'重新開始':'Play again',this.callbacks.restart));
     }else if(journey.reading){
       const p=data.pages[journey.readingPage];
       main.append(this.element('p','reading-page-number',`${zh?'教材':'TEXTBOOK'} ${journey.readingPage+1} / ${data.pages.length}`));
