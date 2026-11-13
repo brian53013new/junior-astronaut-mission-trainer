@@ -1,6 +1,6 @@
 # NASA data integration audit
 
-Audit timestamp: **2026-11-13 01:59 UTC** (web documentation/PDF inspection). Executor API probes were attempted again during this implementation; outbound NASA API traffic was blocked by the executor network proxy with `Tunnel connection failed: 403 Forbidden` before an API response. That is recorded as an access failure, not a NASA API result.
+Audit timestamp: **2026-11-13 01:59 UTC** (web documentation/PDF inspection). Gate 2 direct probes (2026-11-13 03:44–03:45 UTC) tried both DONKI roots for CME/FLR/GST/SEP/IPS/HSS over 7, 30, and 90 days, plus the requested NASA Images search and PDS LOLA catalog. The proxy tunnel rejected connections with `Tunnel connection failed: 403 Forbidden` before reaching the origin. Therefore no origin HTTP status, JSON body, image item, or LOLA rows were obtained. Exact attempted ranges and transport outcomes are recorded in `public/data/nasa/api-access-audit.json`; proxy errors are not attributed to NASA.
 
 Outpost Control is an independent educational game, not a NASA product, certification, mission simulator, or safety tool. It uses public NASA materials as educational references. Every game-specific resource effect below is an educational abstraction.
 
@@ -35,3 +35,18 @@ Detailed machine-readable provenance is in `public/data/nasa/source-manifest.jso
 
 
 Flight lesson boundary: NASA lunar surface gravity is now displayed with a source link. The current orbit interaction is still a conceptual ring adjustment, not a gravity solver or numerically computed trajectory. The value is not used to imply otherwise.
+
+
+## Gate 2 live access attempt (2026-11-13)
+
+The machine-readable [API access audit](../public/data/nasa/api-access-audit.json) records the 7/30/90-day DONKI attempts and direct NASA Images/PDS probes. Both DONKI roots and all six event types were blocked at the proxy tunnel; origin HTTP status is unavailable. The requested Images API search and LOLA catalog download also did not reach their origin. No JSON, image metadata, or terrain measurements have been fabricated or added. The empty educational fallback in `public/data/nasa-event-snapshot.json` remains empty.
+
+The flight lesson now uses the NASA lunar surface gravity reference in a mass-to-weight comparison (weight = mass × acceleration). The comparison is an educational calculator; the in-game ring still does not compute an orbit.
+
+## Gate 2 ingestion and provenance implementation
+
+The code path now uses `Promise.allSettled` for the six DONKI feeds and retains valid categories when another category fails. On a successful response, each raw feed body is retained alongside its request URL, retrieval UTC time, HTTP status and SHA-256; the normalized records retain event ID/type, event time, official record link and explicit game-rule disclosure. An export control in the NASA Data Lab exposes those raw bodies and hashes. Empty, malformed, unvalidated or all-failed results cannot replace a valid cache or bundled snapshot. A partially successful result is explicitly `partial`.
+
+These behaviors are validated with mock fixtures only (`npm run check:nasa-data`). The actual NASA endpoint requests in this environment were stopped by the proxy before reaching NASA, so there is currently no real raw body, real hash, or NASA event snapshot to include. `public/data/nasa-event-snapshot.json` is intentionally still an empty educational fallback. The importer is ready to write a validated raw snapshot once it runs in a network that reaches the official API; the current proxy failure is not treated as a NASA response.
+
+The Images API normalizer now records the exact query URL and retrieval time with each real catalog result, and the UI/export displays those fields. This normalizer is also tested only against mock data here. The game’s bundled PIA13720 asset remains labeled as a static NASA Science Photojournal image and is not represented as an Images API result.

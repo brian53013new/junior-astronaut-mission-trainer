@@ -1,6 +1,6 @@
 {
   "manifestVersion": 1,
-  "generatedAtUTC": "2026-11-13T02:23:08Z",
+  "generatedAtUTC": "2026-11-13T03:45:52Z",
   "projectDisclosure": "Outpost Control is an independent educational project, not a NASA product or endorsement. Game effects are not mission or safety predictions.",
   "sources": [
     {
@@ -17,7 +17,7 @@
         "IPS",
         "HSS"
       ],
-      "retrievedAtUTC": "2026-11-13T01:59:51Z",
+      "retrievedAtUTC": "2026-11-13T03:44:15Z",
       "dataVersion": "Public API documentation/migration checked; no JSON snapshot imported",
       "licenseOrTerms": "CCMC DONKI is provided as-is; official documentation cautions that near-real-time outputs/simulations are prototyping or research quality and not mission advice. Attribute the official event record; do not imply NASA endorsement.",
       "usedFields": [
@@ -27,22 +27,23 @@
         "event-type-specific metadata when present"
       ],
       "gameMapping": "Type/date/link/source time are preserved. A small type-dependent power change is a declared educational game rule, never an observed impact, dose, or hazard coefficient.",
-      "verificationStatus": "official-documentation-and-event-page-verified; direct-API-JSON-fetch-blocked-by-executor-proxy-403",
-      "apiTest": "Attempted six public CCMC endpoints for 2026-11-01 through 2026-11-13; proxy tunnel returned HTTP 403 before NASA response. NASA Open APIs DONKI entry was also attempted and unavailable through this executor. No response JSON or new snapshot is claimed."
+      "verificationStatus": "docs-verified-live-probe-failed-before-origin-response",
+      "apiTest": "Both official roots attempted across 7d (2026-11-06..2026-11-13), 30d (2026-10-14..2026-11-13), and 90d (2026-08-15..2026-11-13); each range covered CME, FLR, GST, SEP, IPS, HSS. Proxy tunnel rejected before origin HTTP response: HTTP status unavailable; no NASA JSON retrieved. See api-access-audit.json."
     },
     {
       "sourceId": "lro-lola-pds",
       "sourceName": "LRO LOLA, NASA Planetary Data System Geosciences Node",
       "sourceUrl": "https://pds-geosciences.wustl.edu/missions/lro/lola.htm",
       "apiEndpoint": "PDS catalog/product archive; not a general QuickMap REST API",
-      "retrievedAtUTC": "2026-11-13T01:59:51Z",
+      "retrievedAtUTC": "2026-11-13T03:45:52Z",
       "dataVersion": "LOLA RDR/GDR catalog metadata; Release 67, 2026-09-15",
       "licenseOrTerms": "PDS product-level documentation and citation apply.",
       "usedFields": [
         "product names, release/date metadata, archive scope"
       ],
       "gameMapping": "Catalog context only; no actual elevation/slope rows imported. Game sites are illustrative.",
-      "verificationStatus": "catalog-metadata-verified; site-measurements-not-imported"
+      "verificationStatus": "prior-catalog-metadata-only-current-direct-catalog-probe-failed-before-origin-response",
+      "apiTest": "No row-level terrain measurement data downloaded; direct catalog page probe blocked by proxy tunnel before origin response."
     },
     {
       "sourceId": "bvad",
@@ -63,7 +64,7 @@
       "sourceName": "NASA Image and Video Library API",
       "sourceUrl": "https://images.nasa.gov/docs/images.nasa.gov_api_docs.pdf",
       "apiEndpoint": "https://images-api.nasa.gov/search?q=",
-      "retrievedAtUTC": "2026-11-13T01:59:51Z",
+      "retrievedAtUTC": "2026-11-13T03:45:52Z",
       "dataVersion": "API documentation checked; no live API item query returned",
       "licenseOrTerms": "Check image-specific credit and third-party rights; NASA branding does not imply endorsement.",
       "usedFields": [
@@ -76,7 +77,8 @@
         "links"
       ],
       "gameMapping": "Explicit search action displays API results as cited evidence. Existing bundled PIA13720 image is sourced separately from NASA Science, not claimed as an Images API response.",
-      "verificationStatus": "official-API-documentation-verified; live-query-blocked-by-executor-proxy-403"
+      "verificationStatus": "docs-verified-live-query-failed-before-origin-response",
+      "liveQueryTest": "Exact lunar south pole image query attempted; proxy tunnel rejected before origin HTTP response; no API JSON retrieved."
     },
     {
       "sourceId": "lro-illumination-pia13720",
@@ -106,5 +108,6 @@
       "gameMapping": "Displayed as a physical science fact. Not used to numerically integrate the game orbit model; orbit ring remains illustrative.",
       "verificationStatus": "official-NASA-pages-verified"
     }
-  ]
+  ],
+  "accessAuditFile": "api-access-audit.json"
 }
