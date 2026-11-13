@@ -67,3 +67,27 @@ Status describes behavior in this checkout, not visual ambition. Existing saves 
 - [ ] A single uninterrupted clean-storage run through all six lessons, finale, mission log and certificate was not performed. The tests exercise welcome-to-first-lesson and individual lesson paths plus finale/certificate from a prepared state. Physical iPhone, iPad and Android validation was not performed.
 - [x] `npm run build` passes. Vite reports one 975.27 kB minified initial chunk over its 900 kB advisory; this is non-blocking and remains a startup-performance optimization item. Browser logs also include a Three.js `Clock` deprecation warning.
 - [x] The website remains an independent bilingual 3D lunar-base education game for the NASA Space Apps Challenge “Build a Junior Astronaut Mission Trainer”; its resource changes and alerts are simulations, not NASA mission or safety advice.
+
+## Stage 4 package follow-through — 2026-11-13
+
+This section supersedes earlier Gate 2 bullets that described the NASA snapshot as empty or Lola values as unavailable. The user supplied a data package, and the original payload plus 24-entry checksum list are retained at `public/data/nasa/user-submitted-package/`.
+
+- [x] Local checksum verification: all 24 package SHA-256 entries matched. This confirms supplied-file integrity only; the executor did not independently repeat NASA-origin transactions.
+- [x] DONKI: raw CME (125), GST (3), HSS (11), IPS (11), and valid empty SEP responses preserved with request metadata, reported status and raw-body SHA-256. FLR remains unavailable (reported mirror HTTP 404 and CCMC HTTP 503); normalized 60-record partial snapshot loads in the game. Event resource changes remain educational rules.
+- [x] NASA Images API: preserved raw query response and five normalized result cards. NASA Data Lab shows API IDs, title, description, date, preview and detail page. PIA13720 remains a separate static Photojournal image.
+- [x] LOLA RDR: three CSV/label/query regions and derived records retained. Candidate point coordinates and relative topography are exposed; sparse-point slopes were independently recomputed from the supplied data. The displayed score affects the planning scenario but is an educational mapping, not an official slope product or safety assessment.
+- [x] Site-planning board displays the selected point's coordinate, relative topography, estimated slope, comparison score and explicit limitations. Power/science effects depend on the comparison score; water surcharges and sunlight/route views remain simulations.
+- [x] Course content report now describes the implemented sequence and evidence limits in both languages: `docs/course-content-report.md`.
+- [ ] Rights holder is unconfirmed; no project-wide license is granted. User explicitly said authority is uncertain.
+- [ ] Physical iPhone/iPad test is still pending user execution. Browser emulation is not hardware verification.
+- [ ] One uninterrupted clean-storage six-lesson-to-certificate run remains unverified.
+
+### Stage 4 final verification — 2026-11-13
+
+- [x] User data package integrity: all 24 listed SHA-256 digests matched the attached package manifest. This is not independent confirmation of NASA-origin HTTP transactions.
+- [x] Runtime data: DONKI 60-record partial snapshot (CME/GST/IPS/HSS plus empty SEP; FLR unavailable), five user-supplied NASA Images API result records, and three LOLA RDR-derived candidate point records. Their limits and impacts are described in `docs/nasa-data-audit.md`.
+- [x] `npm run check:nasa-data`, `npm run build`, `git diff --check` passed. Build JS bundle is 989.56 kB; browser logs retain the non-blocking Three.js Clock deprecation notice.
+- [x] Full desktop/mobile Chromium suite after data/UI changes: 76 passed, 8 configured skips, 0 failed (84 total, 30.2 minutes). iPhone-sized Chromium is emulation, not iPhone/iPad Safari hardware.
+- [ ] No single uninterrupted clean-storage run through all six lessons, finale, mission log, and certificate was performed; lesson coverage is split across existing activity tests.
+- [ ] User has not yet returned iPhone/iPad results for the updated private preview. Android physical device is also untested.
+- [ ] Rights holder authority is unknown per user; project-wide license remains pending and `LICENSE` grants no rights.

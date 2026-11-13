@@ -1,60 +1,46 @@
-# NASA data integration audit
+# NASA data audit — current package integration
 
-Audit timestamp: **2026-11-13 01:59 UTC** (web documentation/PDF inspection). Gate 2 direct probes (2026-11-13 03:44–03:45 UTC) tried both DONKI roots for CME/FLR/GST/SEP/IPS/HSS over 7, 30, and 90 days, plus the requested NASA Images search and PDS LOLA catalog. The proxy tunnel rejected connections with `Tunnel connection failed: 403 Forbidden` before reaching the origin. Therefore no origin HTTP status, JSON body, image item, or LOLA rows were obtained. Exact attempted ranges and transport outcomes are recorded in `public/data/nasa/api-access-audit.json`; proxy errors are not attributed to NASA.
+Audit date: 2026-11-13. This is an independent educational game associated with **Build a Junior Astronaut Mission Trainer**, not a NASA product, endorsement, mission tool, or safety recommendation.
 
-Outpost Control is an independent educational game, not a NASA product, certification, mission simulator, or safety tool. It uses public NASA materials as educational references. Every game-specific resource effect below is an educational abstraction.
+## Acquisition and integrity
 
-## Source-by-source evidence
+The user supplied `NASA_Outpost_Control_Data_Package_2026-11-13 (1).zip` (archive SHA-256 `c99feb4c4d381d37910ed501829d791d0d98e20ec94003c71da2f2f0de16e4c3`). It was extracted without path traversal; all 24 listed SHA-256 digests matched. The package, source manifest and checksum list are preserved at `public/data/nasa/user-submitted-package/`; raw response/product files are also stored under `public/data/nasa/raw/` for runtime and citations. Hash agreement establishes file integrity against the supplied manifest; this executor did not independently repeat the source HTTP requests.
 
-| Source | Official address / product | Verification and fields | Rights / limitations | Game use |
-|---|---|---|---|---|
-| CCMC DONKI | [DONKI docs](https://ccmc.gsfc.nasa.gov/tools/DONKI/); public API root `https://ccmc.gsfc.nasa.gov/DONKI-API/get/` | Official documentation inspected. It identifies CME, FLR, GST, SEP, IPS and HSS event groups; the Sep. 30, 2026 migration notice identifies the new CCMC base. Event-search page was inspected for Oct. 24–Nov. 9, 2026. Expected normalized fields are `eventID`, `startTime` or `eventTime` (HSS may use `time21_5`), `link`, plus type-specific metadata. **A raw API JSON result was not obtained**: requests for all six types and the NASA Open APIs mirror were stopped by the executor proxy (403). | CCMC says DONKI is supplied as-is; near-real-time/simulated products are research/prototyping quality and not mission advice. No API key is embedded or required by the new public importer. | Explicit Data Lab request queries six event feeds. IDs, event type, observation timestamp and official event link are retained. A small fixed power-point change is an invented classroom rule; it does not represent hazard severity, dose or forecast. No verified DONKI snapshot is presently bundled, so Story mode stays offline-teaching until one can be obtained and reviewed. |
-| LRO / LOLA / PDS | [PDS Geosciences LOLA catalog](https://pds-geosciences.wustl.edu/missions/lro/lola.htm); [LRO mission](https://science.nasa.gov/mission/lro/); [LROC QuickMap](https://quickmap.lroc.asu.edu/) | Official catalog and Release 67 metadata checked; the release is dated 2026-09-15 and describes archived LRO LOLA product coverage. Product families include EDR/RDR/GDR and related products. **No row-level elevation/slope product was downloaded in this environment.** QuickMap is treated as an interactive map, not described as a general REST API. | Cite the specific PDS product and its SIS when data are eventually imported. A catalog entry alone does not provide measured candidate-site values. | `lunar-sites.json` deliberately has `records: []`. Existing three game locations remain fictional comparison scenarios, without measured elevation/slope or a single scientifically “correct” answer. |
-| Life Support BVAD | [NTRS record 20210024855](https://ntrs.nasa.gov/citations/20210024855); [Rev. 2 PDF](https://ntrs.nasa.gov/api/citations/20210024855/downloads/BVAD_2.15.22-final.pdf) | Official record and actual PDF inspected. Revision 2, Feb. 2022. Table **4-20, printed p. 72**, units `kg/crew-member-day`. Verified drinking water 2.00, food rehydration 0.50, total human consumption 2.50; flush/hygiene and total-water rows are transcribed in `public/data/nasa/life-support-baselines.json`. NTRS record metadata: PUBLIC distribution, public use permitted, no third-party material flagged. | Preserve scenario names and assumptions; the table is not a universal lunar habitat specification. NASA attribution is retained; no NASA endorsement implied. | `3.2 kg / 0.64 kg per game point = 5 game points` for the Transit Vehicle reference. `4.48 / 0.64 = 7` for Early Planetary Base; `9.12 / 0.64 = 14.25`, displayed as 14 rounded points for Mature Planetary Base. Site surcharges and the 0.64 scale are game design, not NASA values. Plan lesson and daily baseline use the 5-point reference. Oxygen, food inventory, energy sizing, waste-system performance and repair durations are not imported yet. |
-| NASA Image and Video Library | [API documentation](https://images.nasa.gov/docs/images.nasa.gov_api_docs.pdf); search root `https://images-api.nasa.gov/search` | Official PDF inspected: `/search`, `/asset/{nasa_id}` and `collection.items[].data[]` metadata including `nasa_id`, `title`, `description`, `date_created`, `center`, `keywords`, and preview links. A live query was blocked by the executor proxy (403), so this audit does not claim API response items. | Verify item-specific credit and third-party restrictions before redistribution. The presence of an item in NASA's catalog alone is not a blanket license statement. | Data Lab offers an explicit `lunar south pole` search and renders only successfully returned items with their NASA details page. |
-| Lunar gravity | [NASA Science: Moon by the Numbers](https://science.nasa.gov/moon/by-the-numbers/); corroborated by [NASA Glenn Moon facts](https://www1.grc.nasa.gov/beginners-guide-to-aeronautics/moon/) | Official pages checked 2026-11-13 02:23 UTC; lunar surface gravity 1.624 m/s² and 0.165 Earth comparison. | Reference fact only; not a NASA-endorsed game model. | Shown on flight lesson page 1. Orbit ring remains illustrative and does not numerically integrate this constant. Stored in `public/data/nasa/flight-baselines.json`. |
-| Bundled image PIA13720 | [NASA Science Photojournal: South Pole Illumination Map](https://science.nasa.gov/photojournal/south-pole-illumination-map/) | Official page inspected; existing local `/data/lro-south-pole.jpg` is catalogued as the illumination image with NASA/GSFC/Arizona State University credit. This asset came from the NASA Science page, **not** a live Images API response. | Keep the credit. A page-specific third-party restriction was not separately checked in this audit. | Used in the observation lesson to compare illumination only; darkness/brightness is not presented as an ice measurement. |
+## DONKI
 
-Detailed machine-readable provenance is in `public/data/nasa/source-manifest.json`. The BVAD transcription, unimported fields and conversion are in `public/data/nasa/life-support-baselines.json`; the PDS status and Images API catalog are in their corresponding JSON files.
+- Preserved JSON responses and reported HTTP 200: CME (125), GST (3), HSS (11), IPS (11), SEP (valid empty array). FLR was not obtained: the package records HTTP 404 from the tested `api.nasa.gov` path and HTTP 503 from CCMC.
+- Original JSON bodies are kept under `public/data/nasa/raw/donki/`. Their request URLs, package retrieval UTC, reported status, SHA-256 and counts are recorded in `public/data/nasa-event-snapshot.json`. A 60-record normalized subset is loaded by the game, retaining at least one event per non-empty feed. Snapshot status is partial because FLR failed; SEP is empty but successful.
+- Each event is mission context. Its simulated power effect is educational and is not a dose, impact coefficient, forecast, health effect or safety warning.
 
-## Data and fallback flow
+## NASA Images API
 
-1. **Story teaching:** load a non-empty validated bundled snapshot if one exists; otherwise use a previously validated local DONKI cache; otherwise use clearly labeled fictional teaching events. The current bundled NASA snapshot is empty and the executor had no verified-event cache, so the observed environment resolves to the fictional offline teaching mode.
-2. **NASA Data Lab:** only an explicit button starts a query; it requests CME, FLR, GST, SEP, IPS and HSS for the previous seven UTC days in parallel. Validated official event metadata is cached locally. Invalid, empty or partially failed fetches never replace that cache.
-3. **NASA Images:** only an explicit button queries `images-api.nasa.gov`; results are normalized from the documented collection fields. A blocked query shows a visible failure and no invented result.
-4. **Event handling:** when actual records are available, mission logs keep event ID, type, observed time, retrieved time, official record URL and mapping disclosure in local browser storage. Event resource changes are game rules; an imported DONKI event alone does not subtract crew health.
-5. **Lunar map:** metadata is kept separate from measurements. Until a versioned LOLA product is acquired and validated, no numeric terrain comparison is attributed to NASA.
+- The preserved raw response at `public/data/nasa/raw/images-api/lunar-south-pole_page-1.json` corresponds to the package query URL and reported HTTP 200. Five result records are in `image-catalog.json` and appear in the NASA Data Lab with NASA ID, title, description, date, preview and official detail page.
+- PIA13720 remains a separate static NASA Science Photojournal image and is not labeled as an Images API result. Image search metadata does not establish ice, water abundance, or item-specific redistribution rights.
 
-## Known gaps
+## LRO / LOLA
 
-- No actual DONKI API JSON snapshot was retrieved during this audit. The code path and importer are verified with synthetic test fixtures only; test fixtures are not NASA data.
-- No LOLA elevation/slope values were downloaded or integrated; real three-site comparison remains outstanding.
-- NASA Images API documentation was verified, but the query could not be exercised against NASA in this environment. It must be retried in a browser/network that can reach NASA.
-- Only the BVAD water-consumption rows from Table 4-20 are transcribed and mapped. Oxygen, food, energy, waste, spare-parts and repair-time baselines need their own verified table/page citations before integration.
-- Desktop/mobile UI, fallback and importer automated checks are run as recorded at handoff; this environment cannot certify physical iPhone/iPad behavior from browser automation alone.
+- Three user-provided ODE query JSON files, selected topography CSVs and PDS3 labels are preserved under `public/data/nasa/raw/lola/`; the original package (including its derived candidate file and method) is also retained.
+- Three representative points are recorded in `lunar-sites.json`, with east longitude, planetocentric latitude, topography relative to the 1,737.4 km lunar mean radius (meters), observation time, shot number, product/query references and point counts. Product labels identify LOLA RDR, PDS3, units, and product creation dates; they do not state an archive release number.
+- Displayed slope is a package-derived least-squares local estimate from sparse valid RDR shots, not an official LOLA slope field. This audit independently repeated the fit about each query-window center and reproduced the supplied slopes to four decimals.
+- Site selection now uses relative topography and derived slope in a labeled educational comparison score; score-to-power/science effects are invented mappings. Sunlight, ice, communication visibility, landing suitability and safety are not inferred from these three point records.
 
+## Other NASA facts already used
 
-Flight lesson boundary: NASA lunar surface gravity is displayed with a source link and drives a mass-to-weight calculator (weight = mass × gravity); the result is stored as a local learning record. The orbit interaction is still a conceptual ring adjustment, not a gravity solver or numerically computed trajectory.
+- BVAD Rev. 2 Table 4-20, printed page 72: Transit Vehicle total water consumption 3.2 kg/crew-member-day; converted at 0.64 kg/game point (an educational scale).
+- NASA lunar surface gravity 1.624 m/s² drives the classroom mass-to-weight calculation. The orbit ring is still illustrative.
+- PIA13720 static image remains identified separately.
 
+## Runtime and fallback behavior
 
-## Gate 2 live access attempt (2026-11-13)
+1. The bundled DONKI snapshot loads during story setup; valid records map to explicitly fictional game rules.
+2. The Data Lab still supports explicit live queries. Live and imported snapshot evidence remain distinct. A partial live query preserves successes and names failed feeds; invalid/empty responses cannot overwrite a valid cache.
+3. NASA Images API saved records are visible from the local catalog even when live egress fails; an explicit search can still refresh them.
+4. LOLA measured point fields and slope estimates appear on the site readout. The map's sunlight and route modes and all consequences remain educational illustrations.
 
-The machine-readable [API access audit](../public/data/nasa/api-access-audit.json) records the 7/30/90-day DONKI attempts and direct NASA Images/PDS probes. Both DONKI roots and all six event types were blocked at the proxy tunnel; origin HTTP status is unavailable. The requested Images API search and LOLA catalog download also did not reach their origin. No JSON, image metadata, or terrain measurements have been fabricated or added. The empty educational fallback in `public/data/nasa-event-snapshot.json` remains empty.
+## Remaining limits
 
-The flight lesson now uses the NASA lunar surface gravity reference in a mass-to-weight comparison (weight = mass × acceleration). The comparison is an educational calculator; the in-game ring still does not compute an orbit.
-
-## Gate 2 ingestion and provenance implementation
-
-The code path now uses `Promise.allSettled` for the six DONKI feeds and retains valid categories when another category fails. On a successful response, each raw feed body is retained alongside its request URL, retrieval UTC time, HTTP status and SHA-256; the normalized records retain event ID/type, event time, official record link and explicit game-rule disclosure. An export control in the NASA Data Lab exposes those raw bodies and hashes. Empty, malformed, unvalidated or all-failed results cannot replace a valid cache or bundled snapshot. A partially successful result is explicitly `partial`.
-
-These behaviors are validated with mock fixtures only (`npm run check:nasa-data`). The actual NASA endpoint requests in this environment were stopped by the proxy before reaching NASA, so there is currently no real raw body, real hash, or NASA event snapshot to include. `public/data/nasa-event-snapshot.json` is intentionally still an empty educational fallback. The importer is ready to write a validated raw snapshot once it runs in a network that reaches the official API; the current proxy failure is not treated as a NASA response.
-
-The Images API normalizer now records the exact query URL and retrieval time with each real catalog result, and the UI/export displays those fields. This normalizer is also tested only against mock data here. The game’s bundled PIA13720 asset remains labeled as a static NASA Science Photojournal image and is not represented as an Images API result.
-
-## Stage 3 follow-through — 2026-11-13
-
-- `NASADataProvider.ts` now imports the checked-in BVAD and lunar-gravity JSON files as runtime data. The mission water baseline derives from the BVAD Transit Vehicle value and the explicitly educational 0.64 kg/game-point scale; the flight lesson calculator derives the 1.624 m/s² constant from the flight data file. This removes the separate hard-coded runtime copy of those two values.
-- The study view provides course-level source cards for assembly, communications, repair and the finale. Planning and flight have linked NASA data cards; observation shows the static Photojournal image and source. Cards distinguish reference context, imported data, classroom action and limitations.
-- The three candidate lunar locations still have no real LOLA row-level measurements and do not use a NASA terrain score. DONKI and NASA Images API still have no genuine response in the repository.
-- The browser/web search connector could render the PDS LOLA catalog metadata (Release 67) during follow-up, but neither it nor the executor produced a product download or measured site row. The catalog page is not treated as a terrain dataset and no values were added.
-- Rights and source records are consolidated in `NASA_REFERENCES.md`; the complete 68-entry npm lock inventory is in `public/data/third-party/dependency-license-inventory.json`. Optional platform-specific packages not installed in this environment remain marked as license metadata not locally verified. The project-wide license is pending rights-holder confirmation in `LICENSE`.
+- No FLR JSON was provided.
+- Supplied HTTP statuses and acquisition times are attributed to the user's package; the executor independently verified file hashes and content shape, not the origin transactions.
+- No official LOLA slope product was supplied; slope is package-derived and sparse. No point is a NASA-designated landing site.
+- BVAD oxygen, food, energy, waste, backup and repair quantities are not added without separately verified page/unit/context.
+- Mock tests remain mock tests. Local checks validate package snapshots and hash metadata, but are not fresh live API requests.

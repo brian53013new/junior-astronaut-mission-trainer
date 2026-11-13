@@ -460,5 +460,34 @@
       "accessMethod": "web search connector",
       "result": "Release 67 catalog metadata and archive documentation visible; no downloadable LOLA row-level measurements, elevation/slope values, or origin HTTP status were returned. This does not change lunar-sites.json records."
     }
-  ]
+  ],
+  "userSuppliedPackage": {
+    "file": "NASA_Outpost_Control_Data_Package_2026-11-13 (1).zip",
+    "receivedAtUTC": "2026-11-13T08:40Z",
+    "localVerification": "24 of 24 listed SHA-256 entries match supplied package files",
+    "originTransactionsIndependentlyRepeated": false,
+    "donki": {
+      "reportedHttp200": [
+        "CME",
+        "GST",
+        "HSS",
+        "IPS",
+        "SEP"
+      ],
+      "sepIsEmpty": true,
+      "flrReportedFailures": {
+        "apiNasa": 404,
+        "ccmc": 503
+      }
+    },
+    "imagesApi": {
+      "reportedHttpStatus": 200,
+      "results": 5
+    },
+    "lola": {
+      "rawQueryCsvAndPds3Labels": 3,
+      "derivedSlopesIndependentlyRecomputed": true
+    },
+    "disclosure": "Acquisition times and HTTP statuses are attributed to the user-provided package manifest. Local hash/content verification does not independently authenticate the original HTTP transaction."
+  }
 }

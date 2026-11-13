@@ -1,40 +1,36 @@
-# Stage 3 implementation and verification report
+# Verification report — Stage 4 NASA data package follow-through
 
 Date: 2026-11-13 UTC
-Base revision: `ff2701e64e52f36e65b0ae617fdc74ff86bb9155`
-Scope: source/provenance accuracy, use of verified classroom references, curriculum source cards, game checks, browser tests and private preview.
+Base revision: `a836ba7f2868de44294065887ff4a46cf7f94452`
+Scope: user-supplied NASA data package integrity, runtime data use, Data Lab status accuracy, build and full browser regression.
 
 ## Evidence categories
 
 | Category | Result |
 |---|---|
-| Genuine NASA source/data evidence | BVAD Rev. 2 water reference and NASA lunar surface-gravity reference are in local source data and drive the documented classroom calculations; the PIA13720 static illumination image appears in the observation lesson. See `NASA_REFERENCES.md`. |
-| Mock-only | DONKI feed validation, raw-body/hash retention, partial failures/cache rules and NASA Images API response parsing use fixtures in `npm run check:nasa-data`. These do not establish NASA connectivity. |
-| NASA network access | No DONKI JSON, Images API result or LOLA row-level measurements were received. Requests were blocked before the origin server; no HTTP status is claimed. |
-| Browser automation | Full post-change desktop Chromium + iPhone-sized mobile Chromium suite: **76 passed, 8 skipped, 0 failed** (84 total; 29.2 minutes). Chromium was `/usr/bin/chromium`. The 8 skips are project-specific device/platform conditions, not failures. Chromium emulation is not a physical-device result. |
-| Physical hardware | iPhone, iPad and Android hardware have not been tested in this session. |
-| Licensing | Dependency inventory is recorded; the project-wide original-work license and some image redistribution rights remain pending. See `LICENSE` and `NASA_REFERENCES.md`. |
+| User-supplied source package | Archive SHA-256: `c99feb4c4d381d37910ed501829d791d0d98e20ec94003c71da2f2f0de16e4c3`. All 24 manifest checksums matched. This verifies package integrity, not origin transactions. |
+| DONKI | Preserved user-supplied raw JSON: CME 125, GST 3, IPS 11, HSS 11, and SEP valid empty result. FLR is missing; package records HTTP 404 (api.nasa.gov path) and 503 (CCMC). The app uses a 60-record partial snapshot; effects are educational rules. |
+| NASA Images API | Preserved raw query response and five results, shown in the NASA Data Lab with nasa_id, title, description, date, preview and official details URL. The package reports HTTP 200; executor independently checked file hashes and result structure, not the origin transaction. PIA13720 remains a separate static Photojournal image. |
+| LRO / LOLA | Three user-supplied ODE query/CSV/PDS3-label regions. Candidate coordinates and relative topography are used in the site-planning comparison. Slope values are derived from sparse points and independently recomputed, not official LOLA slope fields. Site outcomes remain educational mappings. |
+| Mock-only | DONKI API/cache/failure-flow tests use mocked fetch. They do not establish live NASA network access. |
+| Browser automation | Full desktop Chromium + iPhone-sized mobile Chromium suite: **76 passed, 8 skipped, 0 failed** (84 total; 30.2 minutes), using `/usr/bin/chromium`. Emulation is not physical Safari/iOS or Android testing. |
+| Physical hardware | User can test iPhone/iPad; no result has yet been supplied for the updated preview. Android also remains untested. |
+| Licensing | User said rights authority is unknown; project-wide `LICENSE` remains pending and grants no license. |
 
-## Commands and final outcomes
-
-The following commands were run after the last source change:
+## Commands and outcomes
 
 ```text
 npm run check:nasa-data
 npm run build
-npm test
+CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm test -- --reporter=line
 git diff --check
 ```
 
-Results:
-
-- `npm run check:nasa-data`: passed. This command uses mock responses; the separate data checks also verify that runtime JSON and the public-copy JSON remain identical.
-- `npm run build`: passed. Vite emitted a **975.27 kB minified JavaScript chunk** warning against the 900 kB advisory threshold. This is non-blocking: the current app loads the shared Three.js engine and the procedural game in a single initial bundle. It is not a compile/build error, but it remains a startup-size/performance optimization task, especially for low-memory phones.
-- `CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm test`: passed, 76/84; 8 expected project-specific skips; zero failures. Full desktop and mobile projects ran. The initial default-path attempt could not start Chromium; the full successful run used the discovered system Chromium path.
-- `git diff --check`: passed on the final tracked and untracked source/document changes prepared for commit.
-
-The checks do not claim live NASA access. A Vite warning about `THREE.Clock` deprecation appears in browser logs; it did not fail tests/build and remains a code-maintenance item.
+- `npm run check:nasa-data`: passed; validates supplied package hashes, snapshot, image catalog, LOLA points and game-score effects. Its fetch-flow tests are mock fixtures.
+- `npm run build`: passed; Vite output includes a 989.56 kB JavaScript bundle. Vite reports the 989.56 kB chunk above its 900 kB advisory threshold; the Three.js `Clock` deprecation appears in browser logs. Neither blocks build or tests.
+- Full Playwright suite: **76 passed, 8 skipped, 0 failed**. It covers desktop and phone-sized Chromium, welcome through lesson one, lesson activities, retry, prepared-state finale/certificate, persistence, language, 375×812 / 768×1024 / 1024×768 layouts, touch, camera bounds, guidance, assembly, repair, science, communications, gravity, and 200% text. Eight skips are project-configured platform cases.
+- `git diff --check`: passed after code/data updates. Re-run after final report edits and before commit.
 
 ## Flow and device-test boundary
 
-The test suite covers a clean-storage NOVA welcome through the first lesson on desktop and mobile, individual course activities, retries, the finale and game certificate from a prepared final-mission state, persistence/reload, language, responsive 375×812, 768×1024 and 1024×768 viewports, touch input, camera boundaries, text size and settings. It is **not** a single uninterrupted clean-storage playthrough through all six lessons, finale, mission log and certificate. Physical browser testing is not performed by Playwright device emulation.
+No single uninterrupted fresh-storage walkthrough through all six lessons, finale, mission log and certificate was completed. Existing tests cover the welcome-to-first-lesson path and individual lessons; the finale/certificate test begins from a prepared final-mission state. Physical iPhone/iPad Safari and Android browser behavior remains unverified. Do not report those as complete.

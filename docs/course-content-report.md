@@ -23,9 +23,9 @@ Each lesson is framed as a child-friendly everyday question, introduces a scienc
 
 - **NOVA / everyday entry:** Choose where to camp when power, water, and safety all matter.
 - **Learning focus:** Sunlight can support solar generation; some cold shadows may preserve ice, but darkness alone is not evidence of water. A real site decision must consider more than one factor.
-- **Player activity:** Predict which area favors solar panels, compare the illustrative site choices, move/select a base marker, then explain one reason and one caution.
+- **Player activity:** Predict which area favors solar panels, compare three LOLA RDR representative points, move/select a base marker, then explain one reason and one caution.
 - **Outcome / record:** Site choice and reflection are recorded. The simulated water baseline affects the game resource calculation.
-- **Source and limits:** NASA Moon Base Systems is contextual reference. BVAD Rev. 2 Table 4-20, printed page 72, provides the packaged Transit Vehicle water baseline (3.2 kg per crew-member-day); division by 0.64 kg per game point is an educational conversion. Site coordinates, sunlight scores, terrain, and surcharges are not surveyed LOLA measurements.
+- **Source and limits:** NASA Moon Base Systems is contextual reference. BVAD Rev. 2 Table 4-20, printed page 72, provides the packaged Transit Vehicle water baseline (3.2 kg per crew-member-day); division by 0.64 kg per game point is an educational conversion. Coordinates and relative topography come from supplied LOLA RDR rows. Slope is a package-derived sparse-point estimate, not an official product. Sunlight and resource modifiers remain illustrative; the point comparison score is an educational mapping, not a safety assessment.
 
 ### 3. Into space
 
@@ -65,7 +65,7 @@ Each lesson is framed as a child-friendly everyday question, introduces a scienc
 - **Learning focus:** Decisions involve connected systems, evidence, uncertainty, and trade-offs.
 - **Player activity:** Review base status, choose a priority, recycle water, observe again, and respond to a simulated alert.
 - **Outcome / record:** Choices affect the game state and are summarized for the mission record/certificate flow.
-- **Source and limits:** Previously used science references may appear in the final source summary. The alert, resource changes, and response consequences are educational abstractions. Until DONKI and LOLA evidence is obtained, the finale does not use a real event or surveyed lunar site.
+- **Source and limits:** Previously used science references may appear in the final source summary. The alert, resource changes, and response consequences are educational abstractions. A user-supplied DONKI partial snapshot and LOLA-derived comparison data are available in this build. Finale resource/event consequences remain game rules and are not a full operational model.
 
 ## Completion and evidence limits
 
