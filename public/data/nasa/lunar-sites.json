@@ -11,5 +11,13 @@
   "usedFields": [],
   "records": [],
   "gameMapping": "No measured elevation, slope, coordinates, communications visibility, or landing-risk values have been imported. The three game locations remain illustrative teaching scenarios and are not real surveyed candidate sites.",
-  "limitations": "QuickMap is an interactive mapping application, not described here as a REST API. Import a versioned PDS product and preserve its product identifier, release, coordinates, units, processing level, and citation before claiming measured values."
+  "limitations": "QuickMap is an interactive mapping application, not described here as a REST API. Import a versioned PDS product and preserve its product identifier, release, coordinates, units, processing level, and citation before claiming measured values.",
+  "catalogAccessAudit": {
+    "checkedAtUTC": "2026-11-13T06:57:57Z",
+    "accessMethod": "web search connector rendered the PDS/ODE documentation pages; no raw product/API response or HTTP status was exposed",
+    "httpStatus": null,
+    "visibleMetadata": "LOLA RDR/GDR Release 67 catalog metadata",
+    "rowLevelMeasurements": 0,
+    "decision": "Catalog visibility is not treated as acquired terrain measurements; site candidate records remain empty."
+  }
 }

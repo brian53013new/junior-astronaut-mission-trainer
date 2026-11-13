@@ -450,6 +450,15 @@
       "httpStatus": null,
       "transportStatus": "proxy-tunnel-failed",
       "error": "Tunnel connection failed: 403 Forbidden before request reached origin; no product download or row-level terrain data obtained."
+    },
+    {
+      "source": "NASA PDS / ODE LOLA catalog documentation",
+      "url": "https://pds-geosciences.wustl.edu/missions/lro/lola.htm",
+      "observedAtUTC": "2026-11-13T06:57:57Z",
+      "httpStatus": null,
+      "transportStatus": "static-documentation-rendered-only",
+      "accessMethod": "web search connector",
+      "result": "Release 67 catalog metadata and archive documentation visible; no downloadable LOLA row-level measurements, elevation/slope values, or origin HTTP status were returned. This does not change lunar-sites.json records."
     }
   ]
 }

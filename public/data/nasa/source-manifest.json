@@ -1,6 +1,6 @@
 {
   "manifestVersion": 1,
-  "generatedAtUTC": "2026-11-13T03:45:52Z",
+  "generatedAtUTC": "2026-11-13T06:57:57Z",
   "projectDisclosure": "Outpost Control is an independent educational project, not a NASA product or endorsement. Game effects are not mission or safety predictions.",
   "sources": [
     {
@@ -35,15 +35,15 @@
       "sourceName": "LRO LOLA, NASA Planetary Data System Geosciences Node",
       "sourceUrl": "https://pds-geosciences.wustl.edu/missions/lro/lola.htm",
       "apiEndpoint": "PDS catalog/product archive; not a general QuickMap REST API",
-      "retrievedAtUTC": "2026-11-13T03:45:52Z",
+      "retrievedAtUTC": "2026-11-13T06:57:57Z",
       "dataVersion": "LOLA RDR/GDR catalog metadata; Release 67, 2026-09-15",
       "licenseOrTerms": "PDS product-level documentation and citation apply.",
       "usedFields": [
         "product names, release/date metadata, archive scope"
       ],
       "gameMapping": "Catalog context only; no actual elevation/slope rows imported. Game sites are illustrative.",
-      "verificationStatus": "prior-catalog-metadata-only-current-direct-catalog-probe-failed-before-origin-response",
-      "apiTest": "No row-level terrain measurement data downloaded; direct catalog page probe blocked by proxy tunnel before origin response."
+      "verificationStatus": "static-catalog-and-Release-67-metadata-verified-via-web-connector; no-row-level-measurements",
+      "apiTest": "Search connector rendered official PDS/ODE documentation pages; HTTP status was not exposed and no granular LOLA product records were returned. Direct executor request remains proxy-blocked. No site elevation/slope values imported."
     },
     {
       "sourceId": "bvad",
@@ -105,7 +105,7 @@
       "usedFields": [
         "Moon surface gravity 1.624 m/s²; Earth comparison 0.165"
       ],
-      "gameMapping": "Displayed as a physical science fact. Not used to numerically integrate the game orbit model; orbit ring remains illustrative.",
+      "gameMapping": "The 1.624 m/s² value from flight-baselines.json drives the mass × gravity lunar-weight result and local learning-record calculator. The Earth comparison constant is a classroom reference; the orbit ring remains illustrative and is not integrated.",
       "verificationStatus": "official-NASA-pages-verified"
     }
   ],

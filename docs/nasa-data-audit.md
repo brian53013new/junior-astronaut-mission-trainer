@@ -34,7 +34,7 @@ Detailed machine-readable provenance is in `public/data/nasa/source-manifest.jso
 - Desktop/mobile UI, fallback and importer automated checks are run as recorded at handoff; this environment cannot certify physical iPhone/iPad behavior from browser automation alone.
 
 
-Flight lesson boundary: NASA lunar surface gravity is now displayed with a source link. The current orbit interaction is still a conceptual ring adjustment, not a gravity solver or numerically computed trajectory. The value is not used to imply otherwise.
+Flight lesson boundary: NASA lunar surface gravity is displayed with a source link and drives a mass-to-weight calculator (weight = mass × gravity); the result is stored as a local learning record. The orbit interaction is still a conceptual ring adjustment, not a gravity solver or numerically computed trajectory.
 
 
 ## Gate 2 live access attempt (2026-11-13)
@@ -50,3 +50,11 @@ The code path now uses `Promise.allSettled` for the six DONKI feeds and retains 
 These behaviors are validated with mock fixtures only (`npm run check:nasa-data`). The actual NASA endpoint requests in this environment were stopped by the proxy before reaching NASA, so there is currently no real raw body, real hash, or NASA event snapshot to include. `public/data/nasa-event-snapshot.json` is intentionally still an empty educational fallback. The importer is ready to write a validated raw snapshot once it runs in a network that reaches the official API; the current proxy failure is not treated as a NASA response.
 
 The Images API normalizer now records the exact query URL and retrieval time with each real catalog result, and the UI/export displays those fields. This normalizer is also tested only against mock data here. The game’s bundled PIA13720 asset remains labeled as a static NASA Science Photojournal image and is not represented as an Images API result.
+
+## Stage 3 follow-through — 2026-11-13
+
+- `NASADataProvider.ts` now imports the checked-in BVAD and lunar-gravity JSON files as runtime data. The mission water baseline derives from the BVAD Transit Vehicle value and the explicitly educational 0.64 kg/game-point scale; the flight lesson calculator derives the 1.624 m/s² constant from the flight data file. This removes the separate hard-coded runtime copy of those two values.
+- The study view provides course-level source cards for assembly, communications, repair and the finale. Planning and flight have linked NASA data cards; observation shows the static Photojournal image and source. Cards distinguish reference context, imported data, classroom action and limitations.
+- The three candidate lunar locations still have no real LOLA row-level measurements and do not use a NASA terrain score. DONKI and NASA Images API still have no genuine response in the repository.
+- The browser/web search connector could render the PDS LOLA catalog metadata (Release 67) during follow-up, but neither it nor the executor produced a product download or measured site row. The catalog page is not treated as a terrain dataset and no values were added.
+- Rights and source records are consolidated in `NASA_REFERENCES.md`; the complete 68-entry npm lock inventory is in `public/data/third-party/dependency-license-inventory.json`. Optional platform-specific packages not installed in this environment remain marked as license metadata not locally verified. The project-wide license is pending rights-holder confirmation in `LICENSE`.
