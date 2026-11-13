@@ -63,6 +63,8 @@ git diff --check
 
 Mock-based ingestion checks verify validation and failure handling; they do not prove NASA connectivity. The current test report separates mock checks, genuine source evidence, browser emulation and physical-device gaps. Review [docs/nasa-data-integration.md](docs/nasa-data-integration.md) before acquiring a snapshot. Never turn a DONKI event type into a real radiation dose, health prediction or safety instruction.
 
+The implemented bilingual lesson sequence and its evidence limits are summarized in [docs/course-content-report.md](docs/course-content-report.md).
+
 ## Project map
 
 - `src/game/Game.ts`, `MissionEngine.ts`: scene coordination and game-state transitions.
