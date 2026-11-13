@@ -1,0 +1,22 @@
+{
+  "catalogSource": "NASA Image and Video Library API",
+  "apiDocumentation": "https://images.nasa.gov/docs/images.nasa.gov_api_docs.pdf",
+  "apiEndpoint": "https://images-api.nasa.gov/search",
+  "checkedAtUTC": "2026-11-13T01:59:51Z",
+  "verificationStatus": "API-documentation-verified; live-query-blocked-in-executor",
+  "usedFieldsForLiveResults": ["nasa_id", "title", "description", "date_created", "center", "keywords", "links[].href", "links[].rel"],
+  "items": [
+    {
+      "nasaId": "PIA13720",
+      "title": "South Pole Illumination Map",
+      "officialPage": "https://science.nasa.gov/photojournal/south-pole-illumination-map/",
+      "description": "A Lunar Reconnaissance Orbiter illumination map; bright and dark regions represent lighting conditions and do not directly report water abundance.",
+      "mission": "Lunar Reconnaissance Orbiter (LRO)",
+      "credit": "NASA / GSFC / Arizona State University",
+      "useTerms": "NASA public-media use guidance applies; retain the credit and verify any page-specific third-party restrictions before redistribution. No separate page-specific license statement was verified in this audit.",
+      "retrievedAtUTC": "2026-11-13T01:59:51Z",
+      "bundledLocalAsset": "/data/lro-south-pole.jpg",
+      "sourceType": "NASA Science Photojournal page; not a response from images.nasa.gov"
+    }
+  ]
+}

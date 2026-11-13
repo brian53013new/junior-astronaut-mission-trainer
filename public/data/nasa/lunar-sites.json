@@ -1,0 +1,15 @@
+{
+  "dataset": "LRO Lunar Orbiter Laser Altimeter (LOLA) data catalog",
+  "sourceName": "NASA Planetary Data System Geosciences Node",
+  "sourceUrl": "https://pds-geosciences.wustl.edu/missions/lro/lola.htm",
+  "relatedMissionUrl": "https://science.nasa.gov/mission/lro/",
+  "quickMapUrl": "https://quickmap.lroc.asu.edu/",
+  "productAndReleaseChecked": "LOLA RDR/GDR catalog; Release 67 metadata, dated 2026-09-15",
+  "checkedAtUTC": "2026-11-13T01:59:51Z",
+  "verificationStatus": "catalog-metadata-verified; measured-site-values-not-downloaded",
+  "licenseOrTerms": "PDS archive distribution; product-specific documentation and citations apply. No derived site values are redistributed in this file.",
+  "usedFields": [],
+  "records": [],
+  "gameMapping": "No measured elevation, slope, coordinates, communications visibility, or landing-risk values have been imported. The three game locations remain illustrative teaching scenarios and are not real surveyed candidate sites.",
+  "limitations": "QuickMap is an interactive mapping application, not described here as a REST API. Import a versioned PDS product and preserve its product identifier, release, coordinates, units, processing level, and citation before claiming measured values."
+}

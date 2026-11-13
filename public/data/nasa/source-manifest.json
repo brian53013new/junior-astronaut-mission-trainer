@@ -1,0 +1,70 @@
+{
+  "manifestVersion": 1,
+  "generatedAtUTC": "2026-11-13T01:59:51Z",
+  "projectDisclosure": "Outpost Control is an independent educational project, not a NASA product or endorsement. Game effects are not mission or safety predictions.",
+  "sources": [
+    {
+      "sourceId": "donki",
+      "sourceName": "NASA CCMC Space Weather Database Of Notifications, Knowledge, Information (DONKI)",
+      "sourceUrl": "https://ccmc.gsfc.nasa.gov/tools/DONKI/",
+      "apiEndpoint": "https://ccmc.gsfc.nasa.gov/DONKI-API/get/",
+      "queryTemplate": "{type}?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD",
+      "eventTypes": ["CME", "FLR", "GST", "SEP", "IPS", "HSS"],
+      "retrievedAtUTC": "2026-11-13T01:59:51Z",
+      "dataVersion": "Public API documentation/migration checked; no JSON snapshot imported",
+      "licenseOrTerms": "CCMC DONKI is provided as-is; official documentation cautions that near-real-time outputs/simulations are prototyping or research quality and not mission advice. Attribute the official event record; do not imply NASA endorsement.",
+      "usedFields": ["eventID", "startTime or eventTime", "link", "event-type-specific metadata when present"],
+      "gameMapping": "Type/date/link/source time are preserved. A small type-dependent power change is a declared educational game rule, never an observed impact, dose, or hazard coefficient.",
+      "verificationStatus": "official-documentation-and-event-page-verified; direct-API-JSON-fetch-blocked-by-executor-proxy-403",
+      "apiTest": "Attempted six public CCMC endpoints for 2026-11-01 through 2026-11-13; proxy tunnel returned HTTP 403 before NASA response. NASA Open APIs DONKI entry was also attempted and unavailable through this executor. No response JSON or new snapshot is claimed."
+    },
+    {
+      "sourceId": "lro-lola-pds",
+      "sourceName": "LRO LOLA, NASA Planetary Data System Geosciences Node",
+      "sourceUrl": "https://pds-geosciences.wustl.edu/missions/lro/lola.htm",
+      "apiEndpoint": "PDS catalog/product archive; not a general QuickMap REST API",
+      "retrievedAtUTC": "2026-11-13T01:59:51Z",
+      "dataVersion": "LOLA RDR/GDR catalog metadata; Release 67, 2026-09-15",
+      "licenseOrTerms": "PDS product-level documentation and citation apply.",
+      "usedFields": ["product names, release/date metadata, archive scope"],
+      "gameMapping": "Catalog context only; no actual elevation/slope rows imported. Game sites are illustrative.",
+      "verificationStatus": "catalog-metadata-verified; site-measurements-not-imported"
+    },
+    {
+      "sourceId": "bvad",
+      "sourceName": "NASA Baseline Values and Assumptions Document for Life Support Systems, Rev. 2",
+      "sourceUrl": "https://ntrs.nasa.gov/citations/20210024855",
+      "apiEndpoint": "https://ntrs.nasa.gov/api/citations/20210024855/downloads/BVAD_2.15.22-final.pdf",
+      "retrievedAtUTC": "2026-11-13T01:59:51Z",
+      "dataVersion": "2021 record / February 2022 Rev. 2 PDF",
+      "licenseOrTerms": "NTRS record marks PUBLIC distribution and PUBLIC_USE_PERMITTED; no third-party material flagged. Attribution retained.",
+      "usedFields": ["Table 4-20, printed page 72: drinking water, food rehydration, urinal flush, personal hygiene, shower, laundry, dish wash, total hygiene, total water consumption"],
+      "gameMapping": "Transit vehicle total 3.2 kg/crew-member-day / 0.64 kg per game point = 5 points. 0.64 kg scale and site-specific surcharges are educational abstractions.",
+      "verificationStatus": "official-NTRS-record-and-PDF-table-verified"
+    },
+    {
+      "sourceId": "nasa-images-api",
+      "sourceName": "NASA Image and Video Library API",
+      "sourceUrl": "https://images.nasa.gov/docs/images.nasa.gov_api_docs.pdf",
+      "apiEndpoint": "https://images-api.nasa.gov/search?q=",
+      "retrievedAtUTC": "2026-11-13T01:59:51Z",
+      "dataVersion": "API documentation checked; no live API item query returned",
+      "licenseOrTerms": "Check image-specific credit and third-party rights; NASA branding does not imply endorsement.",
+      "usedFields": ["nasa_id", "title", "description", "date_created", "center", "keywords", "links"],
+      "gameMapping": "Explicit search action displays API results as cited evidence. Existing bundled PIA13720 image is sourced separately from NASA Science, not claimed as an Images API response.",
+      "verificationStatus": "official-API-documentation-verified; live-query-blocked-by-executor-proxy-403"
+    },
+    {
+      "sourceId": "lro-illumination-pia13720",
+      "sourceName": "NASA Science Photojournal: South Pole Illumination Map (PIA13720)",
+      "sourceUrl": "https://science.nasa.gov/photojournal/south-pole-illumination-map/",
+      "apiEndpoint": null,
+      "retrievedAtUTC": "2026-11-13T01:59:51Z",
+      "dataVersion": "Bundled local image / PIA13720",
+      "licenseOrTerms": "Credit NASA/GSFC/Arizona State University; page-specific third-party restrictions were not separately verified in this audit.",
+      "usedFields": ["illumination map image and attribution"],
+      "gameMapping": "Learners compare lit and shadowed terrain; image brightness is not interpreted as water abundance.",
+      "verificationStatus": "official-source-page-verified; already-bundled-image"
+    }
+  ]
+}
