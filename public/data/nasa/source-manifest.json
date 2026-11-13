@@ -1,6 +1,6 @@
 {
   "manifestVersion": 1,
-  "generatedAtUTC": "2026-11-13T01:59:51Z",
+  "generatedAtUTC": "2026-11-13T02:23:08Z",
   "projectDisclosure": "Outpost Control is an independent educational project, not a NASA product or endorsement. Game effects are not mission or safety predictions.",
   "sources": [
     {
@@ -9,11 +9,23 @@
       "sourceUrl": "https://ccmc.gsfc.nasa.gov/tools/DONKI/",
       "apiEndpoint": "https://ccmc.gsfc.nasa.gov/DONKI-API/get/",
       "queryTemplate": "{type}?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD",
-      "eventTypes": ["CME", "FLR", "GST", "SEP", "IPS", "HSS"],
+      "eventTypes": [
+        "CME",
+        "FLR",
+        "GST",
+        "SEP",
+        "IPS",
+        "HSS"
+      ],
       "retrievedAtUTC": "2026-11-13T01:59:51Z",
       "dataVersion": "Public API documentation/migration checked; no JSON snapshot imported",
       "licenseOrTerms": "CCMC DONKI is provided as-is; official documentation cautions that near-real-time outputs/simulations are prototyping or research quality and not mission advice. Attribute the official event record; do not imply NASA endorsement.",
-      "usedFields": ["eventID", "startTime or eventTime", "link", "event-type-specific metadata when present"],
+      "usedFields": [
+        "eventID",
+        "startTime or eventTime",
+        "link",
+        "event-type-specific metadata when present"
+      ],
       "gameMapping": "Type/date/link/source time are preserved. A small type-dependent power change is a declared educational game rule, never an observed impact, dose, or hazard coefficient.",
       "verificationStatus": "official-documentation-and-event-page-verified; direct-API-JSON-fetch-blocked-by-executor-proxy-403",
       "apiTest": "Attempted six public CCMC endpoints for 2026-11-01 through 2026-11-13; proxy tunnel returned HTTP 403 before NASA response. NASA Open APIs DONKI entry was also attempted and unavailable through this executor. No response JSON or new snapshot is claimed."
@@ -26,7 +38,9 @@
       "retrievedAtUTC": "2026-11-13T01:59:51Z",
       "dataVersion": "LOLA RDR/GDR catalog metadata; Release 67, 2026-09-15",
       "licenseOrTerms": "PDS product-level documentation and citation apply.",
-      "usedFields": ["product names, release/date metadata, archive scope"],
+      "usedFields": [
+        "product names, release/date metadata, archive scope"
+      ],
       "gameMapping": "Catalog context only; no actual elevation/slope rows imported. Game sites are illustrative.",
       "verificationStatus": "catalog-metadata-verified; site-measurements-not-imported"
     },
@@ -38,7 +52,9 @@
       "retrievedAtUTC": "2026-11-13T01:59:51Z",
       "dataVersion": "2021 record / February 2022 Rev. 2 PDF",
       "licenseOrTerms": "NTRS record marks PUBLIC distribution and PUBLIC_USE_PERMITTED; no third-party material flagged. Attribution retained.",
-      "usedFields": ["Table 4-20, printed page 72: drinking water, food rehydration, urinal flush, personal hygiene, shower, laundry, dish wash, total hygiene, total water consumption"],
+      "usedFields": [
+        "Table 4-20, printed page 72: drinking water, food rehydration, urinal flush, personal hygiene, shower, laundry, dish wash, total hygiene, total water consumption"
+      ],
       "gameMapping": "Transit vehicle total 3.2 kg/crew-member-day / 0.64 kg per game point = 5 points. 0.64 kg scale and site-specific surcharges are educational abstractions.",
       "verificationStatus": "official-NTRS-record-and-PDF-table-verified"
     },
@@ -50,7 +66,15 @@
       "retrievedAtUTC": "2026-11-13T01:59:51Z",
       "dataVersion": "API documentation checked; no live API item query returned",
       "licenseOrTerms": "Check image-specific credit and third-party rights; NASA branding does not imply endorsement.",
-      "usedFields": ["nasa_id", "title", "description", "date_created", "center", "keywords", "links"],
+      "usedFields": [
+        "nasa_id",
+        "title",
+        "description",
+        "date_created",
+        "center",
+        "keywords",
+        "links"
+      ],
       "gameMapping": "Explicit search action displays API results as cited evidence. Existing bundled PIA13720 image is sourced separately from NASA Science, not claimed as an Images API response.",
       "verificationStatus": "official-API-documentation-verified; live-query-blocked-by-executor-proxy-403"
     },
@@ -62,9 +86,25 @@
       "retrievedAtUTC": "2026-11-13T01:59:51Z",
       "dataVersion": "Bundled local image / PIA13720",
       "licenseOrTerms": "Credit NASA/GSFC/Arizona State University; page-specific third-party restrictions were not separately verified in this audit.",
-      "usedFields": ["illumination map image and attribution"],
+      "usedFields": [
+        "illumination map image and attribution"
+      ],
       "gameMapping": "Learners compare lit and shadowed terrain; image brightness is not interpreted as water abundance.",
       "verificationStatus": "official-source-page-verified; already-bundled-image"
+    },
+    {
+      "sourceId": "lunar-gravity",
+      "sourceName": "NASA Science Moon by the Numbers; NASA Glenn Research Center Moon facts",
+      "sourceUrl": "https://science.nasa.gov/moon/by-the-numbers/",
+      "apiEndpoint": null,
+      "retrievedAtUTC": "2026-11-13T02:23:08Z",
+      "dataVersion": "NASA Science page checked 2026-11-13; JPL Solar System Dynamics cited by page",
+      "licenseOrTerms": "Public NASA educational reference; attribution retained. No NASA endorsement implied.",
+      "usedFields": [
+        "Moon surface gravity 1.624 m/s²; Earth comparison 0.165"
+      ],
+      "gameMapping": "Displayed as a physical science fact. Not used to numerically integrate the game orbit model; orbit ring remains illustrative.",
+      "verificationStatus": "official-NASA-pages-verified"
     }
   ]
 }
