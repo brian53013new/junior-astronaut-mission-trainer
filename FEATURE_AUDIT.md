@@ -1,5 +1,16 @@
 # Junior Astronaut Mission Trainer — implementation audit
 
+## Stage 5 — Mission Table route (2026-11-13)
+
+- [x] Added the production Lunar Mission Table route after the 3D welcome room. It presents six short learning turns plus an integrated finale; the full paper curriculum remains optional.
+- [x] Board state, round actions and learning record persist in local storage. Existing course data remains intact; board state uses its own versioned key.
+- [x] Connected assembly, communications, observation and repair tasks to existing 3D rooms. Site comparison and gravity controls use packaged values and change visible educational status rails.
+- [x] Added course evidence cards and updated the Data Lab LOLA wording to match the user-supplied RDR package and its slope limitations.
+- [ ] A fresh-storage uninterrupted run through welcome, all rooms, finale, learning record and certificate is not yet verified. This audit records implementation, not end-to-end proof.
+- [ ] Physical iPhone/iPad/Android checks remain with the user; no physical-device result is claimed.
+
+The historical Gate 2 bullets below record what was known before the user-supplied package. Current acquisition facts are in the later user-package section and `docs/nasa-data-audit.md`.
+
 Status describes behavior in this checkout, not visual ambition. Existing saves must remain usable.
 
 - [x] First-visit 3D welcome room, NOVA introduction, practice button/dial/switch and hatch; desktop/mobile emulation has exercised the first lesson.

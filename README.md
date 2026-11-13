@@ -2,6 +2,8 @@
 
 Outpost Control is a **bilingual (English / Traditional Chinese) 3D lunar-base education game** created for the NASA Space Apps Challenge **“Build a Junior Astronaut Mission Trainer.”** Learners join NOVA to assemble a probe, compare LOLA-derived south-pole points, plan a flight, align a communication link, inspect lunar imagery, repair a system, and make resource choices in an integrated outpost mission.
 
+The ordinary production route goes from NOVA's 3D welcome room to a six-turn Lunar Mission Table and integrated finale (about 12–18 minutes). The existing full reading-and-quiz curriculum remains available as an optional longer route. See the [current Mission Table course report](docs/mission-board-course-report.md) for its dialogue, actions, outcomes, sources and limits.
+
 **This is an independent educational game, not a NASA product, NASA-certified trainer, operational mission simulator, radiation-dose forecast, or lunar-base safety tool.** Game values and consequences are classroom simulations. Only the references and datasets explicitly marked as used below are represented as NASA material. See [NASA_REFERENCES.md](NASA_REFERENCES.md), [data audit](docs/nasa-data-audit.md), and [test report](docs/TEST_REPORT.md).
 
 ## Current NASA data status
@@ -64,7 +66,7 @@ git diff --check
 
 Mock-based ingestion checks verify validation and failure handling; they do not prove NASA connectivity. The current test report separates mock checks, genuine source evidence, browser emulation and physical-device gaps. Review [docs/nasa-data-integration.md](docs/nasa-data-integration.md) before acquiring a snapshot. Never turn a DONKI event type into a real radiation dose, health prediction or safety instruction.
 
-The implemented bilingual lesson sequence and its evidence limits are summarized in [docs/course-content-report.md](docs/course-content-report.md). The raw user-provided NASA package and original checksums are preserved under public/data/nasa/user-submitted-package/.
+The current bilingual mission-table sequence and evidence limits are summarized in [docs/mission-board-course-report.md](docs/mission-board-course-report.md). The legacy paper curriculum is summarized in [docs/course-content-report.md](docs/course-content-report.md). The raw user-provided NASA package and original checksums are preserved under public/data/nasa/user-submitted-package/.
 
 ## Project map
 

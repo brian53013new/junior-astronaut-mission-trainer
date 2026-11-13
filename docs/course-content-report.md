@@ -3,7 +3,7 @@
 Date: 2026-11-13
 Source revision: `a836ba7f2868de44294065887ff4a46cf7f94452`
 
-This report describes the course currently implemented in `src/game/Journey.ts`, `src/game/Curriculum.ts`, `src/game/LearningActivities.ts`, and `src/game/NASADataProvider.ts`. It is an audit of the implemented learning journey, not a claim that every lesson is NASA-data driven. The game is an independent bilingual educational simulation, not a NASA product or mission tool. It stores lesson choices and action summaries as learning records; it is not intended to collect a learner's name, birth date, address, face, voice, or other direct personal identifier.
+The required short-form route is now the six-turn Lunar Mission Table described in [`mission-board-course-report.md`](mission-board-course-report.md) and implemented by `src/game/MissionBoard.ts`. The earlier paper-led `Journey` route remains available as optional full lessons; this document records that curriculum. It is not a claim that every lesson is NASA-data driven. The game is an independent bilingual educational simulation, not a NASA product or mission tool. It stores lesson choices and action summaries locally; it is not intended to collect a learner's name, birth date, address, face, voice, or other direct personal identifier.
 
 ## Shared lesson rhythm
 
@@ -41,7 +41,7 @@ Each lesson is framed as a child-friendly everyday question, introduces a scienc
 - **Learning focus:** Radio waves are electromagnetic waves and can propagate through vacuum; sound requires a medium. Distance affects signal travel time.
 - **Player activity:** Predict signal delay, operate the communications exercise and transmit a pattern, then explain why a distant reply is not immediate.
 - **Outcome / record:** Communication actions and quiz attempts are saved; any resource or event effects are explicitly simulation rules.
-- **Source and limits:** NASA Space Place / DSN material provides context. No genuine DONKI event snapshot has been obtained, so no NASA space-weather event is currently used to change the task. The pattern is not NASA encoding.
+- **Source and limits:** NASA Space Place / DSN material provides context. A user-supplied, hash-checked partial DONKI snapshot is available to the short-form mission board as event context. The game does not convert event types into radiation dose, health risk or a forecast. The legacy signal pattern is not NASA encoding.
 
 ### 5. Be a space scientist
 
@@ -49,7 +49,7 @@ Each lesson is framed as a child-friendly everyday question, introduces a scienc
 - **Learning focus:** Separate observation (“the map shows a dark area”) from inference (“there may be ice”) and identify what further evidence is needed.
 - **Player activity:** Adjust an observation instrument, compare visual clues, state what is seen, and decide whether a conclusion needs more evidence.
 - **Outcome / record:** Instrument actions, clues, and quiz attempts are recorded. Displayed signal strength is a game simulation.
-- **Source and limits:** The existing PIA13720 asset is labeled as a NASA Science Photojournal static image. It was not returned by the NASA Images API. An illumination image does not directly measure ice; no dark patch is presented as proof of water.
+- **Source and limits:** The existing PIA13720 asset is a separate NASA Science Photojournal static image, not an Images API result. Five user-supplied NASA Images API result records are also bundled and shown in the Data Lab / short-form evidence card. Neither search metadata nor illumination directly measures ice; no dark patch is presented as proof of water.
 
 ### 6. Emergency repair
 
@@ -69,7 +69,7 @@ Each lesson is framed as a child-friendly everyday question, introduces a scienc
 
 ## Completion and evidence limits
 
-The source currently implements predictions, actions, reflections, retryable quizzes, and per-lesson records. Browser tests cover entry into the first lesson and multiple individual course flows. The recorded test suite does not yet prove one uninterrupted fresh-storage journey through all six lessons, finale, mission log, and certificate. Do not describe that end-to-end path as fully verified until that run is completed.
+The legacy route implements predictions, actions, reflections, retryable quizzes, and per-lesson records. The short-form board has its own persistent round and action records. A complete uninterrupted fresh-storage journey through every room, finale, mission record, and certificate remains a required verification item; component tests or isolated lesson tests do not prove that path.
 
 ## Data protection note
 
