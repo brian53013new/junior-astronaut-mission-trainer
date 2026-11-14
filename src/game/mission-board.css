@@ -26,3 +26,10 @@
 @media(prefers-reduced-motion:reduce){.board-screen-hint,.source-detail{transition:none!important}}
 /* Keep the action row above the tutorial card on narrow, safe-area viewports. */
 @media(max-width:760px){.physical-board-head nav{position:absolute;top:58px;left:0;right:0;justify-content:flex-end}.physical-board-step{top:max(140px,calc(env(safe-area-inset-top) + 112px))}.physical-resource-rail{top:max(140px,calc(env(safe-area-inset-top) + 112px))}}
+/* The source card is a small learning interaction: identify the clue before exposing raw provenance. */
+.source-question{margin:10px 0 6px;color:var(--mission-amber);font-weight:750;line-height:1.4}
+.source-choices{display:grid;gap:7px}
+.source-choice{min-height:var(--mission-touch);padding:8px 12px;border:1px solid #6d8795;border-radius:7px;background:#142a3b;color:var(--mission-white);font:inherit;text-align:left;cursor:pointer}
+.source-choice:hover{border-color:var(--mission-ice);background:#1d3b50}
+.source-choice:focus-visible{outline:3px solid var(--mission-focus-ring);outline-offset:2px}
+.source-choices[hidden],.source-question[hidden]{display:none}

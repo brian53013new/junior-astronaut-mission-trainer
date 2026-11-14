@@ -49,9 +49,15 @@ test('fresh save completes the five-turn physical board and restores its certifi
   await dragBoardObject(page, await boardPoint(page, 'base'), await boardPoint(page, 'site', 0));
   await expect.poll(() => page.evaluate(() => window.__OUTPOST_QA__!.missionBoard().site)).not.toBe('');
   await expect(page.locator('#mission-board')).toHaveAttribute('data-tutorial-step', '1');
+  await expect(page.locator('.physical-board-task')).not.toContainText('°');
   await clickBoardMesh(page, 'source', 0);
   await expect(page.locator('.source-drawer')).toBeVisible();
   await expect(page.locator('#mission-board')).toHaveAttribute('data-tutorial-step', '1');
+  await expect(page.locator('.source-detail')).toBeHidden();
+  await page.getByTestId('source-choice-1').click();
+  await expect(page.locator('.physical-nova')).toContainText('Look at the mission question again');
+  await page.getByTestId('source-choice-1').click();
+  await expect(page.locator('.physical-nova')).toContainText('location and terrain');
   await page.getByTestId('source-find-clue').click();
   await expect(page.locator('.source-detail a')).toBeVisible();
   await expect(page.locator('#mission-board')).toHaveAttribute('data-tutorial-step', '2');
