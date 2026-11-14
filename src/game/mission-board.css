@@ -7,3 +7,22 @@
 @media(max-height:550px) and (orientation:landscape){.physical-board-step{top:68px;width:230px;padding:7px}.physical-resource-rail{top:68px}.physical-board-task{bottom:62px;max-height:48vh;right:10px;width:320px}.physical-nova{bottom:6px;width:310px;padding:6px 9px}.physical-nova button{display:none}}
 @media(prefers-reduced-motion:reduce){#mission-board *{scroll-behavior:auto!important}}
 .antenna-fallback{display:grid;gap:3px;margin:5px 0;color:#d3dcdf;font-size:.8em}.antenna-fallback input{width:100%;min-height:40px;accent-color:var(--mission-amber);touch-action:pan-x}
+.board-tutorial-callout{display:grid;grid-template-columns:1fr auto;gap:3px 8px;margin-top:9px;padding:8px 9px;border-top:1px solid #90764b;background:#1a2a32a8}.board-tutorial-callout b{grid-column:1/-1;color:var(--mission-amber);font-size:.68em;letter-spacing:.08em}.board-tutorial-callout span{align-self:center;font-size:.78em;line-height:1.25;color:#e1e6e4}.board-tutorial-callout button{grid-column:2;grid-row:2;min-height:34px;padding:4px 8px;border:1px solid #8298a3;border-radius:6px;background:#142a3bdd;color:var(--mission-white);font:inherit;font-size:.68em;cursor:pointer;pointer-events:auto}@media(max-width:760px){.board-tutorial-callout{gap:2px 5px;margin-top:6px;padding:6px}.board-tutorial-callout span{font-size:.7em}.board-tutorial-callout button{min-height:34px;padding:4px 6px}}
+
+/* Child-friendly progressive source reveal and accessible focus states. */
+:root{--mission-focus-ring:#f2d48c;--mission-danger:#d76a62;--mission-success:#80c5b5;--mission-space:8px;--mission-touch:44px}
+#mission-board :focus-visible{outline:3px solid var(--mission-focus-ring);outline-offset:3px;box-shadow:0 0 0 5px #0b1c28}
+.physical-board-head nav{position:relative;align-items:center}
+.board-screen-hint{position:absolute;right:0;top:calc(100% + 7px);padding:6px 10px;border:1px solid var(--mission-ice);border-radius:6px;background:#102333ef;color:var(--mission-white);font-size:.75em;white-space:nowrap;pointer-events:none;box-shadow:0 4px 12px #0005}
+.source-drawer .source-summary,.source-drawer .source-clue{font-size:.95em;line-height:1.5;color:var(--mission-white)}
+.source-find-clue{display:block;min-height:var(--mission-touch);max-width:100%;margin:8px 0;padding:8px 12px;border:1px solid var(--mission-ice);border-radius:7px;background:#173248;color:var(--mission-white);font:inherit;font-weight:750;cursor:pointer}
+.source-find-clue:hover{background:#23475d}
+.source-detail{padding:8px 10px;border-left:3px solid var(--mission-amber);background:#0b1a26a8}
+.source-detail[hidden]{display:none}
+.source-detail .source-clue{color:var(--mission-amber);font-weight:700}
+.source-detail .source-limit{font-size:.88em;line-height:1.5;color:var(--mission-muted)}
+.source-detail .source-provenance{display:block;margin:8px 0 0;font-size:.75em;line-height:1.45;color:#c6d1d2;overflow-wrap:anywhere}
+@media(max-width:760px){.physical-board-head nav{gap:3px}.board-screen-hint{top:calc(100% + 4px);font-size:.69em}.source-drawer{max-height:72dvh;overflow:auto}}
+@media(prefers-reduced-motion:reduce){.board-screen-hint,.source-detail{transition:none!important}}
+/* Keep the action row above the tutorial card on narrow, safe-area viewports. */
+@media(max-width:760px){.physical-board-head nav{position:absolute;top:58px;left:0;right:0;justify-content:flex-end}.physical-board-step{top:max(140px,calc(env(safe-area-inset-top) + 112px))}.physical-resource-rail{top:max(140px,calc(env(safe-area-inset-top) + 112px))}}

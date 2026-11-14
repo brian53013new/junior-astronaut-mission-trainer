@@ -2,15 +2,20 @@
 
 ## Urgent board-only rebuild — 2026-11-14
 
-- [x] Normal home → start now opens one five-turn 3D mission board directly; no welcome-room, lesson selector, or alternate course button appears on the production route. Legacy lesson classes remain in the repository but are not the normal route; deletion remains open.
+- [x] Normal home → start opens one five-turn 3D mission board directly; no welcome, lesson-selector, or alternate course entry is rendered. A separate home-screen Replay Board Guide action returns to this same board and preserves mission progress. Legacy room/course source modules remain dormant and are still pending source cleanup.
 - [x] The board includes physical Three.js terrain pads/habitat token, gimbal antenna, evidence tiles and repair ports. Mouse drag and touch pointer events use raycast selection/pointer capture; accessible task controls are retained.
 - [x] A 3D task overlay hit-area regression was fixed: the card's transparent body no longer intercepts mesh interaction, while buttons, range inputs, source links and summaries remain interactive.
 - [x] Five turn decisions update the canonical MissionEngine resources and persist turn records; finale certificate state survives reload.
 - [x] Source details show provenance date/hash/status where an imported snapshot provides them; NASA facts, imported snapshots and game mappings remain distinct.
-- [x] Board E2E covers fresh storage, physical site drag, physical antenna drag, physical evidence tile, physical repair ports, finale choices, certificate, reload, language persistence and 375×812 / 768×1024 / 1024×768 viewport overflow.
+- [x] Four-step board guide requires habitat drag, physical source-card open, child-sized clue discovery, antenna rotation and a confirmed choice; source details progressively reveal and clue IDs persist. It is skippable/replayable without resetting mission data.
+- [x] Blank-space mouse parallax is damped and clamped, does not react while hovering controls, pauses during drag, recenters on canvas exit, and is disabled under reduced motion.
+- [x] The rear-right scene display has a non-overlapping touch raycast surface; physical click/tap and keyboard Enter open the same source focus state, and source close/Escape returns the smooth camera to overview without changing mission state.
+- [x] Board E2E covers those operations, mission completion, replay from home with saved progress, certificate/reload, language and 375×812 / 768×1024 / 1024×768 overflow. It also checks camera focus/return, physical hit target and reduced motion.
 - [ ] Physical iPhone/iPad Safari test is still pending. Chromium mobile emulation is not a hardware result.
 - [ ] Legacy course classes and their route-dependent tests remain dormant and incompatible with the board-only default. The old full-suite attempt had two failures, one interrupted test and 116 cases not run; no full legacy-suite pass is claimed. Current acceptance uses the dedicated board-only tests. See `docs/TEST_REPORT.md`.
 - [ ] Original content rights and project-wide license remain unconfirmed; no new license was assigned.
+
+See [`docs/existing-feature-matrix.md`](docs/existing-feature-matrix.md) for a combined recovery matrix from the board rebuild and teaching/3D-interaction follow-up packages, including explicit legacy and multi-room gaps.
 
 Implementation details and limitations: [`docs/urgent-board-rebuild-report.md`](docs/urgent-board-rebuild-report.md).
 
@@ -55,7 +60,7 @@ Status describes behavior in this checkout, not visual ambition. Existing saves 
 
 - [x] Lobby “Skip arrival” now enters the same first-time 3D welcome room and bypasses only its opening arrival animation; returning learners enter their saved cabin/lesson. Desktop and mobile Chromium browser checks cover the button path.
 - [x] Lobby language and text-size labels are localized; the accessible size selector retains the saved 100/150/200% choice.
-- [x] The existing unused HTML WelcomeFlow was replaced with a seven-step accessible alternative using `outpost-welcome-3d-step`, the same progress key as the 3D tutorial. The learner can switch from lobby or from the 3D room and return to the saved step. Desktop and mobile Chromium checks cover switching both ways.
+- [ ] Historical seven-step WelcomeFlow and WelcomeRoom sources remain dormant in this branch; they have no production entry, rendered WelcomeFlow DOM, or route in the board-only flow. Full source deletion remains open rather than being reported as complete.
 - [x] The existing mobile ReadingPanel is now wired to the same `Journey`, `MissionEngine` state and save methods as the 3D paper. Page turn, prediction/clue/reflection, answer and next-question callbacks share progress; the 3D paper is hidden only while the compact HTML study sheet is active. Mobile Chromium verified reading, saved page state and 200% text without horizontal overflow.
 - [x] Restored the previously force-hidden `#coach`; it now appears outside lobby/intro/quiz states and is suppressed while Settings is open. The mobile NOVA subtitle keeps a reserved avatar gutter at large text sizes.
 - [x] Added a user-facing source/provenance and Space Apps preparation panel, available in Settings and after completion. It states whether a NASA snapshot is actually loaded, lists the LRO illumination map and reference sources, stores checklist progress locally and exports JSON without submitting it.
@@ -64,7 +69,7 @@ Status describes behavior in this checkout, not visual ambition. Existing saves 
 
 ### Verification note — 2026-11-12
 
-- `npm run build` passes. The only build warning is the minified JavaScript bundle at about 940 kB, above Vite's 900 kB advisory threshold.
+- Current `npm run build` passes. Its minified JavaScript bundle is about 1,031 kB, above Vite's 900 kB advisory threshold; code splitting remains open.
 - `git diff --check` passes.
 - Curriculum, paper, core mission, offline-cache and DONKI import checks pass.
 - The full Playwright run previously completed all 38 desktop Chromium tests. After mobile-specific repairs, focused mobile assembly, finale, paper-turn, reading-panel and target-marker tests pass. The end-to-end mobile welcome-to-first-lesson test was interrupted during the longer assembly activation segment, so it is not counted as passing; the complete suite has not been rerun after the mobile fixes.

@@ -5,7 +5,7 @@
 
 ## Production route
 
-The home screen now presents the project disclosure, language, sources, settings and one start action. Start opens a single persistent 3D mission board directly. The ordinary flow has five short turns and ends with the mission record/certificate panel:
+The home screen presents the project disclosure, start, replay-board-guide, language, sources and settings. Start opens a single persistent 3D mission board directly; replaying the guide reuses the existing board save and changes only its tutorial step. The ordinary flow has five short turns and ends with the mission record/certificate panel:
 
 1. **Site:** drag the habitat token onto one of three LOLA point pads. The selected coordinates, relative topography and package-derived slope are shown; an educational comparison rule updates the mission state.
 2. **Event and communications:** physically drag the antenna gimbal. At alignment, choose to protect reserve or continue transmission. A saved user-provided DONKI event is context only; the consequence is labeled an educational rule.
@@ -13,16 +13,18 @@ The home screen now presents the project disclosure, language, sources, settings
 4. **Repair:** select the physical backup-power connector and life-support port. The cable geometry updates when connected; the resource change is disclosed as a game abstraction.
 5. **Integrated priorities:** choose two or more of energy, water and communications. The resource result, five turn records, source IDs and certificate state are stored locally.
 
-NOVA gives a short contextual line at each turn. A compact task panel provides keyboard/touch alternatives, summaries and the expandable source and limitation details. The operational board is scene geometry in the shared Three.js scene; the DOM layer is for readable instructions, resources, settings, source details and accessible alternatives.
+A four-step, skippable/replayable board guide now directs the player to (1) drag the habitat token, (2) open a physical source card, (3) find a child-sized clue before seeing the raw source details, then rotate the physical antenna and watch its readout, and (4) confirm a choice. The clue action saves which source the learner inspected and advances NOVA's guide. Full URL, provenance, units and restrictions reveal after the child finds the clue. The guide is saved in the same board state, is not a second route, and can be replayed from the home screen or board footer without clearing mission choices. NOVA’s short line changes with the guide step and task turn. A compact task panel provides keyboard/touch alternatives, summaries and expandable source and limitation details. The operational board is scene geometry in the shared Three.js scene; the DOM layer is for readable instructions, resources, settings, source details and accessible alternatives.
 
 ## Input and layout changes
 
-- The start action no longer gates the game behind the WelcomeRoom, long intro sequence, text tutorial or course selector. The board directly owns the default route.
+- The start action enters the board directly. The former WelcomeFlow is not imported or instantiated; no welcome-room, intro-skip, course-selector or lesson-selector element is in the rendered DOM. A separate dormant legacy WelcomeRoom implementation and old course modules still exist in source, but no production button or route can enter them; complete source deletion remains tracked as cleanup.
 - Old course/room control handlers are ignored while the board is active, so a legacy control cannot also rotate the camera or execute an unrelated action.
 - Physical controls use raycasting against the board's own interaction meshes. The habitat token and antenna use pointer capture for drag; classification tiles and repair connectors use selection/tap. DOM buttons remain alternatives.
 - The HUD task surface is pointer-transparent except for actual links, buttons, summaries and inputs. This fixes the hit-area blocker where the task panel rectangle intercepted antenna drag despite having transparent areas.
 - Old wall monitors, desk controls, paper, legacy desk furniture and the NOVA mesh are hidden while the board is active; the ring camera overlay is removed. The board has a dedicated camera view, then restores the previous console view when leaving board mode. The board table includes a continuous frame, edge rails and visible support legs.
 - Phone/tablet CSS uses safe insets, one-column resource indicators, bounded task card height, and no horizontal page overflow. All controls keep touch-sized targets.
+- Empty-space mouse movement produces a bounded, damped board parallax of at most about four degrees; pointer movement over a physical control does not move the board, dragging pauses parallax, canvas exit recenters it, and reduced-motion preference disables it.
+- The rear-right 3D mission display has a separate expanded transparent raycast surface, so the physical screen no longer competes with the observation tiles for hit priority. Click/tap raycast and a keyboard-focusable screen action enter the same focus state; the camera dollies toward the display and the current source drawer opens. Closing or pressing Escape returns to overview without mutating phase, site, or resources.
 
 ## Data and provenance shown in play
 
@@ -38,14 +40,16 @@ Source details are accessible from each turn. The project remains an independent
 
 Automated Playwright board-only E2E in Chromium browser emulation:
 
-- Fresh storage → physical habitat drag → site confirmation → physical antenna drag to at least 52% → event choice → physical evidence-tile selection → physical repair-port connection → two finale priorities → completion → certificate → reload restores certificate.
+- Fresh storage → tutorial habitat drag → source-card open → tutorial antenna rotation → site confirmation → physical antenna drag to at least 52% → event choice → physical evidence-tile selection → physical repair-port connection → two finale priorities → completion → certificate → reload restores certificate.
 - The same complete sequence passed in desktop Chromium and iPhone-sized/mobile Chromium emulation.
 - Responsive check passed at 375×812, 768×1024 and 1024×768 with no horizontal document overflow.
 - Language toggle changed the board copy and persisted across reload.
+- Right-rear display raycast returned `screen` in desktop and phone-sized viewport tests; click moved the actual game camera into the focus pose, and close/Escape smoothly moved it back while phase, site and resources remained unchanged.
+- Keyboard Enter/Escape follows the same focus and return state. `prefers-reduced-motion` left parallax at neutral while keeping screen focus active.
 - No uncaught browser page errors in the end-to-end run.
-- Current desktop and 375×812 visual evidence is included in `docs/ui-evidence/`.
+- Current desktop and 375×812 visual evidence is included in `docs/ui-evidence/board-only-desktop-1280.png` and `docs/ui-evidence/board-only-mobile-375.png`.
 
-These are browser-emulation results only. A real iPhone/iPad Safari test remains pending; no Android device test is claimed. The four current board-only Playwright cases passed. A full legacy-suite attempt did not pass: two old-route expectations failed, one test was interrupted, and 116 cases were not run. See `docs/TEST_REPORT.md`; no full legacy-suite pass is claimed.
+These are browser-emulation results only. A real iPhone/iPad Safari test remains pending; no Android device test is claimed. The current board-only Playwright acceptance tests cover desktop and iPhone-sized Chromium emulation, including home-screen replay preserving a saved site/record; the latest result is recorded in the test report. A full legacy-suite attempt did not pass: two old-route expectations failed, one test was interrupted, and 116 cases were not run. See `docs/TEST_REPORT.md`; no full legacy-suite pass is claimed. Requirements and evidence from both user-supplied board/teaching packages are mapped in [`docs/existing-feature-matrix.md`](existing-feature-matrix.md), including explicit gaps that are not part of this production route.
 
 ## Still open
 
