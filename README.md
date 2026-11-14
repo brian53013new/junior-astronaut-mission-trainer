@@ -1,6 +1,20 @@
-# Outpost Control · Junior Astronaut Mission Trainer
+# Outpost Control — Junior Astronaut Mission Trainer
 
-Outpost Control is a bilingual educational mission-management game presented as a first-person 3D lunar operations desk. Players stay seated at the console and operate physical controls with the mouse; there is no avatar walking or map traversal. Mouse movement gently shifts the viewpoint. Hover over a control to move to its bounded focus position. Move the pointer away or press Escape to return. The in-scene procedure screen explains the control and its current availability.
+Outpost Control is a **bilingual (English / Traditional Chinese) 3D lunar-base education game** created for the NASA Space Apps Challenge **“Build a Junior Astronaut Mission Trainer.”** The production flow is now one compact 3D mission board: learners compare LOLA point data, adjust a physical antenna, reason from lunar imagery, connect a repair circuit, then make integrated outpost priorities.
+
+The home screen offers Start Game and Replay Board Guide, plus language, sources and settings. Both actions enter the same persistent 3D board (about 10 minutes); there is no welcome-room gate, course selector, or alternate lesson route. NOVA provides short contextual coaching and each turn offers physical board interaction, a brief readable task panel, result feedback and source/limitations details. Source cards reveal child-sized clues before detailed provenance. The board has bounded mouse parallax and a rear-right 3D mission display that can be focused and returned by mouse/touch or keyboard. See [the board-only rebuild report](docs/urgent-board-rebuild-report.md) and [feature recovery matrix](docs/existing-feature-matrix.md) for the implemented interactions, limits and verification. Legacy lesson classes remain in the repository pending cleanup, but the production start path does not route into them.
+
+**This is an independent educational game, not a NASA product, NASA-certified trainer, operational mission simulator, radiation-dose forecast, or lunar-base safety tool.** Game values and consequences are classroom simulations. Only the references and datasets explicitly marked as used below are represented as NASA material. See [NASA_REFERENCES.md](NASA_REFERENCES.md), [data audit](docs/nasa-data-audit.md), and [test report](docs/TEST_REPORT.md).
+
+## Current NASA data status
+
+NASA material currently used in the game:
+
+- A static **NASA Science Photojournal** LRO south-pole illumination image (PIA13720) in the observation lesson. It is not an Images API result; lighting is not a direct measurement of ice.
+- NASA BVAD Rev. 2 Table 4-20 water-consumption reference values. The Transit Vehicle value (3.2 kg per crew-member-day) is converted to the game’s daily water baseline using a clearly identified educational scale. These values now come from the checked-in JSON data file used by the game logic.
+- NASA’s lunar surface-gravity reference (1.624 m/s²) drives the lesson’s mass-to-weight comparison. The learner’s comparison is saved locally. It does not calculate an orbit or trajectory.
+
+**Imported from the user-provided package:** preserved raw DONKI responses for CME/GST/HSS/IPS and a valid empty SEP response (FLR was not obtained), five NASA Images API results, and three LOLA RDR representative points with relative topography and locally derived slope estimates. All 24 package SHA-256 entries validated locally. This executor did not repeat the origin requests; acquisition metadata and limits are retained with the package. Game effects and terrain scores are educational abstractions, not mission or safety predictions.
 
 ## Run locally
 
@@ -9,86 +23,52 @@ npm install
 npm run dev
 ```
 
-The game runs in a desktop or mobile browser. Mouse input is the primary control; narrow viewports use a wider camera and reduced rendering cost. Language can be switched between English and Traditional Chinese from the upper-right switch.
+The project uses Three.js for the shared 3D scene. Mouse, keyboard and touch controls are available in the browser; touch-friendly interaction and the accessible study panel are implemented, but physical iPhone, iPad and Android devices have not been verified for this release. English and Traditional Chinese can be selected in settings.
 
-## Mission loop
+## Learning journey and game effects
 
-The current scenario is a lunar south-pole outpost over 12 sols. Each sol allows one successful subsystem command. The physical desk includes controls for mission planning, spacecraft checkout, power, communications, navigation, science observations, data analysis, water recovery, food growth, event review, event response, and the mission clock. The switch pauses or resumes the clock; advance moves one sol, while clicking the skip dial moves up to three sols. Drag the skip dial right for accelerated time and left to stop it. Acceleration stops at an event so the crew response can be chosen first.
+| Stage | Learner activity | Data/fact and actual effect | Limitation |
+|---|---|---|---|
+| 1 · Site | Drag the habitat token to one of three LOLA candidate pads and compare measured coordinates/topography plus package-derived slope | Chosen point and educational score enter the mission state | Candidate points are not NASA landing recommendations; slope is derived from sparse returned observations and the score is an educational rule |
+| 2 · Event and communication | Drag the physical antenna gimbal to align it, then protect reserve or continue the data transmission | Choice changes simulated power and data; event record/date is shown when a verified supplied DONKI record is available | DONKI snapshot is user-supplied, partial, and not independently re-requested here; game effects are not dose, forecast or safety prediction |
+| 3 · Observation evidence | Select a 3D classification tile for the claim that an image shadow proves water ice | Evidence classification updates the mission record | Image metadata does not establish ice; PIA13720 is a distinct static Photojournal source |
+| 4 · Repair | Select the backup power plug and connect it to the life-support port | Repair completion updates simulated power and water | BVAD supplies a context baseline only; the repair cost and circuit behavior are educational abstractions |
+| 5 · Integrated finale | Choose at least two mission priorities and resolve the board | Resource outcomes, five decisions, provenance IDs and certificate state persist locally | It is a short educational challenge, not a complete mission simulator or full six-course NASA curriculum |
 
-Drag the power slider to trade water for power; drag the habitat token across three teaching sites to choose a lunar base location, the spacecraft lever to test thrust, and the navigation marker to choose a route and its fuel cost. The science dial adjusts observation intensity horizontally and aim vertically. Drag the analysis marker to compare synthetic teaching samples. Power, water/oxygen, food, crew condition, propellant, shielding, and science data interact. System prerequisites, resource costs, one-command-per-sol locking, and a short action cooldown prevent repeated clicks from charging twice. Events and daily life-support use change the resource state. The mission ends with a debrief that summarizes resource margins, science records, and the decision trade-offs.
+The four-step board guide teaches physical token drag, source-card inspection, antenna rotation and choice confirmation. It can be skipped or replayed from the home screen without resetting the saved mission. The five turns provide a shorter judge-ready activity rather than the former lesson-by-lesson curriculum. The longer course implementation has not been deleted, but it is not on the normal home-to-game route; further removal and regression cleanup are tracked in `FEATURE_AUDIT.md`.
 
-The first-visit guide highlights the next available device and walks through supplies, planning, spacecraft checkout, communications, event choices, navigation and a first observation. GUIDE opens a separate training mission and restores the current mission on completion or skip. Tutorial progress is stored in this browser.
+## Controls and accessibility
 
-## Lunar base site training
+- Drag the habitat token, gimbal antenna and point/click the evidence and repair ports; DOM buttons remain as accessible alternatives. No hover is required.
+- Mouse wheel, pinch and on-screen controls adjust camera zoom by default. Text size is independent and supports 100%, 150% and 200% settings.
+- The settings panel offers language, audio, reduced motion, text size, camera zoom and reset view. NOVA subtitles and mission state are retained in the browser save.
+- The local final record contains course answers, retries, reflections and actions. It is a game record, not proof of learning or an official certificate.
+- The game does not request or upload a learner’s name, birth date, address, face or voice. Progress and course answers are stored locally. Do not include minors’ personal details in any external submission or shared screenshot.
 
-The plan device is a three-site lunar teaching board. Drag the habitat token to a bright ridge, balanced rim, or shadow edge and release to commit. The sites affect daily electricity and water consumption; the shadow site also gives a simplified science bonus. The trade-offs and numbers are invented game rules, not measured NASA site conditions. The categories of sunlight, water, temperature and communications are inspired by NASA's [LRO Educator Resource Kit](https://science.nasa.gov/wp-content/uploads/2024/01/lro-educator-resource-kit.pdf), especially its lunar south-pole site-selection activity. Real ice availability varies and needs verification. Site selection and resource rules work without a network; a later data integration still needs scientific and schema review.
+## Sources, media, libraries and licensing
 
-## Assembly and fault tracing
+NASA and external references, actual in-game use, query/verification dates, terms, bundled media credits, code dependencies and outstanding rights questions are listed in [NASA_REFERENCES.md](NASA_REFERENCES.md). The only bundled external image is PIA13720 with NASA/GSFC/Arizona State University credit. Scene geometry, HUD art, the study-paper texture and sounds are generated locally; audio uses browser Web Audio, and text uses operating-system fonts. No recorded voice, external music, external font or paid API is bundled.
 
-In the in-world centre monitor, choose **ASSEMBLE**, then drag the three-dimensional panel, tank and shield models to their matching purposes. When all parts are fitted, activate the finished unit to spend one command and 4 power for 10 shielding. On the left monitor, choose **REPAIR** and drag each power, water, or data line to its correct system. Activating the repaired circuit uses one command and 3 water as a simplified cooling cost and restores 12 power. Wrong matches can be retried; both rewards are limited to once per mission. These effects are invented educational rules, not NASA-certified engineering outcomes. Each panel has a return control. Both activities are offline.
+**The repository does not yet have an authorized project-wide OSI license.** `LICENSE` records that rights-holder confirmation is pending. The presence of public NASA material or open-source dependencies does not grant a license to the project’s original code/content or to every third-party asset.
 
-## NOVA, the cabin and signal training
-
-NOVA is a procedurally modelled 3D helper with floating motion, animated arms and blinking eyes. It travels near the active tutorial control and types a short bilingual instruction. It reacts to mission actions and events. Its chirps, feedback and quiet procedural music use Web Audio and start after a player gesture; volume and mute are on the right monitor. No recorded voice, third-party music or paid audio service is used.
-
-Move the mouse for gentle parallax. Hold and drag the **right mouse button** to rotate the seated view; press **R** to return forward. Escape closes a close-up. The cabin has control, science, maintenance, and rear living/hatch areas in one room; these are not separate navigable rooms. The central monitor's **SIGNAL** game shows a four-symbol sequence, then asks the player to repeat it. Completing the fictional signal and transmitting costs 3 power for 10 data, once per mission. It is not a NASA encoding or observation.
-
-## Opening, sound and study room
-
-The lobby opens with a locally modelled starfield and habitat. Choose **Begin Adventure** to enter; **Skip Intro** immediately advances the background arrival animation. Browser audio starts after an interaction. Lobby sliders and the right in-world monitor control separate music, effects and NOVA-voice levels. Synthesized lesson motifs, filtered cabin ambience and distinct mechanical interaction sounds accompany the electronic NOVA syllables; music quiets while NOVA speaks. No external music service or recorded voice is used. Room changes use a brief soft white transition (disabled when reduced motion is requested).
-
-NOVA follows the camera view while its readable subtitle stays within the screen; click the subtitle skip control or press Space to finish displaying a message. In the study room, the paper lies flat and the camera uses a fixed overhead view. Every lesson has a short illustrated knowledge page before its paper question. These educational descriptions are not real-time forecasts or mission instructions.
-
-## The Junior Astronaut journey
-
-The lobby is the prologue, followed by six lessons (assembly, mission planning, flight, communications, observation, and repair) and a final integrated mission. NOVA introduces each lesson and points to the relevant controls or in-world screen. The three-dimensional assembly pieces use a monitor-based matching interaction; flight includes a draggable lunar orbit ring; communications uses a fictional signal pattern; repair requires matching circuits. These are educational simulations, not flight-qualified procedures. Mission planning uses the existing lunar site token and simplified resource costs.
-
-A first-time welcome introduces NOVA, a clearly labelled practice sequence and a six-lesson mission map; returning players resume their existing progress. Each lesson presents three introductory pages with a question, one concept and a saved prediction before an activity. A fourth page recalls that prediction and invites reflection, followed by three questions with feedback and retries. The original longer material remains available under “Want to know more?”. The light-and-shadow activity and radio travel times are illustrations, not measurements. The observation exercise separates a visible dark area from the unsupported claim that it contains ice. Some matching and sequence questions still ask learners to select a prewritten answer rather than freely sorting pieces. The final mission requires water recycling, observation and a simulated alert response. The certificate is a game souvenir, not a NASA credential. The mission log saves answers, retries and an optional reflection locally; it cannot establish whether a child truly understands a concept.
-
-A clearly labelled fictional training reserve is available when power, water or food falls below 18. It raises power and water to at least 45 and food to 36, at most once per simulated day; it cannot be used while paused or during an unresolved event. This is a game-accessibility mechanism, not an actual NASA resupply model. New reading choices and reflections are saved in the existing browser progress record; older snapshots skip an added post-activity reflection when already in an existing quiz rather than being reset.
-
-
-### Image and scientific sources
-
-- NASA/GSFC/Arizona State University, [South Pole Illumination Map, PIA13720](https://science.nasa.gov/photojournal/south-pole-illumination-map/), accessed 2026-11-06; source image: https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia13/pia13720/PIA13720.jpg?crop=faces%2Cfocalpoint&fit=clip&h=1214&w=1214 . The locally bundled image shows an LRO illumination map in lesson five's study notes. Brighter and darker areas convey illumination history, not measurements of water ice. NASA content generally permits educational reuse subject to its [media usage guidelines](https://www.nasa.gov/nasa-brand-center/images-and-media/); the credited ASU collaboration is retained and no endorsement is implied.
-- [NASA Moon Base FAQ](https://www.nasa.gov/moon-base-frequently-asked-questions/), accessed 2026-11-06: site selection and the role of power, life support and communications in the learning text.
-- [NASA LRO educator resource kit](https://science.nasa.gov/wp-content/uploads/2024/01/lro-educator-resource-kit.pdf), [NASA ECLSS overview](https://www.nasa.gov/reference/environmental-control-and-life-support-systems-eclss/), [NASA Moon Water and Ices](https://science.nasa.gov/moon/moon-water-and-ices/), and [NASA radiation protection](https://science.nasa.gov/science-research/heliophysics/how-nasa-will-protect-astronauts-from-space-radiation-at-the-moon/), consulted 2026-11-06: site selection, water recycling, the uncertainty of ice clues, and shielding.
-
-The 2026 challenge URL could not be accessed during this update, so its details and submission requirements remain unverified. The image and NASA educational resources are historical material; resource costs, failure scenarios and route mechanics are fictional teaching simplifications.
-
-## Cross-device controls
-
-Use the left and right arrow keys or A and D to move sideways in the welcome room, control desk, and study room. On the control desk, moving sideways closes an open equipment close-up first. In the welcome room, W/S or the up/down arrows move forward and backward; touch users can use the on-screen directional controls. Text inputs keep their normal keyboard behavior.
-
-The gear in the upper-right corner opens sound, language, text-size, motion and camera controls. Camera zoom is on by default and supports a mouse wheel, two-finger pinch, and the zoom buttons; it can be disabled in settings. Use Reset view to return to the standard view. Text scaling is independent of camera zoom. On touch input, the navigation strip offers workspace movement, return, and a Find goal shortcut. Selected adjustable equipment gets a larger slider; the time control advances on confirmation at 100 and then resets. Workshop parts and sockets can be selected in two taps. The mobile-accessible paper presents the same saved reading and quiz state with larger controls. Desktop, tablet and phone behavior still requires hands-on device validation.
-
-## NASA data status
-
-The adapter and dated snapshot contract are ready, while the bundled snapshot is intentionally empty. The game therefore uses clearly labeled offline education cases today. It does not require a live NASA request to play. After one successful online load and service-worker installation, the application shell and last saved snapshot are cached for later offline use in the same browser; actual browser/offline behavior still needs device verification. On 13–14 November, retrieve a dated snapshot using the command in the integration guide after setting `NASA_API_KEY` in the local shell; the key is never written to the snapshot or browser. The script validates the response and preserves the offline file if retrieval fails or returns no records. See [NASA data integration](docs/nasa-data-integration.md).
-
-DONKI solar-weather records are not lunar surface dose measurements or crew-safety forecasts. The game must not turn them into a NASA-certified risk score. Any shelter costs or crew-condition changes remain clearly labeled educational rules. Outpost Control is not a NASA product, an operational forecast, a crewed-mission decision tool, or a NASA-certified model.
-
-## Project structure
-
-- `src/game/ConsoleRoom.ts` builds the procedural 3D room, physical console controls, displays, lighting, and pointer-raycast targets.
-- `src/game/MissionEngine.ts` contains mission state, system costs, sol progression, event choices, and action cooldowns.
-- `src/game/TutorialGuide.ts` determines the next actionable tutorial step; `src/game/FocusPreset.ts` provides bounded camera destinations.
-- `src/game/NASADataProvider.ts` validates the dated snapshot and supplies the offline fallback.
-- `src/game/language.ts` contains English and Traditional Chinese interface and scenario text.
-- `docs/nasa-data-integration.md` explains the official snapshot workflow and science limitations.
-
-Scene geometry, HUD artwork, and the paper texture are generated locally with Three.js and canvas; the interface uses system fonts and has no external image, font, audio, or paid API dependency.
-
-## Checks
+## NASA data acquisition and tests
 
 ```bash
+npm run check:nasa-data
 npm run build
-node --experimental-transform-types scripts/check-curriculum.mjs
-node --experimental-transform-types scripts/check-quiz-paper.mjs
-node --experimental-transform-types scripts/check-core.mjs
-node scripts/check-offline-cache.mjs
-node scripts/check-donki-import.mjs
 npm test
+git diff --check
 ```
 
-The browser checks cover physical-control clicks, per-sol command locking, event progression and response, language switching, and viewport fit. Playwright requires Chromium to be installed in the environment.
+Mock-based ingestion checks verify validation and failure handling; they do not prove NASA connectivity. The current test report separates mock checks, genuine source evidence, browser emulation and physical-device gaps. Review [docs/nasa-data-integration.md](docs/nasa-data-integration.md) before acquiring a snapshot. Never turn a DONKI event type into a real radiation dose, health prediction or safety instruction.
+
+The current single-board flow, source boundaries and test evidence are summarized in [docs/urgent-board-rebuild-report.md](docs/urgent-board-rebuild-report.md). Earlier course reports document the archived learning sequence. The raw user-provided NASA package and original checksums are preserved under `public/data/nasa/user-submitted-package/`.
+
+## Project map
+
+- `src/game/Game.ts`, `MissionEngine.ts`: scene coordination and game-state transitions.
+- `src/game/Curriculum.ts`, `Journey.ts`, `LearningActivities.ts`, `ReadingPanel.ts`: bilingual lessons, persisted progress and assessments.
+- `src/game/NASADataProvider.ts`: validated DONKI/Images API adapters, offline fallback and classroom source registry.
+- `public/data/nasa/`: provenance, water/gravity references, raw NASA package evidence, LOLA point records and API-access audit.
+- `NASA_REFERENCES.md`: source, media, package and rights inventory.
+- `FEATURE_AUDIT.md`: implemented behavior, test evidence and open feature gaps.

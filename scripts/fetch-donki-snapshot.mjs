@@ -1,39 +1,24 @@
 #!/usr/bin/env node
-
+import { createHash } from 'node:crypto';
 import { writeFile } from 'node:fs/promises';
 
 const [startDate,endDate]=process.argv.slice(2);
-const apiKey=process.env.NASA_API_KEY;
 const datePattern=/^\d{4}-\d{2}-\d{2}$/;
-if(!apiKey){console.error('Set NASA_API_KEY in the local shell environment; the key is never written to the snapshot.');process.exit(2);}
-if(!datePattern.test(startDate??'')||!datePattern.test(endDate??'')||startDate>endDate){console.error('Usage: NASA_API_KEY=… node scripts/fetch-donki-snapshot.mjs YYYY-MM-DD YYYY-MM-DD');process.exit(2);}
-
-const endpoint=new URL('https://ccmc.gsfc.nasa.gov/DONKI-API/get/SEP');
-endpoint.searchParams.set('startDate',startDate);
-endpoint.searchParams.set('endDate',endDate);
-endpoint.searchParams.set('api_key',apiKey);
-const response=await fetch(endpoint,{headers:{accept:'application/json'},signal:AbortSignal.timeout(15000)});
-if(!response.ok){console.error(`DONKI request failed with HTTP ${response.status}; the offline snapshot was left unchanged.`);process.exit(1);}
-const data=await response.json();
-if(!Array.isArray(data)){console.error('DONKI returned an unexpected payload; the offline snapshot was left unchanged.');process.exit(1);}
-function canonicalEventLink(input){
-  if(typeof input!=='string')return null;
-  try{const url=new URL(input);if(url.protocol!=='https:'||url.username||url.password)return null;if(url.hostname==='kauai.ccmc.gsfc.nasa.gov'&&url.pathname.startsWith('/DONKI/'))url.hostname='ccmc.gsfc.nasa.gov';if(url.hostname!=='ccmc.gsfc.nasa.gov'&&!url.hostname.endsWith('.ccmc.gsfc.nasa.gov'))return null;for(const key of [...url.searchParams.keys()])if(key.toLowerCase()==='api_key')url.searchParams.delete(key);return url.toString();}catch{return null;}
-}
-const events=data.flatMap(item=>{const sourceUrl=canonicalEventLink(item?.link);const eventDate=typeof item?.eventTime==='string'?item.eventTime.slice(0,10):'';return item&&typeof item.eventID==='string'&&item.eventID&&Number.isFinite(Date.parse(item.eventTime))&&eventDate>=startDate&&eventDate<=endDate&&sourceUrl?[{...item,sourceUrl}]:[];});
-if(events.length===0){console.error('No verifiable SEP records were returned; the offline snapshot was left unchanged.');process.exit(1);}
+if(!datePattern.test(startDate??'')||!datePattern.test(endDate??'')||startDate>endDate){console.error('Usage: node scripts/fetch-donki-snapshot.mjs YYYY-MM-DD YYYY-MM-DD');process.exit(2);}
+const types=['CME','FLR','GST','SEP','IPS','HSS'];
+const base='https://ccmc.gsfc.nasa.gov/DONKI-API/get';
+function sha256(text){return createHash('sha256').update(text,'utf8').digest('hex');}
+function canonicalEventLink(input){if(typeof input!=='string')return null;try{const url=new URL(input);if(url.protocol!=='https:'||url.username||url.password)return null;if(url.hostname==='kauai.ccmc.gsfc.nasa.gov'&&url.pathname.startsWith('/DONKI/'))url.hostname='ccmc.gsfc.nasa.gov';if(url.hostname!=='ccmc.gsfc.nasa.gov'&&!url.hostname.endsWith('.ccmc.gsfc.nasa.gov'))return null;for(const key of [...url.searchParams.keys()])if(key.toLowerCase()==='api_key')url.searchParams.delete(key);return url.toString();}catch{return null;}}
+async function query(type){const requestStartedAtUTC=new Date().toISOString();const url=new URL(`${base}/${type}`);url.searchParams.set('startDate',startDate);url.searchParams.set('endDate',endDate);const response=await fetch(url,{headers:{accept:'application/json'},signal:AbortSignal.timeout(15000)});if(!response.ok){const error=new Error(`HTTP ${response.status}`);error.httpStatus=response.status;throw error;}const rawBody=await response.text();let json;try{json=JSON.parse(rawBody);}catch{throw new Error('invalid JSON body');}if(!Array.isArray(json))throw new Error('response was not a JSON array');return{type,requestUrl:url.toString(),requestStartedAtUTC,httpStatus:response.status,rawBody,json};}
+const settled=await Promise.allSettled(types.map(query));
+const responseGroups=settled.flatMap(v=>v.status==='fulfilled'?[v.value]:[]);
+const failedTypes=settled.flatMap((v,i)=>v.status==='rejected'?[{eventType:types[i],httpStatus:typeof v.reason?.httpStatus==='number'?v.reason.httpStatus:null,error:v.reason instanceof Error?v.reason.message:String(v.reason)}]:[]);
 const retrievedAt=new Date().toISOString();
-const requestUrl=`https://ccmc.gsfc.nasa.gov/DONKI-API/get/SEP?startDate=${startDate}&endDate=${endDate}`;
-const records=events.slice(0,10).map(item=>({
-  id:item.eventID,
-  kind:'NASA',
-  titleKey:`SEP observation · ${item.eventTime.slice(0,10)}`,
-  noteKey:'nasaMapping',
-  sourceUrl:item.sourceUrl,
-  retrievedAt,
-  effects:{},
-  mappingDisclosure:'This DONKI SEP record supplies event context only. It is not a lunar surface dose, crew exposure, safety warning, or forecast. The shelter action cost and any crew-condition change are invented educational rules.'
-}));
-const manifest={schemaVersion:1,provenance:{mode:'NASA-SNAPSHOT',dataset:'NASA CCMC DONKI · Solar Energetic Particle events',sourceUrl:requestUrl,retrievedAt,recordId:`donki-sep-${startDate}-${endDate}`,limitations:'Historical/observed space-weather event context only. No lunar surface crew dose, mission safety prediction, or NASA-certified gameplay coefficient.'},records};
-await writeFile(new URL('../public/data/nasa-event-snapshot.json',import.meta.url),`${JSON.stringify(manifest,null,2)}\n`);
-console.log(`Saved ${records.length} dated DONKI SEP event(s) for the offline training snapshot. No API key was saved.`);
+function canonicalRows({type,json}){return json.flatMap(item=>{const sourceUrl=canonicalEventLink(item?.link);const rawDate=typeof item?.startTime==='string'?item.startTime:typeof item?.eventTime==='string'?item.eventTime:typeof item?.time21_5==='string'?item.time21_5:'';const eventTime=Date.parse(rawDate),day=Number.isFinite(eventTime)?new Date(eventTime).toISOString().slice(0,10):'';if(typeof item?.eventID!=='string'||!item.eventID||!day||day<startDate||day>endDate||!sourceUrl)return[];const eventName={CME:'Coronal Mass Ejection',FLR:'Solar Flare',GST:'Geomagnetic Storm',SEP:'Solar Energetic Particle',IPS:'Interplanetary Shock',HSS:'High Speed Stream'}[type];const power={CME:-5,FLR:-3,GST:-5,SEP:-4,IPS:-3,HSS:-5}[type];return[{id:`${type}:${item.eventID}`,kind:'NASA',titleKey:`${type} · ${day}`,noteKey:'nasaMapping',sourceUrl,retrievedAt,observedAt:new Date(eventTime).toISOString(),eventType:type,effects:{power},mappingDisclosure:`${eventName} record is event context only. The ${Math.abs(power)} point power change is an invented educational game rule, not a NASA impact coefficient, radiation dose, forecast, or safety advice.`}];});}
+const records=responseGroups.flatMap(canonicalRows).sort((a,b)=>b.observedAt.localeCompare(a.observedAt)).slice(0,60);
+if(!records.length){console.error('No valid official events were returned; the existing snapshot was left unchanged.');process.exit(1);}
+const rawResponses=responseGroups.map(({type,requestUrl,requestStartedAtUTC,httpStatus,rawBody})=>({eventType:type,requestUrl,requestStartedAtUTC,httpStatus,rawBody,sha256:sha256(rawBody)}));
+const successfulTypes=responseGroups.map(v=>v.type);
+const snapshotHash=sha256(JSON.stringify(rawResponses));
+const manifest={schemaVersion:1,provenance:{mode:'NASA-SNAPSHOT',dataset:`NASA CCMC DONKI · ${successfulTypes.join(', ')}`,sourceUrl:`${base}/[${successfulTypes.join('|')}]?startDate=${startDate}&endDate=${endDate}`,retrievedAt,recordId:`donki-${startDate}-${endDate}-${snapshotHash.slice(0,12)}`,limitations:`Verified event context only. Failed feeds: ${failedTypes.map(f=>f.eventType).join(', ')||'none'}. Resource effects are educational rules, not NASA hazard coefficients, radiation dose, forecast, or safety advice.`,rawSnapshotSha256:snapshotHash},records,rawResponses,failedTypes:failedTypes.map(f=>f.eventType),queryAudit:{startDate,endDate,startedAtUTC:responseGroups.map(v=>v.requestStartedAtUTC).sort()[0]??retrievedAt,completedAtUTC:retrievedAt,feeds:types.map(type=>{const success=responseGroups.find(v=>v.type===type),failure=failedTypes.find(v=>v.eventType===type);return success?{eventType:type,httpStatus:success.httpStatus,requestStartedAtUTC:success.requestStartedAtUTC,rawBodySha256:sha256(success.rawBody)}:{...failure};})}};
+const out=new URL('../public/data/nasa-event-snapshot.json',import.meta.url);await writeFile(out,`${JSON.stringify(manifest,null,2)}\n`);console.log(`Saved ${records.length} validated DONKI event(s). Successful feeds: ${successfulTypes.join(', ')||'none'}; failed feeds: ${manifest.failedTypes.join(', ')||'none'}. Raw response bodies and SHA-256 hashes are retained. No API key was used or saved.`);

@@ -5,7 +5,9 @@ export type Point2={x:number;y:number};
 
 /** Fixed camera destination for a control. The current camera position is never an input. */
 export function focusPreset(base:Point3,control:Point3,pointer:Point2={x:0,y:0},aspect=1,fov=48){
-  const position=new Vector3(control.x*.82,Math.min(base.y,control.y+1.65),control.z+2.9);
+  const direction=new Vector3(base.x-control.x,0,base.z-control.z).normalize();
+  if(direction.lengthSq()<.01)direction.set(0,0,1);
+  const position=new Vector3(control.x+direction.x*2.9,Math.min(base.y,control.y+1.65),control.z+direction.z*2.9);
   const anchor=new Vector3(control.x,control.y,control.z);
   const camera=new PerspectiveCamera(fov,aspect,.1,100);camera.position.copy(position);camera.rotation.order='YXZ';camera.lookAt(anchor);
   let pitch=camera.rotation.x,yaw=camera.rotation.y;

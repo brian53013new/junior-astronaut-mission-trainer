@@ -1,0 +1,17 @@
+{
+  "sourceName": "NASA Science Moon by the Numbers",
+  "sourceUrl": "https://science.nasa.gov/moon/by-the-numbers/",
+  "corroboratingSourceName": "NASA Glenn Research Center Moon facts",
+  "corroboratingSourceUrl": "https://www1.grc.nasa.gov/beginners-guide-to-aeronautics/moon/",
+  "retrievedAtUTC": "2026-11-13T02:23:08Z",
+  "values": {
+    "lunarSurfaceGravity": 1.624,
+    "earthComparison": 0.165,
+    "unit": "m/s²"
+  },
+  "usedFields": [
+    "surface gravity"
+  ],
+  "gameUse": "Used by the flight lesson's mass-to-weight calculator (weight = mass × gravity) and saved as a local learning record. The orbit-ring interaction is an illustrative model and is not numerically integrated using this constant.",
+  "disclosure": "NASA reference value used in a classroom weight calculation; the in-game trajectory and fuel effects are simplified educational rules, not a real mission simulation."
+}

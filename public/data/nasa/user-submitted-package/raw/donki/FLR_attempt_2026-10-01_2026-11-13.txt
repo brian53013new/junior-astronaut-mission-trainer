@@ -1,0 +1,12 @@
+DONKI FLR acquisition attempt
+Date: 2026-11-13 Asia/Taipei
+
+Tested official routes:
+
+1. https://api.nasa.gov/DONKI/FLR?startDate=2026-10-01&endDate=2026-11-13&api_key=DEMO_KEY
+Result: HTTP 404, response path /DONKI-API/get/FLR/
+
+2. https://ccmc.gsfc.nasa.gov/DONKI-API/get/FLR?startDate=2026-10-01&endDate=2026-11-13
+Result: HTTP 503 / connection timeout before a JSON response.
+
+No FLR JSON is included. No synthetic replacement was created.

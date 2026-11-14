@@ -1,3 +1,5 @@
+import { studyPaperClick } from './study-paper';
+import { finishProbe } from './finish-probe';
 import { expect, test } from '@playwright/test';
 import { curriculum } from '../src/game/Curriculum';
 import { questionOrder } from '../src/game/QuestionOrder';
@@ -40,7 +42,7 @@ test('physical welcome controls lead to the first lesson', async ({page}, testIn
   await click('door');await click('door');await expect.poll(async()=>(await state()).quiz,{timeout:15000}).toBe(true);
   const lesson=()=>page.evaluate(()=>window.__OUTPOST_QA__!.lesson());
   expect((await lesson()).id).toBe('assembly');
-  const paperClick=async(x:number,y:number)=>{await page.waitForTimeout(2500);const p=await page.evaluate(([a,b])=>window.__OUTPOST_QA__!.paperPosition(a,b),[x,y]);if(mobile)await page.touchscreen.tap(p.x,p.y);else await page.mouse.click(p.x,p.y);};
+  const paperClick=async(x:number,y:number)=>{await page.waitForTimeout(2500);await studyPaperClick(page,mobile,x,y);};
   await paperClick(800,710);await expect.poll(async()=>(await lesson()).page).toBe(1);
   await paperClick(800,710);await expect.poll(async()=>(await lesson()).page).toBe(2);
   await paperClick(300,360);await expect.poll(async()=>(await lesson()).prediction).not.toBeNull();
@@ -49,11 +51,12 @@ test('physical welcome controls lead to the first lesson', async ({page}, testIn
   const screen=(x:number,y:number)=>page.evaluate(([a,b])=>window.__OUTPOST_QA__!.screenPoint('map',a,b),[x,y]);
   const screenTap=async(x:number,y:number)=>{const p=await screen(x,y);if(mobile)await page.touchscreen.tap(p.x,p.y);else await page.mouse.click(p.x,p.y);await page.waitForTimeout(1800);};
   await screenTap(320,200);await page.waitForTimeout(5000);await screenTap(468,22);await expect.poll(()=>page.evaluate(()=>window.__OUTPOST_QA__!.workshop().mode)).toBe('assembly');
-  for(let i=0;i<3;i++){const a=await screen(130,98+i*60),b=await screen(500,98+i*60);if(cdp){await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[a]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[b]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});}else{await page.mouse.move(a.x,a.y);await page.mouse.down();await page.mouse.move(b.x,b.y,{steps:8});await page.mouse.up();}await expect.poll(()=>page.evaluate(index=>window.__OUTPOST_QA__!.workshop().parts[index],i)).toBe(true);}
-  await screenTap(315,334);await expect.poll(async()=>(await state()).quiz,{timeout:15000}).toBe(true);await page.waitForTimeout(4500);expect((await lesson()).prediction).toBe(prediction);
+  await expect.poll(()=>page.evaluate(()=>window.__OUTPOST_QA__!.assemblyBay().active)).toBe(true);await page.waitForTimeout(2500);for(let i=0;i<3;i++){const a=await page.evaluate(i=>window.__OUTPOST_QA__!.assemblyPoint('part',i),i),b=await page.evaluate(i=>window.__OUTPOST_QA__!.assemblyPoint('socket',i),i);if(cdp){await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[a]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[b]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});}else{await page.mouse.move(a.x,a.y);await page.mouse.down();await page.mouse.move(b.x,b.y,{steps:8});await page.mouse.up();}await expect.poll(()=>page.evaluate(index=>window.__OUTPOST_QA__!.workshop().parts[index],i)).toBe(true);}
+  await finishProbe(page,mobile);
+ {const p=await page.evaluate(()=>window.__OUTPOST_QA__!.assemblyPoint('activate',0));if(mobile)await page.touchscreen.tap(p.x,p.y);else await page.mouse.click(p.x,p.y);}await expect.poll(async()=>(await state()).quiz,{timeout:15000}).toBe(true);await page.waitForTimeout(4500);expect((await lesson()).prediction).toBe(prediction);
   await paperClick(300,350);await paperClick(800,710);
-  const first=curriculum.assembly.questions[0];const wrong=questionOrder(first.id).findIndex(answer=>answer!==first.correct);await paperClick(300,350+wrong*96);await expect.poll(async()=>(await lesson()).phase).toBe('review');await paperClick(800,710);
-  for(const q of curriculum.assembly.questions){const slot=questionOrder(q.id).indexOf(q.correct);await paperClick(300,350+slot*96);await paperClick(800,710);}
+  const first=curriculum.assembly.questions[0];const order=questionOrder(first.id);const wrong=order.findIndex(answer=>answer!==first.correct);await paperClick(300,350+wrong*96);await expect.poll(async()=>(await lesson()).phase).toBe('review');if(!mobile)await paperClick(800,710);await paperClick(300,350+order.indexOf(first.correct)*96);await paperClick(800,710);
+  for(const q of curriculum.assembly.questions.slice(1)){const slot=questionOrder(q.id).indexOf(q.correct);await paperClick(300,350+slot*96);await paperClick(800,710);}
   await expect.poll(async()=>(await lesson()).id,{timeout:15000}).toBe('plan');await page.reload();await page.locator('#lobby-start').click();await expect.poll(async()=>(await lesson()).id,{timeout:15000}).toBe('plan');
   expect(errors).toEqual([]);
 });

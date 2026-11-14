@@ -1,5 +1,5 @@
 import type { Action, MissionState, ScenarioEvent } from './types';
-import { siteProfile } from './SitePlanner.ts';
+import { BASELINE_GAME_WATER_POINTS, siteProfile } from './SitePlanner.ts';
 import type { WorkshopKind } from './Workshop';
 
 export type CommandResult={ok:boolean;kind:'action'|'time'|'event'|'error'|'paused';message:string;event?:ScenarioEvent;timeAdvanced?:number;}
@@ -27,7 +27,7 @@ export class MissionEngine {
     if(!(['planned','craftReady','commsReady','navReady','eventOpen','paused','commandSpent'] as const).every(k=>typeof s[k]==='boolean'))return false;
     if(!(['power','craft','science','aim','navigate','plan','analyze'] as const).every(k=>typeof p[k]==='number'&&Number.isFinite(p[k])&&p[k]>=0&&p[k]<=1))return false;
     const event=v.activeEvent;
-    if(s.eventOpen){if(!event||typeof event.id!=='string'||typeof event.title!=='string'||typeof event.note!=='string'||typeof event.source!=='string'||!['education','nasa-snapshot'].includes(event.kind)||!event.effects||typeof event.effects!=='object')return false;const allowed=new Set(['power','water','food','health','propellant']);if(!Object.entries(event.effects).every(([key,value])=>allowed.has(key)&&typeof value==='number'&&Number.isFinite(value)&&Math.abs(value)<=100))return false;}
+    if(s.eventOpen){if(!event||typeof event.id!=='string'||typeof event.title!=='string'||typeof event.note!=='string'||typeof event.source!=='string'||!['education','nasa-snapshot','nasa-live'].includes(event.kind)||!event.effects||typeof event.effects!=='object')return false;const allowed=new Set(['power','water','food','health','propellant']);if(!Object.entries(event.effects).every(([key,value])=>allowed.has(key)&&typeof value==='number'&&Number.isFinite(value)&&Math.abs(value)<=100))return false;}
     Object.assign(this.state,{power:s.power,water:s.water,food:s.food,health:s.health,propellant:s.propellant,shielding:s.shielding,sol:s.sol,cycle:s.sol,planned:s.planned,craftReady:s.craftReady,commsReady:s.commsReady,navReady:s.navReady,data:s.data,discoveries:s.discoveries,eventOpen:s.eventOpen,paused:s.paused,commandSpent:s.commandSpent,lastCommandAt:0});Object.assign(this.settings,{power:p.power,craft:p.craft,science:p.science,aim:p.aim,navigate:p.navigate,plan:p.plan,analyze:p.analyze});this.commandCount=Number(v.commandCount);this.signalReward=v.signalReward===true;this.orbitReward=v.orbitReward===true;this.lastTrainingSupplySol=Number.isInteger(v.lastTrainingSupplySol)&&Number(v.lastTrainingSupplySol)>=0&&Number(v.lastTrainingSupplySol)<=s.sol?Number(v.lastTrainingSupplySol):-1;this.workshopRewards.assembly=v.workshopRewards?.assembly===true;this.workshopRewards.repair=v.workshopRewards?.repair===true;this.activeEvent=s.eventOpen&&event?{...event,effects:{...event.effects}}:null;this.cooldownUntil=0;return true;
   }
 
@@ -54,6 +54,46 @@ export class MissionEngine {
     this.workshopRewards[kind]=true;s.commandSpent=true;s.lastCommandAt=now;this.commandCount++;this.cooldownUntil=now+650;
     return {ok:true,kind:'action',message:kind==='assembly'?'assemblyDone':'repairDone'};
   }
+  /** Board lessons are short training exercises, so unrelated legacy sol, pause and cooldown gates do not block a completed classroom task. Resource costs and one-time rewards still apply. */
+  claimTrainingWorkshop(kind:WorkshopKind):CommandResult{const s=this.state;if(this.workshopRewards[kind])return {ok:false,kind:'error',message:'alreadyDone'};if(kind==='assembly'){if(s.power<4)return {ok:false,kind:'error',message:'insufficient'};s.power-=4;s.shielding=clamp(s.shielding+10);}else{if(s.water<3)return {ok:false,kind:'error',message:'insufficient'};s.water-=3;s.power=clamp(s.power+12);}this.workshopRewards[kind]=true;this.commandCount++;return {ok:true,kind:'action',message:kind==='assembly'?'assemblyDone':'repairDone'};}
+  /** Apply the board-only decisions to the canonical simulation state; all deltas are explicitly educational mappings. */
+  applyTrainingDecision(kind:'site'|'flight'|'finale'|'event'|'evidence'|'repair',values:{score?:number;mass?:number;priority?:number;choices?:string[];choice?:string;waterCost?:number;powerGain?:number;classification?:string;solarInstalled?:boolean}):CommandResult{
+    const s=this.state;
+    if(kind==='site'){
+      const score=values.score;if(typeof score!=='number'||!Number.isFinite(score)||score<0||score>100)return{ok:false,kind:'error',message:'invalidValue'};
+      s.planned=true;s.power=clamp(s.power+Math.round((score-50)/10)+(values.solarInstalled?6:0));s.data=clamp(s.data+Math.round(score/10));this.commandCount++;
+      return{ok:true,kind:'action',message:'siteDecisionRecorded'};
+    }
+    if(kind==='flight'){
+      const mass=values.mass,priority=values.priority;if(typeof mass!=='number'||!Number.isFinite(mass)||mass<5||mass>80||typeof priority!=='number'||!Number.isFinite(priority)||priority<0||priority>1)return{ok:false,kind:'error',message:'invalidValue'};
+      const loadCost=Math.max(1,Math.round(mass/20));if(s.power<loadCost)return{ok:false,kind:'error',message:'insufficient'};
+      s.power-=loadCost;s.health=clamp(s.health+Math.round((priority-.5)*10));this.settings.power=priority;this.commandCount++;
+      return{ok:true,kind:'action',message:'flightDecisionRecorded'};
+    }
+    if(kind==='event'){
+      if(values.choice==='protect'){s.power=clamp(s.power+2);s.health=clamp(s.health+3);}
+      else if(values.choice==='work'){if(s.power<4)return{ok:false,kind:'error',message:'insufficient'};s.power=clamp(s.power-4);s.data=clamp(s.data+8);}
+      else return{ok:false,kind:'error',message:'invalidValue'};
+      this.commandCount++;return{ok:true,kind:'action',message:'eventResponseRecorded'};
+    }
+    if(kind==='evidence'){
+      if(values.classification!=='inference')return{ok:false,kind:'error',message:'invalidValue'};
+      s.data=clamp(s.data+5);this.commandCount++;return{ok:true,kind:'action',message:'evidenceClassified'};
+    }
+    if(kind==='repair'){
+      const cost=values.waterCost??3,gain=values.powerGain??8;
+      if(!Number.isFinite(cost)||!Number.isFinite(gain)||cost<0||gain<0||s.water<cost)return{ok:false,kind:'error',message:'insufficient'};
+      s.water=clamp(s.water-cost);s.power=clamp(s.power+gain);s.health=clamp(s.health+4);this.commandCount++;return{ok:true,kind:'action',message:'repairRecorded'};
+    }
+    const choices=values.choices;if(!Array.isArray(choices)||choices.length<2||choices.some(x=>!['energy','water','comms'].includes(x)))return{ok:false,kind:'error',message:'invalidValue'};
+    if(choices.includes('energy')){if(s.power<5)return{ok:false,kind:'error',message:'insufficient'};s.power-=5;s.health=clamp(s.health+8);}
+    if(choices.includes('water')){s.water=clamp(s.water+5);s.power=clamp(s.power-2);}
+    if(choices.includes('comms')){s.data=clamp(s.data+3);s.power=clamp(s.power-2);}
+    this.commandCount++;return{ok:true,kind:'action',message:'finaleDecisionRecorded'};
+  }
+  claimTrainingSignal():CommandResult{const s=this.state;if(this.signalReward)return {ok:false,kind:'error',message:'alreadyDone'};if(s.power<3)return {ok:false,kind:'error',message:'insufficient'};s.power-=3;s.data=clamp(s.data+10);this.signalReward=true;this.commandCount++;return {ok:true,kind:'action',message:'signalDone'};}
+  /** A classroom observation uses the same resource state as the outpost sim but is not gated by unrelated legacy mission prerequisites. */
+  claimTrainingObservation(power:number,aim:number):CommandResult{const s=this.state;if(!Number.isFinite(power)||!Number.isFinite(aim)||power<0||power>1||aim<0||aim>1)return{ok:false,kind:'error',message:'invalidValue'};const cost=6+Math.round(power*6);if(s.power<cost||s.propellant<4)return{ok:false,kind:'error',message:'insufficient'};if(s.discoveries>=3)return{ok:false,kind:'error',message:'scienceComplete'};this.settings.science=power;this.settings.aim=aim;s.power-=cost;s.propellant-=4;const alignment=1-Math.abs(aim-.8)*2;const yieldAmount=Math.max(1,Math.round((15+power*20)*(.5+.5*alignment)));s.data=clamp(s.data+yieldAmount);s.discoveries++;this.commandCount++;return{ok:true,kind:'action',message:'scienceFound'};}
   claimSignal(now=performance.now()):CommandResult{const s=this.state;if(this.signalReward)return {ok:false,kind:'error',message:'alreadyDone'};if(now<this.cooldownUntil)return {ok:false,kind:'error',message:'cooldown'};if(s.paused)return {ok:false,kind:'paused',message:'clockPaused'};if(s.eventOpen)return {ok:false,kind:'event',message:'eventMustDecide'};if(s.commandSpent)return {ok:false,kind:'error',message:'solSpent'};if(s.power<3)return {ok:false,kind:'error',message:'insufficient'};s.power-=3;s.data=clamp(s.data+10);s.commandSpent=true;s.lastCommandAt=now;this.commandCount++;this.signalReward=true;this.cooldownUntil=now+650;return {ok:true,kind:'action',message:'signalDone'};}
   claimOrbit(now=performance.now()):CommandResult{const s=this.state;if(this.orbitReward)return {ok:false,kind:'error',message:'alreadyDone'};if(now<this.cooldownUntil)return {ok:false,kind:'error',message:'cooldown'};if(s.paused)return {ok:false,kind:'paused',message:'clockPaused'};if(s.eventOpen)return {ok:false,kind:'event',message:'eventMustDecide'};if(s.commandSpent)return {ok:false,kind:'error',message:'solSpent'};if(s.power<3)return {ok:false,kind:'error',message:'insufficient'};s.power-=3;s.commandSpent=true;s.lastCommandAt=now;this.commandCount++;this.orbitReward=true;this.cooldownUntil=now+650;return {ok:true,kind:'action',message:'orbitDone'};}
   private systemAction(action:Action):CommandResult{
@@ -73,7 +113,7 @@ export class MissionEngine {
       default:return fail('unknownControl');
     }
   }
-  private applyEventEffects(scale:number,allowHealth:boolean){if(!this.activeEvent)return;for(const [key,value]of Object.entries(this.activeEvent.effects)){if(key==='health'&&!allowHealth)continue;const stat=key as keyof Pick<MissionState,'power'|'water'|'food'|'health'|'propellant'>;this.state[stat]=clamp(this.state[stat]+Number(value)*scale);}if(allowHealth&&this.activeEvent.effects.health===undefined&&this.state.shielding<20)this.state.health=clamp(this.state.health-12);}
+  private applyEventEffects(scale:number,allowHealth:boolean){if(!this.activeEvent)return;for(const [key,value]of Object.entries(this.activeEvent.effects)){if(key==='health'&&!allowHealth)continue;const stat=key as keyof Pick<MissionState,'power'|'water'|'food'|'health'|'propellant'>;this.state[stat]=clamp(this.state[stat]+Number(value)*scale);}if(allowHealth&&this.activeEvent.kind!=='nasa-live'&&this.activeEvent.effects.health===undefined&&this.state.shielding<20)this.state.health=clamp(this.state.health-12);}
   private closeEvent(result:CommandResult){this.state.eventOpen=false;this.activeEvent=null;return result;}
-  private advance(days:number,now:number):CommandResult{const s=this.state;if(s.paused)return{ok:false,kind:'paused',message:'clockPaused'};if(s.eventOpen)return{ok:false,kind:'event',message:'eventMustDecide'};if(now<this.cooldownUntil)return{ok:false,kind:'error',message:'cooldown'};let advanced=0;for(let i=0;i<days;i++){s.sol++;advanced++;s.commandSpent=false;const site=siteProfile(this.settings.plan);const powerUse=s.planned?site.powerUse:5;const waterUse=s.planned?site.waterUse:5;s.power=clamp(s.power-powerUse);s.water=clamp(s.water-waterUse);s.food=clamp(s.food-4);if(s.power<12||s.water<12||s.food<10)s.health=clamp(s.health-6);if(s.sol%3===0){s.eventOpen=true;this.activeEvent=this.eventForSol(s.sol);break;}}s.cycle=s.sol;s.lastCommandAt=now;this.cooldownUntil=now+400;return{ok:true,kind:s.eventOpen?'event':'time',message:s.eventOpen?'eventAlert':'advanceDone',event:this.activeEvent??undefined,timeAdvanced:advanced};}
+  private advance(days:number,now:number):CommandResult{const s=this.state;if(s.paused)return{ok:false,kind:'paused',message:'clockPaused'};if(s.eventOpen)return{ok:false,kind:'event',message:'eventMustDecide'};if(now<this.cooldownUntil)return{ok:false,kind:'error',message:'cooldown'};let advanced=0;for(let i=0;i<days;i++){s.sol++;advanced++;s.commandSpent=false;const site=siteProfile(this.settings.plan);const powerUse=s.planned?site.powerUse:5;const waterUse=s.planned?site.waterUse:BASELINE_GAME_WATER_POINTS;s.power=clamp(s.power-powerUse);s.water=clamp(s.water-waterUse);s.food=clamp(s.food-4);if(s.power<12||s.water<12||s.food<10)s.health=clamp(s.health-6);if(s.sol%3===0){s.eventOpen=true;this.activeEvent=this.eventForSol(s.sol);break;}}s.cycle=s.sol;s.lastCommandAt=now;this.cooldownUntil=now+400;return{ok:true,kind:s.eventOpen?'event':'time',message:s.eventOpen?'eventAlert':'advanceDone',event:this.activeEvent??undefined,timeAdvanced:advanced};}
 }

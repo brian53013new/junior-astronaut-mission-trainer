@@ -1,0 +1,119 @@
+{
+  "manifestVersion": 1,
+  "generatedAtUTC": "2026-11-13T08:23:39Z",
+  "projectDisclosure": "Outpost Control is an independent educational project, not a NASA product or endorsement. Game effects are not mission or safety predictions.",
+  "sources": [
+    {
+      "sourceId": "donki",
+      "sourceName": "NASA CCMC Space Weather Database Of Notifications, Knowledge, Information (DONKI)",
+      "sourceUrl": "https://ccmc.gsfc.nasa.gov/tools/DONKI/",
+      "apiEndpoint": "https://ccmc.gsfc.nasa.gov/DONKI-API/get/",
+      "queryTemplate": "{type}?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD",
+      "eventTypes": [
+        "CME",
+        "FLR",
+        "GST",
+        "SEP",
+        "IPS",
+        "HSS"
+      ],
+      "retrievedAtUTC": "2026-11-13T08:23:39Z",
+      "dataVersion": "User-supplied preserved raw responses for 2026-10-01..2026-11-13: CME 125, GST 3, HSS 11, IPS 11, SEP valid empty; FLR not obtained",
+      "licenseOrTerms": "CCMC DONKI is provided as-is; official documentation cautions that near-real-time outputs/simulations are prototyping or research quality and not mission advice. Attribute the official event record; do not imply NASA endorsement.",
+      "usedFields": [
+        "eventID",
+        "startTime or eventTime",
+        "link",
+        "event-type-specific metadata when present"
+      ],
+      "gameMapping": "Verified events supply context and date; game power changes are educational rules and never dose, hazard or safety predictions.",
+      "verificationStatus": "user-supplied-raw-responses-hash-verified; partial 5 feeds; FLR unavailable",
+      "apiTest": "Raw official endpoint response package and SHA-256 inventory supplied by user. HTTP 200 in package manifest for CME/GST/HSS/IPS/SEP; SEP is an empty array. FLR attempt recorded HTTP 404 at api.nasa.gov and HTTP 503 at CCMC. Local hashes verified; origin requests were not independently repeated in this executor."
+    },
+    {
+      "sourceId": "lro-lola-pds",
+      "sourceName": "LRO LOLA, NASA Planetary Data System Geosciences Node",
+      "sourceUrl": "https://pds-geosciences.wustl.edu/missions/lro/lola.htm",
+      "apiEndpoint": "PDS catalog/product archive; not a general QuickMap REST API",
+      "retrievedAtUTC": "2026-11-13T08:23:39Z",
+      "dataVersion": "LOLA RDR selected topography CSV and PDS3 labels generated 2026-11-13; the supplied labels do not state an archive release number",
+      "licenseOrTerms": "PDS product-level documentation and citation apply.",
+      "usedFields": [
+        "product names, release/date metadata, archive scope"
+      ],
+      "gameMapping": "Relative topography is measured from LOLA RDR. Local slopes are derived from sparse measurements, not official slope fields. Both feed only an educational comparison score, not landing safety, illumination, ice, or communications.",
+      "verificationStatus": "user-supplied-query-CSV-and-PDS3-label-hash-verified; three representative points; local slope estimate independently reproduced",
+      "apiTest": "User-supplied ODE query JSON, CSV and PDS label files with checksums verified; candidate selection and slope calculation reproduced from raw points. No separate archive release number was available in the product labels."
+    },
+    {
+      "sourceId": "bvad",
+      "sourceName": "NASA Baseline Values and Assumptions Document for Life Support Systems, Rev. 2",
+      "sourceUrl": "https://ntrs.nasa.gov/citations/20210024855",
+      "apiEndpoint": "https://ntrs.nasa.gov/api/citations/20210024855/downloads/BVAD_2.15.22-final.pdf",
+      "retrievedAtUTC": "2026-11-13T01:59:51Z",
+      "dataVersion": "2021 record / February 2022 Rev. 2 PDF",
+      "licenseOrTerms": "NTRS record marks PUBLIC distribution and PUBLIC_USE_PERMITTED; no third-party material flagged. Attribution retained.",
+      "usedFields": [
+        "Table 4-20, printed page 72: drinking water, food rehydration, urinal flush, personal hygiene, shower, laundry, dish wash, total hygiene, total water consumption"
+      ],
+      "gameMapping": "Transit vehicle total 3.2 kg/crew-member-day / 0.64 kg per game point = 5 points. 0.64 kg scale and site-specific surcharges are educational abstractions.",
+      "verificationStatus": "official-NTRS-record-and-PDF-table-verified"
+    },
+    {
+      "sourceId": "nasa-images-api",
+      "sourceName": "NASA Image and Video Library API",
+      "sourceUrl": "https://images.nasa.gov/docs/images.nasa.gov_api_docs.pdf",
+      "apiEndpoint": "https://images-api.nasa.gov/search?q=",
+      "retrievedAtUTC": "2026-11-13T08:23:39Z",
+      "dataVersion": "NASA Images API query result (5 items) saved as raw JSON",
+      "licenseOrTerms": "Check image-specific credit and third-party rights; NASA branding does not imply endorsement.",
+      "usedFields": [
+        "nasa_id",
+        "title",
+        "description",
+        "date_created",
+        "center",
+        "keywords",
+        "links"
+      ],
+      "gameMapping": "Five saved search result metadata records now appear in the NASA Data Lab with NASA ID, title, description, date, preview and details link. PIA13720 remains separately labeled static Photojournal media.",
+      "verificationStatus": "user-supplied-raw-query-response-hash-verified; five result records",
+      "liveQueryTest": "Raw query URL and response supplied by user; local SHA-256 verified. This executor did not repeat the origin request."
+    },
+    {
+      "sourceId": "lro-illumination-pia13720",
+      "sourceName": "NASA Science Photojournal: South Pole Illumination Map (PIA13720)",
+      "sourceUrl": "https://science.nasa.gov/photojournal/south-pole-illumination-map/",
+      "apiEndpoint": null,
+      "retrievedAtUTC": "2026-11-13T01:59:51Z",
+      "dataVersion": "Bundled local image / PIA13720",
+      "licenseOrTerms": "Credit NASA/GSFC/Arizona State University; page-specific third-party restrictions were not separately verified in this audit.",
+      "usedFields": [
+        "illumination map image and attribution"
+      ],
+      "gameMapping": "Learners compare lit and shadowed terrain; image brightness is not interpreted as water abundance.",
+      "verificationStatus": "official-source-page-verified; already-bundled-image"
+    },
+    {
+      "sourceId": "lunar-gravity",
+      "sourceName": "NASA Science Moon by the Numbers; NASA Glenn Research Center Moon facts",
+      "sourceUrl": "https://science.nasa.gov/moon/by-the-numbers/",
+      "apiEndpoint": null,
+      "retrievedAtUTC": "2026-11-13T02:23:08Z",
+      "dataVersion": "NASA Science page checked 2026-11-13; JPL Solar System Dynamics cited by page",
+      "licenseOrTerms": "Public NASA educational reference; attribution retained. No NASA endorsement implied.",
+      "usedFields": [
+        "Moon surface gravity 1.624 m/s²; Earth comparison 0.165"
+      ],
+      "gameMapping": "The 1.624 m/s² value from flight-baselines.json drives the mass × gravity lunar-weight result and local learning-record calculator. The Earth comparison constant is a classroom reference; the orbit ring remains illustrative and is not integrated.",
+      "verificationStatus": "official-NASA-pages-verified"
+    }
+  ],
+  "accessAuditFile": "api-access-audit.json",
+  "userSuppliedPackage": {
+    "manifestPath": "user-submitted-package/source-manifest.json",
+    "checksumList": "user-submitted-package/checksums.sha256",
+    "checksumEntriesVerified": 24,
+    "originTransactionsRepeatedByExecutor": false
+  }
+}

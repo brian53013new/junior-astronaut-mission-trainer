@@ -1,5 +1,5 @@
 export type Action='plan'|'craft'|'power'|'comms'|'navigate'|'science'|'analyze'|'recycle'|'grow'|'event'|'pause'|'advance'|'skip'|'shelter'|'continue';
 export type MissionState={power:number;water:number;food:number;health:number;propellant:number;shielding:number;sol:number;cycle:number;planned:boolean;craftReady:boolean;commsReady:boolean;navReady:boolean;data:number;discoveries:number;eventOpen:boolean;paused:boolean;commandSpent:boolean;lastCommandAt:number};
-export type ScenarioEvent={id:string;title:string;note:string;source:string;sourceUrl?:string;retrievedAt?:string;mappingDisclosure?:string;effects:Partial<Pick<MissionState,'power'|'water'|'food'|'health'|'propellant'>>;kind:'education'|'nasa-snapshot'};
+export type ScenarioEvent={id:string;title:string;note:string;source:string;sourceUrl?:string;retrievedAt?:string;mappingDisclosure?:string;eventType?:'CME'|'FLR'|'GST'|'SEP'|'IPS'|'HSS';observedAt?:string;effects:Partial<Pick<MissionState,'power'|'water'|'food'|'health'|'propellant'>>;kind:'education'|'nasa-snapshot'|'nasa-live'};
 export type FlightRecord={completedOps:number;bestHealth:number;credits:number;streak:number;lastDay:string;badges:string[];discoveries:number};
-export type DataProvenance={mode:'NASA-SNAPSHOT'|'EDUCATIONAL-FALLBACK';dataset:string;sourceUrl:string;retrievedAt:string;recordId:string;limitations:string};
+export type DataProvenance={mode:'NASA-LIVE'|'NASA-SNAPSHOT'|'EDUCATIONAL-FALLBACK';dataset:string;sourceUrl:string;retrievedAt:string;recordId:string;limitations:string};

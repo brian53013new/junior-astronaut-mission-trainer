@@ -1,3 +1,4 @@
+import { turnToSide } from './turn-to-side';
 import { expect, test, type Page } from '@playwright/test';
 
 type State={power:number;water:number;sol:number;commandSpent:boolean;commandCount:number};
@@ -13,7 +14,7 @@ async function enterDesk(page:Page){
 
 test('physical power control changes supplies once and survives reload',async({page},info)=>{
  test.setTimeout(120_000);const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await enterDesk(page);
- const mobile=info.project.name.includes('mobile');const pos=()=>page.evaluate(()=>window.__OUTPOST_QA__!.screenPosition('power'));
+ const mobile=info.project.name.includes('mobile');await turnToSide(page,mobile,'left',1.25);const pos=()=>page.evaluate(()=>window.__OUTPOST_QA__!.screenPosition('power'));
  const before=await state(page);let p=await pos();expect(p.x).toBeGreaterThan(0);expect(p.x).toBeLessThan(page.viewportSize()!.width);
  if(mobile)await page.touchscreen.tap(p.x,p.y);else await page.mouse.click(p.x,p.y);
  await expect.poll(()=>page.evaluate(()=>window.__OUTPOST_QA__!.selectedAction()),{timeout:15000}).toBe('power');await page.waitForTimeout(5000);p=await pos();

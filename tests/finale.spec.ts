@@ -1,3 +1,4 @@
+import { studyPaperClick } from './study-paper';
 import { expect, test } from '@playwright/test';
 import { curriculum } from '../src/game/Curriculum';
 import { questionOrder } from '../src/game/QuestionOrder';
@@ -16,7 +17,7 @@ test('final alert and questions lead to the game certificate',async({page},info)
  await tap();await expect.poll(()=>page.evaluate(()=>window.__OUTPOST_QA__!.selectedAction()),{timeout:15000}).toBe('shelter');await page.waitForTimeout(4000);
  await tap();await expect.poll(()=>page.evaluate(()=>window.__OUTPOST_QA__!.safetyOpen())).toBe(true);await tap();
  await expect.poll(()=>page.evaluate(()=>window.__OUTPOST_QA__!.welcome().quiz),{timeout:15000}).toBe(true);await page.waitForTimeout(5000);
- const lesson=()=>page.evaluate(()=>window.__OUTPOST_QA__!.lesson());const paper=async(x:number,y:number)=>{const p=await page.evaluate(([a,b])=>window.__OUTPOST_QA__!.paperPosition(a,b),[x,y]);if(mobile)await page.touchscreen.tap(p.x,p.y);else await page.mouse.click(p.x,p.y);await page.waitForTimeout(1500);};
+ const lesson=()=>page.evaluate(()=>window.__OUTPOST_QA__!.lesson());const paper=async(x:number,y:number)=>{await studyPaperClick(page,mobile,x,y);await page.waitForTimeout(1500);};
  await expect.poll(async()=>(await lesson()).phase).toBe('reflection');await paper(300,350);await paper(800,710);await expect.poll(async()=>(await lesson()).phase).toBe('quiz');
  for(const q of curriculum.finale.questions){const slot=questionOrder(q.id).indexOf(q.correct);await paper(300,350+slot*96);await page.waitForTimeout(1000);await paper(800,710);}
  await expect.poll(async()=>(await lesson()).finished,{timeout:15000}).toBe(true);expect(errors).toEqual([]);

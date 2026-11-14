@@ -1,0 +1,34 @@
+{
+  "sourceName": "NASA Baseline Values and Assumptions Document for Life Support Systems, Rev. 2",
+  "record": "NTRS 20210024855",
+  "sourceUrl": "https://ntrs.nasa.gov/citations/20210024855",
+  "pdfUrl": "https://ntrs.nasa.gov/api/citations/20210024855/downloads/BVAD_2.15.22-final.pdf",
+  "retrievedAtUTC": "2026-11-13T01:59:51Z",
+  "printedPage": 72,
+  "table": "4-20",
+  "unit": "kg/crew-member-day",
+  "licenseOrTerms": "NTRS metadata marks PUBLIC distribution and PUBLIC_USE_PERMITTED; no third-party material flagged. Cite the source; this is not NASA endorsement.",
+  "values": {
+    "rows": [
+      {"item":"Drinking Water","ISS":2.0,"Transit Vehicle":2.0,"Early Planetary Base":2.0,"Mature Planetary Base":2.0},
+      {"item":"Food Rehydration","ISS":0.5,"Transit Vehicle":0.5,"Early Planetary Base":0.5,"Mature Planetary Base":0.5},
+      {"item":"Total Human Consumption","ISS":2.5,"Transit Vehicle":2.5,"Early Planetary Base":2.5,"Mature Planetary Base":2.5},
+      {"item":"Urinal Flush","ISS":0.3,"Transit Vehicle":0.3,"Early Planetary Base":0.5,"Mature Planetary Base":0.5},
+      {"item":"Personal Hygiene","ISS":0.4,"Transit Vehicle":0.4,"Early Planetary Base":0.4,"Mature Planetary Base":0.4},
+      {"item":"Shower","ISS":null,"Transit Vehicle":null,"Early Planetary Base":1.08,"Mature Planetary Base":1.08},
+      {"item":"Laundry","ISS":null,"Transit Vehicle":null,"Early Planetary Base":null,"Mature Planetary Base":1.1},
+      {"item":"Dish Wash","ISS":null,"Transit Vehicle":null,"Early Planetary Base":null,"Mature Planetary Base":3.54},
+      {"item":"Total Hygiene","ISS":0.7,"Transit Vehicle":0.7,"Early Planetary Base":1.98,"Mature Planetary Base":6.62},
+      {"item":"Total Water Consumption","ISS":5.38,"Transit Vehicle":3.2,"Early Planetary Base":4.48,"Mature Planetary Base":9.12}
+    ]
+  },
+  "gameConversion": {
+    "kgPerGamePoint": 0.64,
+    "transitVehicleReferencePointsPerCrewDay": 5,
+    "earlyPlanetaryBaseReferencePointsPerCrewDay": 7,
+    "maturePlanetaryBaseReferencePointsPerCrewDay": 14,
+    "disclosure": "A child-friendly educational conversion. Game points and site surcharges are not official mission design requirements, crew consumption predictions, or a lunar habitat simulation."
+  },
+  "notImported": ["oxygen flow and storage values", "food production and inventory values", "energy-system sizing", "waste-system performance", "repair-time values"],
+  "notes": "Use the cited printed-page table and preserve its scenario labels. Values vary by system assumptions; do not treat the table as a universal lunar-base specification."
+}
