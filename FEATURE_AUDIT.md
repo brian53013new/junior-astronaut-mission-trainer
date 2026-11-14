@@ -1,5 +1,19 @@
 # Junior Astronaut Mission Trainer — implementation audit
 
+## Urgent board-only rebuild — 2026-11-14
+
+- [x] Normal home → start now opens one five-turn 3D mission board directly; no welcome-room, lesson selector, or alternate course button appears on the production route. Legacy lesson classes remain in the repository but are not the normal route; deletion remains open.
+- [x] The board includes physical Three.js terrain pads/habitat token, gimbal antenna, evidence tiles and repair ports. Mouse drag and touch pointer events use raycast selection/pointer capture; accessible task controls are retained.
+- [x] A 3D task overlay hit-area regression was fixed: the card's transparent body no longer intercepts mesh interaction, while buttons, range inputs, source links and summaries remain interactive.
+- [x] Five turn decisions update the canonical MissionEngine resources and persist turn records; finale certificate state survives reload.
+- [x] Source details show provenance date/hash/status where an imported snapshot provides them; NASA facts, imported snapshots and game mappings remain distinct.
+- [x] Board E2E covers fresh storage, physical site drag, physical antenna drag, physical evidence tile, physical repair ports, finale choices, certificate, reload, language persistence and 375×812 / 768×1024 / 1024×768 viewport overflow.
+- [ ] Physical iPhone/iPad Safari test is still pending. Chromium mobile emulation is not a hardware result.
+- [ ] Legacy course classes and their route-dependent tests remain dormant and incompatible with the board-only default. The old full-suite attempt had two failures, one interrupted test and 116 cases not run; no full legacy-suite pass is claimed. Current acceptance uses the dedicated board-only tests. See `docs/TEST_REPORT.md`.
+- [ ] Original content rights and project-wide license remain unconfirmed; no new license was assigned.
+
+Implementation details and limitations: [`docs/urgent-board-rebuild-report.md`](docs/urgent-board-rebuild-report.md).
+
 ## Stage 5 — Mission Table route (2026-11-13)
 
 - [x] Added the production Lunar Mission Table route after the 3D welcome room. It presents six short learning turns plus an integrated finale; the full paper curriculum remains optional.

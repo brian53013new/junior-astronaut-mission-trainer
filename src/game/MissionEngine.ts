@@ -57,7 +57,7 @@ export class MissionEngine {
   /** Board lessons are short training exercises, so unrelated legacy sol, pause and cooldown gates do not block a completed classroom task. Resource costs and one-time rewards still apply. */
   claimTrainingWorkshop(kind:WorkshopKind):CommandResult{const s=this.state;if(this.workshopRewards[kind])return {ok:false,kind:'error',message:'alreadyDone'};if(kind==='assembly'){if(s.power<4)return {ok:false,kind:'error',message:'insufficient'};s.power-=4;s.shielding=clamp(s.shielding+10);}else{if(s.water<3)return {ok:false,kind:'error',message:'insufficient'};s.water-=3;s.power=clamp(s.power+12);}this.workshopRewards[kind]=true;this.commandCount++;return {ok:true,kind:'action',message:kind==='assembly'?'assemblyDone':'repairDone'};}
   /** Apply the board-only decisions to the canonical simulation state; all deltas are explicitly educational mappings. */
-  applyTrainingDecision(kind:'site'|'flight'|'finale',values:{score?:number;mass?:number;priority?:number;choices?:string[]}):CommandResult{
+  applyTrainingDecision(kind:'site'|'flight'|'finale'|'event'|'evidence'|'repair',values:{score?:number;mass?:number;priority?:number;choices?:string[];choice?:string;waterCost?:number;powerGain?:number;classification?:string}):CommandResult{
     const s=this.state;
     if(kind==='site'){
       const score=values.score;if(typeof score!=='number'||!Number.isFinite(score)||score<0||score>100)return{ok:false,kind:'error',message:'invalidValue'};
@@ -69,6 +69,21 @@ export class MissionEngine {
       const loadCost=Math.max(1,Math.round(mass/20));if(s.power<loadCost)return{ok:false,kind:'error',message:'insufficient'};
       s.power-=loadCost;s.health=clamp(s.health+Math.round((priority-.5)*10));this.settings.power=priority;this.commandCount++;
       return{ok:true,kind:'action',message:'flightDecisionRecorded'};
+    }
+    if(kind==='event'){
+      if(values.choice==='protect'){s.power=clamp(s.power+2);s.health=clamp(s.health+3);}
+      else if(values.choice==='work'){if(s.power<4)return{ok:false,kind:'error',message:'insufficient'};s.power=clamp(s.power-4);s.data=clamp(s.data+8);}
+      else return{ok:false,kind:'error',message:'invalidValue'};
+      this.commandCount++;return{ok:true,kind:'action',message:'eventResponseRecorded'};
+    }
+    if(kind==='evidence'){
+      if(values.classification!=='inference')return{ok:false,kind:'error',message:'invalidValue'};
+      s.data=clamp(s.data+5);this.commandCount++;return{ok:true,kind:'action',message:'evidenceClassified'};
+    }
+    if(kind==='repair'){
+      const cost=values.waterCost??3,gain=values.powerGain??8;
+      if(!Number.isFinite(cost)||!Number.isFinite(gain)||cost<0||gain<0||s.water<cost)return{ok:false,kind:'error',message:'insufficient'};
+      s.water=clamp(s.water-cost);s.power=clamp(s.power+gain);s.health=clamp(s.health+4);this.commandCount++;return{ok:true,kind:'action',message:'repairRecorded'};
     }
     const choices=values.choices;if(!Array.isArray(choices)||choices.length<2||choices.some(x=>!['energy','water','comms'].includes(x)))return{ok:false,kind:'error',message:'invalidValue'};
     if(choices.includes('energy')){if(s.power<5)return{ok:false,kind:'error',message:'insufficient'};s.power-=5;s.health=clamp(s.health+8);}

@@ -2,6 +2,10 @@
 
 Audit date: 2026-11-13. This is an independent educational game associated with **Build a Junior Astronaut Mission Trainer**, not a NASA product, endorsement, mission tool, or safety recommendation.
 
+## Board-only runtime display update — 2026-11-14
+
+The five-turn board now exposes phase-specific source details in its expandable source cards. The cards display the selected DONKI record and reported retrieval date/status, the LOLA package's three row-level points and package verification note, NASA Images API result/query metadata including its stored response hash, and BVAD table/page/retrieval details. They also retain the science and simulation limitations below. The package hashes were verified locally; the executor did not independently re-request NASA source transactions. The five-turn flow does not convert event intensity to radiation dose or imply ice from shadows.
+
 ## Acquisition and integrity
 
 The user supplied `NASA_Outpost_Control_Data_Package_2026-11-13 (1).zip` (archive SHA-256 `c99feb4c4d381d37910ed501829d791d0d98e20ec94003c71da2f2f0de16e4c3`). It was extracted without path traversal; all 24 listed SHA-256 digests matched. The package, source manifest and checksum list are preserved at `public/data/nasa/user-submitted-package/`; raw response/product files are also stored under `public/data/nasa/raw/` for runtime and citations. Hash agreement establishes file integrity against the supplied manifest; this executor did not independently repeat the source HTTP requests.

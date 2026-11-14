@@ -8,6 +8,7 @@
     "build": "tsc && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "test": "playwright test",
+    "test:legacy": "node scripts/run-legacy-playwright.mjs",
     "verify:visual": "playwright test tests/visual.spec.ts",
     "inspect:canvas": "node scripts/inspect-threejs-canvas.mjs",
     "check:nasa-data": "node --experimental-transform-types scripts/check-nasa-data.mjs && node scripts/check-donki-import.mjs"

@@ -2,6 +2,9 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests',
+  // The active product now has one five-turn board route. The pre-rebuild
+  // room/course acceptance files remain available via PLAYWRIGHT_INCLUDE_LEGACY=1.
+  testMatch: process.env.PLAYWRIGHT_INCLUDE_LEGACY === '1' ? '**/*.spec.ts' : 'board-only-rebuild.spec.ts',
   // One worker: parallel headless WebGL contexts contend for the GPU, and the
   // frame-time collapse makes game time drift from wall time, flaking timed
   // gameplay phases and screenshot baselines.

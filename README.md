@@ -1,8 +1,8 @@
 # Outpost Control — Junior Astronaut Mission Trainer
 
-Outpost Control is a **bilingual (English / Traditional Chinese) 3D lunar-base education game** created for the NASA Space Apps Challenge **“Build a Junior Astronaut Mission Trainer.”** Learners join NOVA to assemble a probe, compare LOLA-derived south-pole points, plan a flight, align a communication link, inspect lunar imagery, repair a system, and make resource choices in an integrated outpost mission.
+Outpost Control is a **bilingual (English / Traditional Chinese) 3D lunar-base education game** created for the NASA Space Apps Challenge **“Build a Junior Astronaut Mission Trainer.”** The production flow is now one compact 3D mission board: learners compare LOLA point data, adjust a physical antenna, reason from lunar imagery, connect a repair circuit, then make integrated outpost priorities.
 
-The ordinary production route goes from NOVA's 3D welcome room to a six-turn Lunar Mission Table and integrated finale (about 12–18 minutes). The existing full reading-and-quiz curriculum remains available as an optional longer route. See the [current Mission Table course report](docs/mission-board-course-report.md) for its dialogue, actions, outcomes, sources and limits.
+The home screen leads directly to the single 3D board (about 10 minutes) with no welcome-room gate, course selector, or alternate lesson route. NOVA provides short contextual coaching and each turn offers physical board interaction, a brief readable task panel, result feedback and source/limitations details. See [the board-only rebuild report](docs/urgent-board-rebuild-report.md) for implemented interactions and verification. Legacy lesson classes remain in the repository pending cleanup, but the production start path does not route into them.
 
 **This is an independent educational game, not a NASA product, NASA-certified trainer, operational mission simulator, radiation-dose forecast, or lunar-base safety tool.** Game values and consequences are classroom simulations. Only the references and datasets explicitly marked as used below are represented as NASA material. See [NASA_REFERENCES.md](NASA_REFERENCES.md), [data audit](docs/nasa-data-audit.md), and [test report](docs/TEST_REPORT.md).
 
@@ -29,21 +29,17 @@ The project uses Three.js for the shared 3D scene. Mouse, keyboard and touch con
 
 | Stage | Learner activity | Data/fact and actual effect | Limitation |
 |---|---|---|---|
-| NOVA welcome | Explore the 3D practice room; try a button, dial, switch, book and hatch | Saved tutorial step and transition into the cabin | Not an unrestricted walkable base |
-| 1 · Probe assembly | Identify, rotate, fit and activate probe modules | Module choices and assembly alter simulated readiness, power and shielding | NASA spacecraft-system pages are references; fitting/reward values are game rules |
-| 2 · Site and energy | Move a site token and trade power against water needs | BVAD’s 3.2 kg water reference drives a 5-point daily baseline (3.2 ÷ 0.64); this changes mission water over time | Three point profiles use LOLA relative topography and locally derived slope estimates; score, water, power and science effects are educational mappings |
-| 3 · Flight | Adjust an illustrative orbit ring; compare an object’s weight on Earth and Moon | 1.624 m/s² drives the lunar weight calculation; the result is saved as a learning record | The visible ring and route costs are not a physical orbit or flight calculation |
-| 4 · Communications | Align an antenna and repeat a signal pattern | Completion changes simulated communications/data state | DONKI event records provide mission context and a disclosed simulated power rule; the signal pattern is not NASA encoding |
-| 5 · Observation | Aim, scan and compare visible evidence with inference | Static PIA13720 image is observed; scan/data yield is simulated | Image brightness indicates illumination, not water abundance |
-| 6 · Repair | Inspect labels, match lines and retest | The repair task changes simulated water and power | Circuit and repair costs are not actual ECLSS procedures or NASA repair data |
-| Finale | Recycle water, observe and respond to a simulated alert | Multiple choices change saved mission resources and learning records | Alert, shelter and shielding effects are fictional; they do not advise crew safety |
+| 1 · Site | Drag the habitat token to one of three LOLA candidate pads and compare measured coordinates/topography plus package-derived slope | Chosen point and educational score enter the mission state | Candidate points are not NASA landing recommendations; slope is derived from sparse returned observations and the score is an educational rule |
+| 2 · Event and communication | Drag the physical antenna gimbal to align it, then protect reserve or continue the data transmission | Choice changes simulated power and data; event record/date is shown when a verified supplied DONKI record is available | DONKI snapshot is user-supplied, partial, and not independently re-requested here; game effects are not dose, forecast or safety prediction |
+| 3 · Observation evidence | Select a 3D classification tile for the claim that an image shadow proves water ice | Evidence classification updates the mission record | Image metadata does not establish ice; PIA13720 is a distinct static Photojournal source |
+| 4 · Repair | Select the backup power plug and connect it to the life-support port | Repair completion updates simulated power and water | BVAD supplies a context baseline only; the repair cost and circuit behavior are educational abstractions |
+| 5 · Integrated finale | Choose at least two mission priorities and resolve the board | Resource outcomes, five decisions, provenance IDs and certificate state persist locally | It is a short educational challenge, not a complete mission simulator or full six-course NASA curriculum |
 
-Each lesson includes a life analogy, concept introduction, device activity, result/reflection and questions with feedback and retry. The questions still include multiple choice and matching; the entire curriculum has not been converted to open-ended physical challenges. Per-lesson NASA reference cards are shown in the study panel where applicable, with factual context separated from game effects.
+The five turns provide a shorter judge-ready activity rather than the former lesson-by-lesson curriculum. The longer course implementation has not been deleted, but it is not on the normal home-to-game route; further removal and regression cleanup are tracked in `FEATURE_AUDIT.md`.
 
 ## Controls and accessibility
 
-- Arrow keys or A/D move between seated work zones; in the welcome room W/S or up/down also move forward/backward.
-- Drag actual sliders, knobs, map tokens and assembly components; buttons are activated by tapping/clicking. Touch input does not require hover.
+- Drag the habitat token, gimbal antenna and point/click the evidence and repair ports; DOM buttons remain as accessible alternatives. No hover is required.
 - Mouse wheel, pinch and on-screen controls adjust camera zoom by default. Text size is independent and supports 100%, 150% and 200% settings.
 - The settings panel offers language, audio, reduced motion, text size, camera zoom and reset view. NOVA subtitles and mission state are retained in the browser save.
 - The local final record contains course answers, retries, reflections and actions. It is a game record, not proof of learning or an official certificate.
@@ -66,7 +62,7 @@ git diff --check
 
 Mock-based ingestion checks verify validation and failure handling; they do not prove NASA connectivity. The current test report separates mock checks, genuine source evidence, browser emulation and physical-device gaps. Review [docs/nasa-data-integration.md](docs/nasa-data-integration.md) before acquiring a snapshot. Never turn a DONKI event type into a real radiation dose, health prediction or safety instruction.
 
-The current bilingual mission-table sequence and evidence limits are summarized in [docs/mission-board-course-report.md](docs/mission-board-course-report.md). The board layout, palette, interaction and resource-state mapping are recorded in [docs/ui-design-report.md](docs/ui-design-report.md), with viewport evidence and verification limits in [docs/ui-acceptance-report.md](docs/ui-acceptance-report.md). The legacy paper curriculum is summarized in [docs/course-content-report.md](docs/course-content-report.md). The raw user-provided NASA package and original checksums are preserved under public/data/nasa/user-submitted-package/.
+The current single-board flow, source boundaries and test evidence are summarized in [docs/urgent-board-rebuild-report.md](docs/urgent-board-rebuild-report.md). Earlier course reports document the archived learning sequence. The raw user-provided NASA package and original checksums are preserved under `public/data/nasa/user-submitted-package/`.
 
 ## Project map
 

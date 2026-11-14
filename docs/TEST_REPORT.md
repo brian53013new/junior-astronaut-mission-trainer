@@ -1,3 +1,18 @@
+# Current board-only verification — 2026-11-14
+
+This section supersedes the route/test interpretation below for the current urgent 3D-board rebuild. The dated 2026-11-13 full-suite results are historical evidence for the previous six-course route; they are not evidence that the removed route still works.
+
+| Check | Current result | Boundary |
+|---|---|---|
+| Board-only Playwright (`npm test`) | 4 passed | Chromium desktop + mobile emulation; end-to-end board, physical drags/taps, certificate, reload, language, responsive viewports. |
+| NASA data checks | Passed on supplied archive and mocked importer cases | Package SHA-256s and included NASA response files checked locally; no fresh NASA HTTP request was made. |
+| Production build | Passed | Vite reports a 1,030.09 kB minified JS chunk above the 900 kB advisory threshold. Non-blocking warning; splitting remains open. |
+| Legacy full-suite attempt | Not passed | The first incompatible old-route tests failed (assembly expected an old workshop mode; audio test expected the hidden legacy settings gear); one responsive run was interrupted; 116 remaining cases were not run. The legacy suite is available via `npm run test:legacy` for diagnosis, but this board-only replacement does not claim legacy-route coverage. |
+| Physical iPhone/iPad/Android | Not verified | Only browser emulation is evidenced; hardware/Safari testing remains outstanding. |
+| Rights / LICENSE | Pending | User stated rights ownership is unknown; no project-wide license was selected. |
+
+Current screenshot evidence is in `docs/ui-evidence/board-only-desktop-1280.png` and `docs/ui-evidence/board-only-mobile-375.png`.
+
 # Verification report — Judge review implementation follow-through
 
 Date: 2026-11-13 UTC

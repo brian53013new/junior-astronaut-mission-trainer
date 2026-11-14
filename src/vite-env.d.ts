@@ -43,6 +43,8 @@ interface Window {
   __THREE_GAME_TEST_HOOKS__?: ThreeGameTestHooks;
   __OUTPOST_QA__?: {
     ready(): Promise<boolean>;
+    missionBoard(): {phase:number;site:string;antenna:number;eventChoice:string;evidence:string;repairLinked:boolean;priorities:string[];completed:string[];resources:{power:number;water:number;data:number;safety:number}|null};
+    boardPoint(kind:'base'|'site'|'source'|'antenna'|'classification'|'port',index?:number): {x:number;y:number};
     state(): Record<string, unknown>;
     language(): 'en'|'zh';
     guide(): {step:number;target:string|null};
