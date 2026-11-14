@@ -43,10 +43,10 @@ interface Window {
   __THREE_GAME_TEST_HOOKS__?: ThreeGameTestHooks;
   __OUTPOST_QA__?: {
     ready(): Promise<boolean>;
-    missionBoard(): {phase:number;site:string;antenna:number;eventChoice:string;evidence:string;repairLinked:boolean;priorities:string[];completed:string[];resources:{power:number;water:number;data:number;safety:number}|null;tutorialStep:number;tutorialDone:boolean;sourceClues:string[];cameraMode:'overview'|'focus-screen';parallax:{yaw:number;pitch:number}};
-    boardPoint(kind:'base'|'site'|'source'|'antenna'|'classification'|'port'|'screen',index?:number): {x:number;y:number};
+    missionBoard(): {phase:number;site:string;solarInstalled:boolean;antenna:number;eventChoice:string;evidence:string;repairLinked:boolean;priorities:string[];completed:string[];resources:{power:number;water:number;data:number;safety:number}|null;tutorialStep:number;tutorialDone:boolean;sourceClues:string[];cameraMode:'overview'|'focus-screen';parallax:{yaw:number;pitch:number}};
+    boardPoint(kind:'base'|'site'|'source'|'antenna'|'classification'|'port'|'screen'|'solar-module'|'solar-socket',index?:number): {x:number;y:number};
     boardHitKind(x:number,y:number): string|null;
-    state(): Record<string, unknown>;
+    state(): {power:number;water:number;data:number;health:number;sol:number;commandSpent:boolean;commandCount:number;[key:string]:unknown};
     language(): 'en'|'zh';
     guide(): {step:number;target:string|null};
     camera(): {x:number;y:number;z:number;baseZ:number;yaw:number;pitch:number};

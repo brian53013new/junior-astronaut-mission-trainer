@@ -33,3 +33,4 @@
 .source-choice:hover{border-color:var(--mission-ice);background:#1d3b50}
 .source-choice:focus-visible{outline:3px solid var(--mission-focus-ring);outline-offset:2px}
 .source-choices[hidden],.source-question[hidden]{display:none}
+@media(max-width:760px){.physical-board-task{max-height:24dvh;padding:7px 9px;pointer-events:auto}.physical-board-task .physical-board-fact{margin:3px 0;padding:5px 7px}.physical-board-task .physical-board-fact b{font-size:.76em}.physical-board-task .board-action{min-height:40px}}

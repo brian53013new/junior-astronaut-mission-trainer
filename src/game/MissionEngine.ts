@@ -57,11 +57,11 @@ export class MissionEngine {
   /** Board lessons are short training exercises, so unrelated legacy sol, pause and cooldown gates do not block a completed classroom task. Resource costs and one-time rewards still apply. */
   claimTrainingWorkshop(kind:WorkshopKind):CommandResult{const s=this.state;if(this.workshopRewards[kind])return {ok:false,kind:'error',message:'alreadyDone'};if(kind==='assembly'){if(s.power<4)return {ok:false,kind:'error',message:'insufficient'};s.power-=4;s.shielding=clamp(s.shielding+10);}else{if(s.water<3)return {ok:false,kind:'error',message:'insufficient'};s.water-=3;s.power=clamp(s.power+12);}this.workshopRewards[kind]=true;this.commandCount++;return {ok:true,kind:'action',message:kind==='assembly'?'assemblyDone':'repairDone'};}
   /** Apply the board-only decisions to the canonical simulation state; all deltas are explicitly educational mappings. */
-  applyTrainingDecision(kind:'site'|'flight'|'finale'|'event'|'evidence'|'repair',values:{score?:number;mass?:number;priority?:number;choices?:string[];choice?:string;waterCost?:number;powerGain?:number;classification?:string}):CommandResult{
+  applyTrainingDecision(kind:'site'|'flight'|'finale'|'event'|'evidence'|'repair',values:{score?:number;mass?:number;priority?:number;choices?:string[];choice?:string;waterCost?:number;powerGain?:number;classification?:string;solarInstalled?:boolean}):CommandResult{
     const s=this.state;
     if(kind==='site'){
       const score=values.score;if(typeof score!=='number'||!Number.isFinite(score)||score<0||score>100)return{ok:false,kind:'error',message:'invalidValue'};
-      s.planned=true;s.power=clamp(s.power+Math.round((score-50)/10));s.data=clamp(s.data+Math.round(score/10));this.commandCount++;
+      s.planned=true;s.power=clamp(s.power+Math.round((score-50)/10)+(values.solarInstalled?6:0));s.data=clamp(s.data+Math.round(score/10));this.commandCount++;
       return{ok:true,kind:'action',message:'siteDecisionRecorded'};
     }
     if(kind==='flight'){

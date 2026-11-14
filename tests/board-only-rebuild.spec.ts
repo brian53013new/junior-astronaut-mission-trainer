@@ -17,8 +17,8 @@ async function beginFreshMission(page: Page) {
   await page.evaluate(() => window.__OUTPOST_QA__!.ready());
 }
 
-async function boardPoint(page: Page, kind: 'base' | 'site' | 'source' | 'antenna' | 'classification' | 'port' | 'screen', index = 0) {
-  return page.evaluate(({target, targetIndex}: {target:'base' | 'site' | 'source' | 'antenna' | 'classification' | 'port' | 'screen';targetIndex:number}) => window.__OUTPOST_QA__!.boardPoint(target, targetIndex), {target:kind,targetIndex:index});
+async function boardPoint(page: Page, kind: 'base' | 'site' | 'source' | 'antenna' | 'classification' | 'port' | 'screen' | 'solar-module' | 'solar-socket', index = 0) {
+  return page.evaluate(({target, targetIndex}: {target:'base' | 'site' | 'source' | 'antenna' | 'classification' | 'port' | 'screen' | 'solar-module' | 'solar-socket';targetIndex:number}) => window.__OUTPOST_QA__!.boardPoint(target, targetIndex), {target:kind,targetIndex:index});
 }
 
 async function dragBoardObject(page: Page, from: {x:number;y:number}, to: {x:number;y:number}) {
@@ -50,7 +50,7 @@ test('fresh save completes the five-turn physical board and restores its certifi
   await expect.poll(() => page.evaluate(() => window.__OUTPOST_QA__!.missionBoard().site)).not.toBe('');
   await expect(page.locator('#mission-board')).toHaveAttribute('data-tutorial-step', '1');
   await expect(page.locator('.physical-board-task')).not.toContainText('°');
-  await clickBoardMesh(page, 'source', 0);
+  await clickBoardAction(page, 'open-phase-source');
   await expect(page.locator('.source-drawer')).toBeVisible();
   await expect(page.locator('#mission-board')).toHaveAttribute('data-tutorial-step', '1');
   await expect(page.locator('.source-detail')).toBeHidden();
@@ -62,12 +62,26 @@ test('fresh save completes the five-turn physical board and restores its certifi
   await expect(page.locator('.source-detail a')).toBeVisible();
   await expect(page.locator('#mission-board')).toHaveAttribute('data-tutorial-step', '2');
   await page.locator('.source-close').evaluate((element: HTMLElement) => element.click());
+  const solarBefore = await page.evaluate(() => window.__OUTPOST_QA__!.missionBoard().solarInstalled);
+  expect(solarBefore).toBe(false);
+  const solarModule = await boardPoint(page, 'solar-module');
+  const solarSocket = await boardPoint(page, 'solar-socket');
+  expect(await page.evaluate(({x,y})=>window.__OUTPOST_QA__!.boardHitKind(x,y),solarModule)).toBe('solar-module');
+  expect(await page.evaluate(({x,y}) => { const element=document.elementFromPoint(x,y) as HTMLElement|null; return element?.tagName === 'CANVAS'; }, solarModule)).toBe(true);
+  await page.mouse.move(solarModule.x,solarModule.y);
+  await page.mouse.down();
+  await page.mouse.move(solarSocket.x,solarSocket.y,{steps:8});
+  await page.mouse.up();
+  await expect.poll(() => page.evaluate(() => window.__OUTPOST_QA__!.missionBoard().solarInstalled)).toBe(true);
+  await expect(page.locator('#mission-board')).toHaveAttribute('data-tutorial-step', '3');
   const tutorialAntenna = await boardPoint(page, 'antenna');
   await dragBoardObject(page, tutorialAntenna, {x:tutorialAntenna.x+190,y:tutorialAntenna.y});
-  await expect(page.locator('#mission-board')).toHaveAttribute('data-tutorial-step', '3');
+  await expect(page.locator('#mission-board')).toHaveAttribute('data-tutorial-step', '4');
+  const powerBeforeSiteDecision=await page.evaluate(()=>window.__OUTPOST_QA__!.state().power);
   await clickBoardAction(page, 'confirm-site');
   await expect(page.locator('#mission-board')).toHaveAttribute('data-tutorial-done', 'true');
   await expect(page.locator('#mission-board')).toHaveAttribute('data-phase', 'event');
+  await expect.poll(()=>page.evaluate(()=>window.__OUTPOST_QA__!.state().power)).toBeGreaterThan(powerBeforeSiteDecision);
 
   // The antenna is a real gimbal. Drag it through the target area, then choose a disclosed game response.
   const antenna = await boardPoint(page, 'antenna');
@@ -82,8 +96,8 @@ test('fresh save completes the five-turn physical board and restores its certifi
   await expect.poll(() => page.evaluate(() => window.__OUTPOST_QA__!.missionBoard().evidence)).toBe('infer');
   await clickBoardAction(page, 'confirm-evidence');
   await expect(page.locator('#mission-board')).toHaveAttribute('data-phase', 'repair');
-  await clickBoardMesh(page, 'port', 0);
-  await clickBoardMesh(page, 'port', 1);
+  await clickBoardAction(page, 'port-choice-0');
+  await clickBoardAction(page, 'port-choice-1');
   await expect.poll(() => page.evaluate(() => window.__OUTPOST_QA__!.missionBoard().repairLinked)).toBe(true);
   await clickBoardAction(page, 'confirm-repair');
   await expect(page.locator('#mission-board')).toHaveAttribute('data-phase', 'finale');
