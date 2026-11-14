@@ -56,6 +56,26 @@ export class MissionEngine {
   }
   /** Board lessons are short training exercises, so unrelated legacy sol, pause and cooldown gates do not block a completed classroom task. Resource costs and one-time rewards still apply. */
   claimTrainingWorkshop(kind:WorkshopKind):CommandResult{const s=this.state;if(this.workshopRewards[kind])return {ok:false,kind:'error',message:'alreadyDone'};if(kind==='assembly'){if(s.power<4)return {ok:false,kind:'error',message:'insufficient'};s.power-=4;s.shielding=clamp(s.shielding+10);}else{if(s.water<3)return {ok:false,kind:'error',message:'insufficient'};s.water-=3;s.power=clamp(s.power+12);}this.workshopRewards[kind]=true;this.commandCount++;return {ok:true,kind:'action',message:kind==='assembly'?'assemblyDone':'repairDone'};}
+  /** Apply the board-only decisions to the canonical simulation state; all deltas are explicitly educational mappings. */
+  applyTrainingDecision(kind:'site'|'flight'|'finale',values:{score?:number;mass?:number;priority?:number;choices?:string[]}):CommandResult{
+    const s=this.state;
+    if(kind==='site'){
+      const score=values.score;if(typeof score!=='number'||!Number.isFinite(score)||score<0||score>100)return{ok:false,kind:'error',message:'invalidValue'};
+      s.planned=true;s.power=clamp(s.power+Math.round((score-50)/10));s.data=clamp(s.data+Math.round(score/10));this.commandCount++;
+      return{ok:true,kind:'action',message:'siteDecisionRecorded'};
+    }
+    if(kind==='flight'){
+      const mass=values.mass,priority=values.priority;if(typeof mass!=='number'||!Number.isFinite(mass)||mass<5||mass>80||typeof priority!=='number'||!Number.isFinite(priority)||priority<0||priority>1)return{ok:false,kind:'error',message:'invalidValue'};
+      const loadCost=Math.max(1,Math.round(mass/20));if(s.power<loadCost)return{ok:false,kind:'error',message:'insufficient'};
+      s.power-=loadCost;s.health=clamp(s.health+Math.round((priority-.5)*10));this.settings.power=priority;this.commandCount++;
+      return{ok:true,kind:'action',message:'flightDecisionRecorded'};
+    }
+    const choices=values.choices;if(!Array.isArray(choices)||choices.length<2||choices.some(x=>!['energy','water','comms'].includes(x)))return{ok:false,kind:'error',message:'invalidValue'};
+    if(choices.includes('energy')){if(s.power<5)return{ok:false,kind:'error',message:'insufficient'};s.power-=5;s.health=clamp(s.health+8);}
+    if(choices.includes('water')){s.water=clamp(s.water+5);s.power=clamp(s.power-2);}
+    if(choices.includes('comms')){s.data=clamp(s.data+3);s.power=clamp(s.power-2);}
+    this.commandCount++;return{ok:true,kind:'action',message:'finaleDecisionRecorded'};
+  }
   claimTrainingSignal():CommandResult{const s=this.state;if(this.signalReward)return {ok:false,kind:'error',message:'alreadyDone'};if(s.power<3)return {ok:false,kind:'error',message:'insufficient'};s.power-=3;s.data=clamp(s.data+10);this.signalReward=true;this.commandCount++;return {ok:true,kind:'action',message:'signalDone'};}
   /** A classroom observation uses the same resource state as the outpost sim but is not gated by unrelated legacy mission prerequisites. */
   claimTrainingObservation(power:number,aim:number):CommandResult{const s=this.state;if(!Number.isFinite(power)||!Number.isFinite(aim)||power<0||power>1||aim<0||aim>1)return{ok:false,kind:'error',message:'invalidValue'};const cost=6+Math.round(power*6);if(s.power<cost||s.propellant<4)return{ok:false,kind:'error',message:'insufficient'};if(s.discoveries>=3)return{ok:false,kind:'error',message:'scienceComplete'};this.settings.science=power;this.settings.aim=aim;s.power-=cost;s.propellant-=4;const alignment=1-Math.abs(aim-.8)*2;const yieldAmount=Math.max(1,Math.round((15+power*20)*(.5+.5*alignment)));s.data=clamp(s.data+yieldAmount);s.discoveries++;this.commandCount++;return{ok:true,kind:'action',message:'scienceFound'};}

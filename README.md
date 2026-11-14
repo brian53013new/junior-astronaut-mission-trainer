@@ -66,7 +66,7 @@ git diff --check
 
 Mock-based ingestion checks verify validation and failure handling; they do not prove NASA connectivity. The current test report separates mock checks, genuine source evidence, browser emulation and physical-device gaps. Review [docs/nasa-data-integration.md](docs/nasa-data-integration.md) before acquiring a snapshot. Never turn a DONKI event type into a real radiation dose, health prediction or safety instruction.
 
-The current bilingual mission-table sequence and evidence limits are summarized in [docs/mission-board-course-report.md](docs/mission-board-course-report.md). The legacy paper curriculum is summarized in [docs/course-content-report.md](docs/course-content-report.md). The raw user-provided NASA package and original checksums are preserved under public/data/nasa/user-submitted-package/.
+The current bilingual mission-table sequence and evidence limits are summarized in [docs/mission-board-course-report.md](docs/mission-board-course-report.md). The board layout, palette, interaction and resource-state mapping are recorded in [docs/ui-design-report.md](docs/ui-design-report.md), with viewport evidence and verification limits in [docs/ui-acceptance-report.md](docs/ui-acceptance-report.md). The legacy paper curriculum is summarized in [docs/course-content-report.md](docs/course-content-report.md). The raw user-provided NASA package and original checksums are preserved under public/data/nasa/user-submitted-package/.
 
 ## Project map
 
